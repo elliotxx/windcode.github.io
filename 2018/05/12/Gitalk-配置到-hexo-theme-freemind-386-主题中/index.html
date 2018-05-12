@@ -1,0 +1,278 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>如何将 Gitalk 集成到 hexo-theme-freemind.386 主题中？ | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="前言Gitalk 如何配置到 hexo-theme-freemind.386 主题中？
+Gitalk 是一款基于 Github issue 的评论插件，多说挂了后，是一个评论框不错的替代方案。
+hexo-theme-freemind.386 是一款基于 Hexo 的主题，暗色调，很有上个世纪 IT ">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="如何将 Gitalk 集成到 hexo-theme-freemind.386 主题中？"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 如何将 Gitalk 集成到 hexo-theme-freemind.386 主题中？</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Gitalk 如何配置到 hexo-theme-freemind.386 主题中？</p>
+<p>Gitalk 是一款基于 Github issue 的评论插件，多说挂了后，是一个评论框不错的替代方案。</p>
+<p>hexo-theme-freemind.386 是一款基于 Hexo 的主题，暗色调，很有上个世纪 IT 极客的氛围。</p>
+<p>下面介绍下将 Gitalk 集成到 hexo-theme-freemind.386 主题中的修改方法：</p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><ol>
+<li>修改 hexo-theme-freemind.386 主题的 _config.yml 配置文件，添加：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># Gitalk</span><br><span class="line">gitalk: </span><br><span class="line">      enable: true                        # 用来做启用判断可以不用</span><br><span class="line">      clientID: xxxxxxxxx                            # github app clientid</span><br><span class="line">      clientSecret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx    # github app clientSecret</span><br><span class="line">      repo: username.github.io            # 仓库名称</span><br><span class="line">      owner: username                     # github 用户名</span><br><span class="line">      admin: username</span><br><span class="line">      distractionFreeMode: true</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>username 是你的 github 用户名，clientID 和 clientSecret 需要<strong>配置 github application 获得</strong>，具体可见：<a href="https://www.jianshu.com/p/9be29ed2f4b7" target="_blank" rel="noopener">Hexo添加Gitalk评论插件</a></p>
+<ol start="2">
+<li>修改 hexo-theme-freemind.386\layout_partial\post\comment.ejs 文件，在第6行后添加：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;% &#125; else if (theme.gitalk.enable)&#123; %&gt;</span><br><span class="line">&lt;div id=&quot;gitalk-container&quot;&gt;&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这是添加 gitalk 的 div 容器。</p>
+<ol start="3">
+<li>修改 hexo-theme-freemind.386\layout_partial\post\comment_footer.ejs 文件，在第23行后添加：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;% &#125; else if (theme.gitalk.enable)&#123; %&gt;</span><br><span class="line">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/gitalk/dist/gitalk.css&quot;&gt;</span><br><span class="line">&lt;script src=&quot;https://unpkg.com/gitalk/dist/gitalk.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line">.gt-comment-content&#123;</span><br><span class="line">  border-radius: 10px;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;script type=&quot;text/javascript&quot;&gt;</span><br><span class="line">    var gitalk = new Gitalk(&#123;</span><br><span class="line">      clientID:  &apos;&lt;%= theme.gitalk.clientID %&gt;&apos;, </span><br><span class="line">      clientSecret: &apos;&lt;%= theme.gitalk.clientSecret %&gt;&apos;,</span><br><span class="line">      id: md5(window.location.pathname),</span><br><span class="line">      repo: &apos;&lt;%= theme.gitalk.repo %&gt;&apos;, </span><br><span class="line">      owner: &apos;&lt;%= theme.gitalk.owner %&gt;&apos;, </span><br><span class="line">      admin: &apos;&lt;%= theme.gitalk.admin %&gt;&apos;, </span><br><span class="line">      distractionFreeMode: &apos;&lt;%= theme.gitalk.distractionFreeMode %&gt;&apos;,</span><br><span class="line">    &#125;)</span><br><span class="line">    console.log(md5(window.location.pathname));</span><br><span class="line">    gitalk.render(&apos;gitalk-container&apos;)</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这里是引入 Gitalk ，并配置认证信息，同时这里用 md5 加密修复了 issue label 50字内的限制（思路参考 <a href="https://github.com/gitalk/gitalk/issues/102" target="_blank" rel="noopener">报错出现 Error: Validation Failed. - gitalk issue #102</a>），以及美化了下评论框的样式（其实就是加了个圆角）。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p>报错出现 Error: Validation Failed. - gitalk issue #102<br><a href="https://github.com/gitalk/gitalk/issues/102" target="_blank" rel="noopener">https://github.com/gitalk/gitalk/issues/102</a></p>
+</li>
+<li><p>Hexo添加Gitalk评论插件<br><a href="https://www.jianshu.com/p/9be29ed2f4b7" target="_blank" rel="noopener">https://www.jianshu.com/p/9be29ed2f4b7</a></p>
+</li>
+<li><p>Hexo NexT主题中集成gitalk评论系统<br><a href="https://asdfv1929.github.io/2018/01/20/gitalk/" target="_blank" rel="noopener">https://asdfv1929.github.io/2018/01/20/gitalk/</a></p>
+</li>
+</ul>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2018/05/12/hello-world/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2018/05/11/2018-年-4-月份阅读记录/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2018-05-12 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+</body>
+   </html>
