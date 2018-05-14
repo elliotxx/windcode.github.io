@@ -1,0 +1,304 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Prolog 练习和笔记 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="前言Prolog 是一种主要用于人工智能领域的编程语言，编程体验和自然语言较为接近。
+前段时间接触了一下，下面记录一下学习的笔记，主要是一个 prolog 和 C++ 混合编程的例子。
+我把示例代码放到了 GitHub 上，链接在这里：windcode/prolog-demo
+另外还有官方文档的链接：官方文档)">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Prolog 练习和笔记"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Prolog 练习和笔记</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Prolog 是一种主要用于人工智能领域的编程语言，编程体验和自然语言较为接近。</p>
+<p>前段时间接触了一下，下面记录一下学习的笔记，主要是一个 prolog 和 C++ 混合编程的例子。</p>
+<p>我把示例代码放到了 GitHub 上，链接在这里：<a href="https://github.com/windcode/prolog-demo" target="_blank" rel="noopener">windcode/prolog-demo</a></p>
+<p>另外还有官方文档的链接：<a href="http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/pldoc.html%27" target="_blank" rel="noopener">官方文档</a>)<br><a id="more"></a></p>
+<h2 id="Prolog-使用笔记"><a href="#Prolog-使用笔记" class="headerlink" title="Prolog 使用笔记"></a>Prolog 使用笔记</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>下载 Windows版本 prolog</p>
+<p>下载页面：<a href="http://www.swi-prolog.org/download/stable" target="_blank" rel="noopener">http://www.swi-prolog.org/download/stable</a></p>
+<p>我选择了 <strong><a href="http://www.swi-prolog.org/download/stable/bin/swipl-w64-760-rc2.exe" target="_blank" rel="noopener">SWI-Prolog 7.6.0-rc2 for Microsoft Windows (64 bit)</a></strong> 下载安装</p>
+<p>安装后，启动 <strong>C:\Program Files\swipl\bin\swipl-win.exe</strong>，可以打开 prolog 控制台。</p>
+<h3 id="打开现成的-Prolog-程序"><a href="#打开现成的-Prolog-程序" class="headerlink" title="打开现成的 Prolog 程序"></a>打开现成的 Prolog 程序</h3><p>比如，<a href="https://github.com/SWI-Prolog/packages-cpp" target="_blank" rel="noopener">Prolog 的 C++ 开发包</a> 里有一个示例程序 <strong>likes.pl</strong></p>
+<p>克隆该项目到本地<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/SWI-Prolog/packages-cpp.git</span><br></pre></td></tr></table></figure></p>
+<p>在目录中可以找到 likes.pl 文件，双击打开</p>
+<p>在弹出的控制台中输入 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">likes(X,Y).</span><br></pre></td></tr></table></figure>
+<p>然后会输出，所有 X 喜欢 Y 的关系</p>
+<h3 id="编写-prolog-程序"><a href="#编写-prolog-程序" class="headerlink" title="编写 prolog 程序"></a>编写 prolog 程序</h3><p>首先在桌面创建一个 Prolog 文件 <strong>ex.pl</strong></p>
+<p>然后在 prolog 控制台中点击 <strong>File –&gt; Edit</strong>，选择刚刚创建的 <strong>ex.pl</strong></p>
+<p>然后我们便可以编辑 <strong>ex.pl</strong> 文件：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">love(a,b).</span><br><span class="line">love(b,c).</span><br><span class="line">love(c,a).</span><br><span class="line"></span><br><span class="line">sanjiaolian(X,Y,Z) :-</span><br><span class="line">    love(X,Y),</span><br><span class="line">    love(Y,Z),</span><br><span class="line">    love(Z,X).</span><br></pre></td></tr></table></figure></p>
+<p>按住 <strong>ctrl+s</strong> 保存</p>
+<p>双击刚刚编辑过的 ex.pl 文件</p>
+<p>在弹出的控制台中输入<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sanjiaolian(a,b,c)</span><br></pre></td></tr></table></figure></p>
+<p>正确输出<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">true</span><br></pre></td></tr></table></figure></p>
+<p>我们<strong>成功判断了 a，b，c 三个人是否为三角恋关系</strong></p>
+<h3 id="packages-cpp-likes-demo-安装测试"><a href="#packages-cpp-likes-demo-安装测试" class="headerlink" title="packages-cpp likes demo 安装测试"></a><a href="https://github.com/SWI-Prolog/packages-cpp" target="_blank" rel="noopener">packages-cpp</a> likes demo 安装测试</h3><p><strong>注意</strong>：安装需在 linux 环境、默认已经安装 g++ 编译器</p>
+<p><strong>1.安装 swipl</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://www.swi-prolog.org/download/stable/src/swipl<span class="number">-7.6</span><span class="number">.0</span>.tar.gz</span><br><span class="line">tar zvxf swipl<span class="number">-7.6</span><span class="number">.0</span>.tar.gz</span><br><span class="line">cd swipl<span class="number">-7.6</span><span class="number">.0</span>/</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure></p>
+<p><strong>2.克隆仓库 packages-cpp，编译 likes.cpp 和 likes.pl</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/SWI-Prolog/packages-cpp.git</span><br><span class="line">cd packages-cpp/</span><br><span class="line">swipl-ld -o likes -ld g++ -goal true likes.cpp likes.pl</span><br></pre></td></tr></table></figure></p>
+<p>swipl-ld 参数说明：<br><a href="http://www.swi-prolog.org/pldoc/man?section=plld" target="_blank" rel="noopener">11.5 Linking embedded applications using swipl-ld</a></p>
+<p><strong>3.运行测试</strong><br>输入<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./likes</span><br></pre></td></tr></table></figure></p>
+<p>输出（提示信息）<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Usage: likes x [y] <span class="keyword">or</span> likes -happy</span><br></pre></td></tr></table></figure></p>
+<p>输入<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./likes -happy</span><br></pre></td></tr></table></figure></p>
+<p>输出<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Happy people:</span><br><span class="line">        mary</span><br><span class="line">        mary</span><br><span class="line">        john</span><br><span class="line">        sue</span><br><span class="line">        paul</span><br><span class="line">        jane</span><br></pre></td></tr></table></figure></p>
+<p>输入<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./likes mary</span><br></pre></td></tr></table></figure></p>
+<p>输出<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mary likes:</span><br><span class="line">        john</span><br><span class="line">        potplants</span><br><span class="line">        jane</span><br><span class="line">        paul</span><br><span class="line">        Heartbreak High</span><br><span class="line">        sunbathing</span><br></pre></td></tr></table></figure></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/399" target="_blank" rel="noopener">Prolog 练习和笔记</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/10/20/一个 mui 底部选择卡切换的简化实现方案/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/10/13/2017 年 10 月份阅读记录/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-10-20 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

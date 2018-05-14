@@ -1,0 +1,361 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>大数据报告：知乎百万用户分析 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="前言最近用 python 爬虫抓取了知乎用户个人资料（公开信息），去重之后有300+万条记录，为了得到这些数据，还不小心跑崩了一台服务器…… 当然主要是配置太低。
+手头有了数据也不能闲着，于是就有了这篇分析报告，这篇报告做了一些浅显的数据分析，主要目的是练练手，大家看个热闹，高手勿笑。
+数据量：3,289,329 人。
+数据采集工具：分布式 python 爬虫
+分析工具：ElasticSearch + Kibana
+分析角度包括：地理位置、男女比例、各类排名、所在高校、活跃程度等。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="大数据报告：知乎百万用户分析"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 大数据报告：知乎百万用户分析</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近用 python 爬虫抓取了知乎用户个人资料（公开信息），去重之后有300+万条记录，为了得到这些数据，还不小心跑崩了一台服务器…… 当然主要是配置太低。</p>
+<p>手头有了数据也不能闲着，于是就有了这篇分析报告，这篇报告做了一些浅显的数据分析，主要目的是练练手，大家看个热闹，高手勿笑。</p>
+<p><strong>数据量</strong>：3,289,329 人。</p>
+<p><strong>数据采集工具</strong>：分布式 python 爬虫</p>
+<p><strong>分析工具</strong>：ElasticSearch + Kibana</p>
+<p><strong>分析角度包括</strong>：地理位置、男女比例、各类排名、所在高校、活跃程度等。<br><a id="more"></a></p>
+<p><strong>注意</strong>：</p>
+<ul>
+<li>以下所有分析结果都基于我抓取到的这300万用户的个人信息，非权威分析，仅供参考。</li>
+<li>数据抓取时间为2017年7月份，用户数据会随着时间推移而变化，所以该报告具有一定时效性。</li>
+<li>知乎的用户个人资料很大程度上是不完整的，因为用户有权只填写部分信息，所以后面分析的时候会筛掉对应指标为空的用户。</li>
+</ul>
+<p>下面让我们看看知乎用户分布中有哪些有趣的现象（下面的图点击可以放大） ↓</p>
+<h2 id="知乎的男女比例？"><a href="#知乎的男女比例？" class="headerlink" title="知乎的男女比例？"></a>知乎的男女比例？</h2><p>首先来看看知乎用户的男女比例，以当前样本数据统计的结果接近 <strong>1:1</strong>，其中男生偏多一些。（其实还有很大一部分性别不明的用户，被我略掉了 ╮(╯▽╰)╭）</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/e5ceffab-2afb-44d8-84ef-c602ab5cf17b.png" alt=""></p>
+<p><strong>蓝色为男生，红色为女生</strong>。具体数据为：  </p>
+<p>男生：1,202,234 人，占 51.55%<br>女生：1,129,874 人，占 48.45%</p>
+<h2 id="知乎用户都是哪里人？"><a href="#知乎用户都是哪里人？" class="headerlink" title="知乎用户都是哪里人？"></a>知乎用户都是哪里人？</h2><p>再来看看<strong>全国（全球？）都有哪些地方的人在玩知乎</strong>：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/d67b117f-1363-4489-b3f8-8b2bb0770ea2.png" alt=""></p>
+<p>由上图可以看到，<strong>知乎用户中一线城市用户占较大的比重</strong>，北上广深皆在词云的中心位置（文字越大，比重越大）。我们再来看看具体的排名（前十名）：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/79272e4b-2483-4936-afd5-afbd7f21cc71.png" alt=""></p>
+<p>知乎用户居住地前十名依次是：<strong>北京、上海、杭州、成都、南京、武汉、广州、深圳、西安、重庆</strong>。</p>
+<p>你可能发现了Y坐标里每座城市的用户数并不多，这是因为有大概260万的知乎没有填写“居住地”这一栏~ 以下分析也有可能出现用户没有填写某一栏信息的情况，我会把这些用户忽略掉，以保证展示图表的准确性。</p>
+<h2 id="知乎的职业分布？"><a href="#知乎的职业分布？" class="headerlink" title="知乎的职业分布？"></a>知乎的职业分布？</h2><p>以下显示<strong>知乎主流职业</strong>，同样根据知乎用户个人信息里填写的职业为准：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/7573ec55-bcf2-40c7-b7dc-34d3d117b576.png" alt=""></p>
+<p>由上图可以看到，知乎用户中<strong>学生用户占据多数</strong>，其它的比如产品经理、程序员、运营、HR数量也不少。我们看一下具体的排名（前十名）：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/5c22df3e-c26f-49f5-a6bd-2197e9db439d.png" alt=""></p>
+<p>由上图可以看到，知乎用户中“学生”的比重独占鳌头，我们把“学生”去掉，来看看<strong>正经些的知乎职业排名</strong>：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/dced3ee9-f009-420a-b96a-4b7c234ce5c6.png" alt=""></p>
+<p>去除学生后，知乎主流职业比重从大到小依次是（前十名）：<strong>产品经理、自由职业、程序员、工程师、设计师、腾讯、教师、人力资源（HR）、运营、律师</strong>。可以看到，除了一些互联网公司的常见职位外，教师和律师用户在知乎中也占据不小的比重。</p>
+<p>下面我们结合 <strong>性别</strong> 和 <strong>居住地</strong> 来分析一下知乎的主流职业。</p>
+<p><strong>知乎主流职业的性别分布</strong>：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/33c3fb3c-aa80-4af4-8aa4-b05fa58bd6a7.png" alt=""></p>
+<p>上面这张饼图的内圈表示各主流职业在前十名中所占的比重，外圈表示该职业从业者中的男女比例，蓝色为男性，红色为女性。我们再用一张直方图来表示：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/58d76873-aee3-4b83-b068-c22916c88937.png" alt=""></p>
+<p>同样蓝色代表男性，红色代表女性，从左到右的职业在知乎中的数量依次下降。可以看到，<strong>知乎大部分主流职业中主要为男性占主导</strong>。前 10 名的主流职业中有 8 个职业的男性从业者比女性多，其中以 <strong>程序员</strong> 的男女比例差距最为悬殊（-_-|||），以 <strong>设计师</strong> 男女比例差距最小，看来设计师从业人员男女比例较为均衡。其它的，比如产品经理、自由职业者、律师中，均为男性从业者多于女性。而前 10 名剩下的 2 个职业——<strong>教师、人力资源（HR）</strong>——女性从业者要多于男性，其中以 <strong>人力资源（HR）</strong> 男女比例差距最为悬殊，<strong>教师</strong>的男女比例虽不那么夸张，但女性也远远多于男性（也许是因为男性教师不怎么上知乎？）。</p>
+<p>看完了知乎各职业的性别分布，我们再用一张热力图，来观察<strong>知乎主流职业（前五名）在各个地区的分布情况</strong>：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/a66c6cb9-0203-4bec-85f6-0c766a23faba.png" alt=""></p>
+<p>这里我为了展示方便，<strong>去掉了产品经理</strong>，你只需要知道产品经理在各地人数都是最多的…… 不明白知乎上怎么这么多产品经理，可能是为了方便宣传他们的产品？</p>
+<p>从上图可以看出，知乎各主流职业大部分集中在<strong>北京和上海</strong>两地，更准确地说，大部分都集中在北京，但是<strong>人力资源（HR）</strong>是个例外，他们更多集中在上海。我们再来看看其他职业，<strong>程序员</strong>分布最多的城市依次是：<strong>北京、上海、广州、杭州、厦门</strong>。北京占得比重最大，简直绿的发黑，看来北京是程序员的天堂？其中深圳没有上榜，让我很奇怪。<strong>设计师</strong>分布最多的城市依次是：<strong>北京、上海、杭州、深圳、武汉</strong>。设计师的地区分布比较平均，各个城市都有一定数量。</p>
+<h2 id="知乎的高校用户"><a href="#知乎的高校用户" class="headerlink" title="知乎的高校用户"></a>知乎的高校用户</h2><p>知乎中学生用户占很大的比重，我们来看看<strong>他们都来自哪些学校</strong>！词云中字体越大，表示所占比重越大。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/efa772e2-456c-4209-8428-417a339cacb8.png" alt=""></p>
+<p>我们再列出详细的比重排名：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/aed3a33c-cbf2-4dcd-bc69-87646e044165.png" alt=""></p>
+<p>以上展示的结果不一定准确，可能有很大一部分学生用户没有填写自己的学校。仅从上图可以看出，知乎活跃高校用户从大到小依次是：<strong>浙江大学、武汉大学、华中科技大学、中山大学、北京大学、上海交通大学、复旦大学、南京大学、四川大学、清华大学</strong>。</p>
+<p>既然分析到学校了，我们顺便看看<strong>各高校的男女比例</strong>，嘿嘿。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/c31c5be7-32ff-4a03-9e55-d33ff82df7c5.png" alt=""></p>
+<p>发现一个有意思的现象，各高校大部分都是男生在玩知乎…… </p>
+<p>再看一下<strong>哪些高校在知乎获得的赞数最多</strong>：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/01d6e457-5b2f-4d5c-8b4a-0f8685275b92.png" alt=""></p>
+<p>第一是同济大学，土木工程，恩，这是哪位大佬撑起来的；第二是华南理工大学，软件工程，这个我知道，轮子哥是皇家理工的嘛；第三，重庆第一工程尸培训基地，恩？？？这是什么鬼（黑人问号）；继续往后看，恩……？？家里蹲大学？？！！还有一个兰州大学，牛肉面工艺专业？？？WHAT？？！！∑(っ°Д°;)っ</p>
+<p>知乎大佬都这么调皮吗……</p>
+<p>这个图似乎不太准，大家忽略就好……</p>
+<p>我们再来看看<strong>各地区有哪些高校是知乎重度用户</strong>：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/16c52d52-b175-4b34-93a7-6f54314a84fa.png" alt=""></p>
+<p>北京玩知乎最多的高校依次是：<strong>北京大学、北京邮电大学、中国传媒大学、中国人民大学、清华大学</strong>。<br>上海玩知乎最多的高校依次是：<strong>上海交通大学、复旦大学、同济大学、上海大学、上海财经大学</strong>。<br>杭州玩知乎最多的高校依次是：<strong>浙江大学、浙江工业大学、杭州电子科技大学、浙江大学,计算机科学、浙江大学,软件工程</strong>。浙江大学是重度用户啊……<br>成都玩知乎最多的高校依次是：<strong>电子科技大学、四川大学、西南交通大学、电子科技大学,软件工程、四川师范大学</strong>。<br>广州玩知乎最多的高校依次是：<strong>中山大学（SYSU）、华南理工大学（SCUT）、华南农业大学(SCAU)、广东外语外贸大学、广东工业大学</strong>。  </p>
+<p>我们再来看一下<strong>知乎各高校用户的活跃程度</strong>，按每个学校用户回答问题的总数排名：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/0ef9b198-ad67-46e9-86aa-ce95d779195f.png" alt=""></p>
+<p>排名依次是：<strong>武汉大学、浙江大学、中山大学、华南理工大学、北京大学、华中科技大学、复旦大学、上海交通大学、西北农林科技大学</strong>。</p>
+<p>好了，高校分析告一段落，我们再来看看知乎用户的各类排名。</p>
+<h2 id="知乎赞数最多的100位大V"><a href="#知乎赞数最多的100位大V" class="headerlink" title="知乎赞数最多的100位大V"></a>知乎赞数最多的100位大V</h2><p>下图中词云的字越大，表示收到的赞数越多：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/0162a585-5166-4ec9-8783-985e142f5487.png" alt=""></p>
+<p>我们再来一张直方图，配合着看：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/5c52ea6b-ef1b-469b-a4ff-d8af1e0a5e6e.png" alt=""></p>
+<p><strong>张佳玮</strong>大大无可争议的获得第一名，360+万赞，恐怖。其次是<strong>马前卒、唐缺、vczh、肥肥猫、朱炫、Seasee Youl、ze ran、鬼木知、豆子</strong>。知乎获赞总数前五名有两位都是作家（张佳玮和唐缺），看来作家在知乎回答问题获赞方面还是很吃香，果然表达能力是观点获得认可的一个重要支撑 。</p>
+<h2 id="知乎关注者最多的100位大V"><a href="#知乎关注者最多的100位大V" class="headerlink" title="知乎关注者最多的100位大V"></a>知乎关注者最多的100位大V</h2><p>下图词云的字越大，表示关注者越多，看看有没有你熟悉的大V 呢？：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/7dbe042e-1919-4206-b1e4-e2c27b6350cc.png" alt=""></p>
+<p>同样我们配合着一张直方图来看：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/659c517c-1488-4f45-96aa-1ad3c3452b98.png" alt=""></p>
+<p>知乎关注人数最多的前10位大V依次是：<strong>张佳玮、李开复、黄继新、周源、张亮、张小北、李淼、朱炫、葛巾、田吉顺</strong>。这些是知乎真正的大V，关注者数量极多。关注者最多的张佳玮有137万粉丝（抓取时），他的粉丝还在不断上涨，到现在已经有138万粉丝。关注者最少田吉顺也有57万粉丝，轮子哥（vczh）稍微少一些，排在第11位。</p>
+<h2 id="知乎回答问题最多的100位大V"><a href="#知乎回答问题最多的100位大V" class="headerlink" title="知乎回答问题最多的100位大V"></a>知乎回答问题最多的100位大V</h2><p>这些大V在知乎很活跃…… 下图词云文字越大，表示回答问题数量越多。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/e331d138-be36-4397-8e40-804b3915ee61.png" alt=""></p>
+<p>具体的排名为：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/25e2b7aa-1256-497a-b700-ea51f585944a.png" alt=""></p>
+<p>知乎回答问题数最多的10位大V从大到小依次为：<strong>vczh、李东、赵钢、另一只袜子、四海之内、M3小蘑菇、kun yu、白猫转转风、yskin、肛里拉出个电锯</strong>。微软的工作貌似很闲，看轮子哥（vczh）整天刷知乎……</p>
+<p>我们再来加上这几位用户在知乎的获得的赞数，看看<strong>“回答问题的数量”</strong>和<strong>“获得的赞数”</strong>之间有没有什么联系：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/887a4afe-7f93-4e54-92a2-911f45801447.png" alt=""></p>
+<p>由上图我们可以粗略的得出结论，<strong>回答问题的数量和获得赞数的关系没有很大</strong>。上图中只有 kun yu 和 vczh 回答问题的数量和获赞数基本持平，榜单前十名的其它用户获得赞数虽然也不少，但和他们回答问题数量的排名比起来，还不在一个量级上。这从侧面也说明了一个问题，<strong>回答问题的质量更加重要，某些高质量的会更容易吸引用户点赞</strong>。</p>
+<h2 id="知乎参加live最多的100位大V"><a href="#知乎参加live最多的100位大V" class="headerlink" title="知乎参加live最多的100位大V"></a>知乎参加live最多的100位大V</h2><p>我们再来看一个有意思的统计，<strong>知乎参加 live 最多的100位用户</strong>，以及他们最多参加过多少场 live。（live 是知乎推出的一种类似于直播的问答形式，大V开一场 live，分享他所在领域的知识，用户买门票参与 live，是一种知识变现的方式）</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/00d0a022-99a8-4fb8-a16c-cd63c525e6b5.png" alt=""></p>
+<p>再来看看他们最多参加过多少场 live：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/cf0f7836-72c1-4172-ab28-c3bb671b6f9c.png" alt=""></p>
+<p>最多的那个大V竟然参加过 1600+ 场 live，真的很有精力和金钱，哈哈。</p>
+<h2 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h2><p>以上，便是以知乎300万用户个人资料为样本，做出的简单数据分析。</p>
+<p>大家觉得还可以挖掘哪些有用的信息呢？</p>
+<p>接下来会发一篇爬虫的源码剖析，有时间的话会继续抓取其它有用的数据，做成数据报告发上来。另外我会尝试下把这次抓到的数据做成功能集成到微信公众号中，如果你有什么好玩的点子也可以推荐给我。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/be534b20-57c0-492f-96c0-043fa6ea7541.jpg" alt=""></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/389" target="_blank" rel="noopener">知乎百万用户大数据分析报告</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/07/18/记录一次服务器重新部署的经历（网站、gogs和一些脚本）/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/07/12/2017 年 6 月份阅读记录/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-07-12 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

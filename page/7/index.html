@@ -1,0 +1,385 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Page 7 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 <div class="page-header logo">
+  <h1>呓语的黑板报<span class="blink-fast">∎</span></h1>
+</div>
+
+<div class="row page">
+
+	
+	<div class="col-md-9">
+	
+
+		<div class="slogan">
+      <!-- <i class="fa fa-heart blink-slow"></i> -->
+      <span class="blink-slow"><img src="/img/avatar.png"></span>
+       hello, world.
+</div>
+		<div id="top_search"></div>
+		<div class="mypage">
+		
+		<!-- title and entry -->
+		
+			<div class="x-post-item">
+				
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/01/02/新浪云SAE搭建python环境 问题拾遗/" >新浪云SAE搭建python环境 问题拾遗</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-02  </div>
+		</div>
+	</div>
+	
+
+
+				<div class="entry">
+  <div class="row">
+	
+	
+		<p><strong><span style="font-size: 16px;">1、python程序部署到sae上需要做的改动</span></strong></p><br><p><span style="font-size: 16px;">在线上需要转换成wsgi的形式运行python程序。</span></p><br><p><span style="font-size: 16px;">sae中运行python程序需要指定一个函数为入口函数。</span></p><br><div class="cnblogs_code"><br><pre><span style="font-size: 16px;">application = sae.create_wsgi_app(main)</span></pre><br></div><br><p><span style="font-size: 16px;">main函数是你定义的入口函数，在这里面你可以调用你定义的其它函数。</span></p><br><p><span style="font-size: 16px;">sae.create_wsgi_app(main) 创建main为入口函数，将入口地址返回给application。</span></p><br><p><span style="font-size: 16px;">运行这个程序的时候sae会直接找到application，运行这个python程序。</span></p><br><p><span style="font-size: 16px;">另外入口函数（main）必须要有两个参数：environ 和 start_response</span></p><br><p><span style="font-size: 16px;">所以你的入口函数要这样写：</span></p><br><div class="cnblogs_code"><br><pre><span style="font-size: 16px;"><span style="color: #008080;">1</span> <span style="color: #0000ff;">def</span><span style="color: #000000;"> main(environ,start_response):<br></span><span style="color: #008080;">2</span>     status = <span style="color: #800000;">‘</span><span style="color: #800000;">200 OK</span><span style="color: #800000;">‘</span><br><span style="color: #008080;">3</span>     response_headers = [(<span style="color: #800000;">‘</span><span style="color: #800000;">Content-type</span><span style="color: #800000;">‘</span>,<span style="color: #800000;">‘</span><span style="color: #800000;">text/plain</span><span style="color: #800000;">‘</span><span style="color: #000000;">)]<br></span><span style="color: #008080;">4</span>     write =<span style="color: #000000;"> start_response(status,response_headers)<br></span><span style="color: #008080;">5</span><br><span style="color: #008080;">6</span>     <span style="color: #0000ff;">return</span> [<span style="color: #800000;">‘</span><span style="color: #800000;">Hello world</span><span style="color: #800000;">‘</span>]</span></pre><br></div><br><p><span style="font-size: 16px;">这里面定义了一个返回的包，status为状态码，200表示成功，response_headers为包的头部，return返回body的内容，组合起来就是一个完整的包。</span></p><br><p><span style="font-size: 16px;">sae中运行python程序基本就要做这些改变，你的其它程序可以在main函数的基础上扩充。另外还有sae不支持一些第三方库的问题，这一节不赘述了。</span></p><br><p><span style="font-size: 16px;">关于程序的设置详见官方文档：<a href="http://www.sinacloud.com/doc/sae/python/runtime.html#qing-qiu-chu-li" target="_blank">请求处理</a></span></p><br><p><span style="font-size: 16px;">&nbsp;</span></p><br><p><strong><span style="font-size: 16px;">2、sae git 提交记住用户名、密码</span></strong></p><br><p><span style="font-size: 16px;">详见：<a href="http://blog.csdn.net/izayl/article/details/49856185" target="_blank">使用GitBash记住在新浪Sae上Git仓库的帐号密码，以后再也不用输帐号密码啦！</a></span></p><br><p><span style="font-size: 16px;">&nbsp;</span></p><br><p><strong><span style="font-size: 16px;">3、运行 git 脚本</span></strong></p><br><p><span style="font-size: 16px; line-height: 24px;">调试的时候每次重复输入几条命令比较麻烦？试试将所有命令写成一个小脚本来运行！</span></p><br><p><span style="font-size: 16px; line-height: 24px;">使用方法：</span></p><br><div class="cnblogs_code"><br><pre><span style="font-size: 16px;">git config –<span style="color: #0000ff;">global</span> alias.push1 <span style="color: #800000;">‘</span><span style="color: #800000;">!git add . &amp;&amp; git commit -m “update” &amp;&amp; git push sae master:1</span><span style="color: #800000;">‘</span></span></pre><br></div><br><p><span style="font-size: 16px;">git控制台中直接运行：</span></p><br><div class="cnblogs_code"><br><pre><span style="font-size: 16px;">git push1</span></pre><br></div><br><p><span style="font-size: 16px;">就可以运行这个脚本啦！</span></p><br><p><span style="font-size: 16px;">参考自：<a href="https://segmentfault.com/q/1010000000263597" target="_blank">Git批处理脚本</a></span></p><br><p>&nbsp;</p><br><p><strong><span style="font-size: 16px;">4、wsgi处理get请求</span></strong></p><br><p><span style="font-size: 16px;">参考自：<a href="http://blog.csdn.net/shanzhizi/article/details/46596921" target="_blank">web python – WSGI接口GET请求</a></span></p><br><p><span style="font-size: 16px;"><a href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001386832689740b04430a98f614b6da89da2157ea3efe2000" target="_blank">&nbsp;WSGI接口</a>&nbsp;&lt;==处理url路径问题</span></p><br><p>&nbsp;</p><br><p><span style="font-size: 16px;"><strong>Freecode# :&nbsp;<a title="www.cnblogs.com/yym2013" href="http://www.cnblogs.com/yym2013" target="_blank" rel="noopener">www.cnblogs.com/yym2013</a></strong></span></p>
+
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/16" target="_blank" rel="noopener">新浪云SAE搭建python环境 问题拾遗<br></a></strong></p>
+	
+	</div>
+  <a type="button" href="/2017/01/02/新浪云SAE搭建python环境 问题拾遗/#more" class="btn btn-default more">Read More</a>
+</div>
+
+			</div>
+		
+			<div class="x-post-item">
+				
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2017/01/02/Python 学习拾遗/" >Python 学习拾遗</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2017-01-02  </div>
+		</div>
+	</div>
+	
+
+
+				<div class="entry">
+  <div class="row">
+	
+	
+		<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/342bab42-efac-4798-9117-11d26ea4b649.png" alt=""></p>
+<p>该博文主要适应于python2.7，并没有对py3进行测试。</p>
+<p>主要记录学习python过程中容易出现的一些小问题、小错误，相信能给你启发。<br></p>
+	
+	</div>
+  <a type="button" href="/2017/01/02/Python 学习拾遗/#more" class="btn btn-default more">Read More</a>
+</div>
+
+			</div>
+		
+			<div class="x-post-item">
+				
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/12/21/关于python中的字符串编码理解/" >关于python中的字符串编码理解</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-12-21  </div>
+		</div>
+	</div>
+	
+
+
+				<div class="entry">
+  <div class="row">
+	
+	
+		<p style="font-family:Verdana, Arial, H
+<a id=" more"="">
+elvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">python2.x 中<strong>中间编码为unicode</strong>，一个字符串需要<strong>decode为unicode，再encode为其它编码格式</strong>（gbk、utf8等）</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">以gbk转utf8为例：</span>&nbsp;<br></p><br><div class="cnblogs_code" style="margin:5px 0px;padding:5px;background-color:#F5F5F5;border:1px solid #CCCCCC;font-family:&quot;font-size:12px !important;"><br><pre><span style="font-size:16px;line-height:1.5 !important;">s = <span style="color:#800000;line-height:1.5 !important;">“我是</span><span style="color:#800000;line-height:1.5 !important;">字符串</span><span style="color:#800000;line-height:1.5 !important;">“</span><span style="line-height:1.5 !important;"> #gbk编码<br>s </span>= s.decode(<span style="color:#800000;line-height:1.5 !important;">‘</span><span style="color:#800000;line-height:1.5 !important;">gbk</span><span style="color:#800000;line-height:1.5 !important;">‘</span>).encode(<span style="color:#800000;line-height:1.5 !important;">‘</span><span style="color:#800000;line-height:1.5 !important;">utf8</span><span style="color:#800000;line-height:1.5 !important;">‘</span>)　　#将gbk编码转换为utf8编码，需要先转换为unicode中间编码，再转换为utf8编码</span></pre><br></div><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    &nbsp;<span style="font-size:16px;">具体过程为：</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;"><strong>s | gbk — decode(‘gbk’) —&gt; s | unicode — encode(‘utf8’) —&gt; s | utf8</strong></span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">代码中的&nbsp;<strong>显式字符串&nbsp;</strong>默认编码为代码文件的编码格式，如果开头没有#coding=[]声明，则默认编码为ascii型（所以存储中文会有问题）</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">如果开头声明了，例如：</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">#coding=gbk</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">则代码中一个显式字符串，例如：</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">s = ‘我是字符串’</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">字符串s会被编码成&nbsp;<strong>gbk</strong>&nbsp;格式存储</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">详见：<a href="http://blog.csdn.net/pipisorry/article/details/44136297" target="_blank">python字符串编码及乱码解决方案</a>&nbsp; &nbsp;讲的不错</span><br></p><br><p style="font-family:Verdana, Arial, Helvetica, sans-serif;font-size:13.92px;"><br>    <span style="font-size:16px;">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<a href="http://www.cnblogs.com/huxi/archive/2010/12/05/1897271.html" target="_blank">Python字符编码详解</a>&nbsp; 这个也可以看一看</span><br></p>
+
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/8" target="_blank" rel="noopener">关于python中的字符串编码理解</a></strong></p>
+
+	
+	</div>
+  <a type="button" href="/2016/12/21/关于python中的字符串编码理解/#more" class="btn btn-default more">Read More</a>
+</div>
+
+			</div>
+		
+			<div class="x-post-item">
+				
+	
+	<!-- display as entry -->
+<div class="row">
+	<div class="col-md-8">
+		<h3 class="title">
+			<a href="/2016/10/15/网站CSS样式/" >网站CSS样式</a>
+		</h3>
+		</div>
+	<div class="col-md-4">
+		<div class="date">post @ 2016-10-15  </div>
+		</div>
+	</div>
+	
+
+
+				<div class="entry">
+  <div class="row">
+	
+	
+		<p>##超链接样式</p>
+	
+	</div>
+  <a type="button" href="/2016/10/15/网站CSS样式/#more" class="btn btn-default more">Read More</a>
+</div>
+
+			</div>
+		
+
+		</div>
+
+		<!-- pagination -->
+		<div>
+  		<center>
+		<div class="pagination">
+
+   
+    
+     <a href="/page/6/" type="button" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Prev</a>
+      
+
+        <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+ 
+          <a type="button" class="btn btn-default disabled">Next<i class="fa fa-arrow-circle-o-right"></i></a>
+        
+
+  
+</div>
+
+  		</center>
+		</div>
+
+		
+		
+	</div> <!-- col-md-9 -->
+
+	
+		<div class="col-md-3">
+	<div id="sidebar">
+	
+			
+		
+			
+
+		
+			
+<div class="widget">
+  <h4>Recent Posts</h4>
+  <ul class="entry list-unstyled">
+    
+      <li>
+        <a href="/2018/05/14/hexo-theme-freemind-386-主题设置图片居中/" ><i class="fa fa-file-o"></i>hexo-theme-freemind.386 主题设...</a>
+      </li>
+    
+      <li>
+        <a href="/2018/05/11/hello-world/" ><i class="fa fa-file-o"></i>Hello World</a>
+      </li>
+    
+      <li>
+        <a href="/2018/04/26/ElasticSearch + Kibana 安装配置(CentOS)/" ><i class="fa fa-file-o"></i>ElasticSearch + Kibana 安装配置...</a>
+      </li>
+    
+      <li>
+        <a href="/2018/04/02/解决VPS经SS访问Google Schoolar受限（补充）/" ><i class="fa fa-file-o"></i>解决VPS经SS访问Google Schoolar受限...</a>
+      </li>
+    
+      <li>
+        <a href="/2018/04/02/使用 Frp 进行内网穿透（在外网用 ssh 登录校园网中的服务器）/" ><i class="fa fa-file-o"></i>使用 Frp 进行内网穿透（在外网用 ssh 登录校园...</a>
+      </li>
+    
+  </ul>
+</div>
+
+		
+			
+<div class="widget">
+	<h4>Links</h4>
+	<ul class="blogroll list-unstyled">
+	
+		<li><i class="fa fa-heart"></i><a href="https://www.zhihu.com/people/yi-yu-67" title="Zhihu" target="_blank"]);">知乎：呓语</a></li>
+	
+		<li><i class="fa fa-github"></i><a href="https://github.com/windcode" title="My GitHub" target="_blank"]);">My GitHub</a></li>
+	
+		<li><i class="fa fa-book"></i><a href="http://www.cnblogs.com/yym2013/" title="以前 Blog" target="_blank"]);">以前的 Blog</a></li>
+	
+	</ul>
+</div>
+
+
+		
+	</div> <!-- sidebar -->
+</div> <!-- col-md-3 -->
+
+	
+	
+</div> <!-- row-fluid -->
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

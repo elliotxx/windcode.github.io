@@ -1,0 +1,292 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>关于 ElasticSearch 中倒排索引的理解 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="ElasticSearch 是一个搜索引擎，也可以看做是一个分布式的数据库（经常被当做一个文档型的NoSQL数据库在使用），它可以大量的存储数据，并建立索引，以便在极短时间从海量数据中找到目标数据。
+它和传统数据库很大的一个区别在于它建立索引的能力，这里有一个重要的概念——倒排索引。
+倒排索引可以很大的提高检索的速度，下面举一个例子，来说明一下倒排索引是什么，以及这种方式相比于传统数据库为什么会提高索引的速度。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="关于 ElasticSearch 中倒排索引的理解"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 关于 ElasticSearch 中倒排索引的理解</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>ElasticSearch 是一个搜索引擎，也可以看做是一个分布式的数据库（经常被当做一个文档型的NoSQL数据库在使用），它可以大量的存储数据，并建立索引，以便在极短时间从海量数据中找到目标数据。</p>
+<p>它和传统数据库很大的一个区别在于它建立索引的能力，这里有一个重要的概念——<strong>倒排索引</strong>。</p>
+<p>倒排索引可以很大的提高检索的速度，下面举一个例子，来说明一下倒排索引是什么，以及这种方式相比于传统数据库为什么会提高索引的速度。<br><a id="more"></a></p>
+<p>在 ElasticSearch 中，一条记录被称之为一个<strong>文档</strong>，文档中有 id、type、version、source（文档主要数据存储在这里）等字段。</p>
+<p>这里假设 <strong>文档A</strong> 的source字段中有一个关键字 content 的值是一条文本：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">I love study.</span><br></pre></td></tr></table></figure></p>
+<p><strong>文档B</strong> 的source字段中有一个关键字 content 的值是另一条文本：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">And study make me happy.</span><br></pre></td></tr></table></figure></p>
+<p>现在输入我们想要检索的关键字：<strong>“study happy”</strong>。</p>
+<p>可以想象，在传统数据库中，会用一条类似这样的 sql 语句在数据库表中挨条查找符合要求的记录：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column_name(s)</span><br><span class="line"><span class="keyword">FROM</span> table_name</span><br><span class="line"><span class="keyword">WHERE</span> (column_name <span class="keyword">LIKE</span> <span class="string">'study'</span> <span class="keyword">and</span> column_name <span class="keyword">LIKE</span> <span class="string">'happy'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>假如表中存有 1000w 条记录，那么这条 sql 将会依次检索这1000w 条记录，所要消耗的时间随着记录数增多而提高。这种方式在应对海量数据的时候，便有些力不从心。</p>
+<p>那么我们可不可以换一种检索的方式呢？</p>
+<p>既然我们要在 <strong>文档（记录）</strong> 中查找指定的 <strong>单词（关键字）</strong>，最终查找的是 <strong>单词（关键字）</strong> 在某一个文档中存不存在，存在于哪一个文档中。那么我们可以反过来直接根据 <strong>单词（关键字）</strong> 建立一个索引表，通过检索关键字直接找到所有包含关键字的文档，这便是 <strong>倒排索引</strong>。</p>
+<p>先拿以上例子说明一下传统数据库存储的方式：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/4/b52cd1ab-c680-4d4b-ba88-f3382ae3e945.png" alt=""></p>
+<p>再拿以上例子说明如何建立倒排索引：</p>
+<p>文档 A 和 B 中的两个文本，<strong>“I love study.”</strong> 和 <strong>“And study make me happy.”</strong>，可以建立如下索引表：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/4/4af14dc4-fc11-4d99-9cf8-37911298cb81.png" alt=""></p>
+<p>当我们检索关键字 <strong>“study happy”</strong> 的时候，可以直接找到 study 在文档A和文档B中都存在，happy 只在 文档B 中存在。相比传统数据库的检索方式，这种方式更加直接和高效，特别在数据量极大的情况下。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/4/8b955dd9-7678-4360-a369-7da1b476e224.png" alt=""></p>
+<p>同时我们也可以发现，我们输入的关键字在 文档A 中命中1次，在文档B中命中2次，于是 ElasticSearch 甚至可以得到相关性的结论，<strong>文档B 的相关度比 文档A 高</strong>。</p>
+<p>这也是 ElasticSearch 的一个优势所在，它不仅可以快速检索内容，还可以将命中的文档根据相关度进行排序，并显示在搜索结果中。</p>
+<p>本文只对倒排索引最核心的概念进行粗略介绍，如有不当之处，欢迎指出。</p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/379" target="_blank" rel="noopener">关于 ElasticSearch 中倒排索引的理解</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/06/05/python 实现校园网自动登录/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/05/17/2017 年 5 月份阅读记录/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-05-29 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

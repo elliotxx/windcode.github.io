@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>博客园文章迁移脚本(xml.sax+mysqldb) | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="写博客系统的后期需要把之前的文章导入过来，我之前的文章都在博客园上，但是博客园只提供博文导入到有限的第三方博客系统中，这里面肯定不包括我自己写的博客系统，所以我需要自己写一个文章迁移程序。
+好在博客园提供博文备份功能，导出的备份文件是 xml格式。  
+所以文章迁移程序要完成两个步骤：  
+
+解析xml文件
+执行sql导入文章">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="博客园文章迁移脚本(xml.sax+mysqldb)"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 博客园文章迁移脚本(xml.sax+mysqldb)</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>写博客系统的后期需要把之前的文章导入过来，我之前的文章都在博客园上，但是博客园只提供博文导入到有限的第三方博客系统中，这里面肯定不包括我自己写的博客系统，所以我需要自己写一个文章迁移程序。</p>
+<p>好在博客园提供博文备份功能，导出的备份文件是 <strong>xml格式</strong>。  </p>
+<p>所以文章迁移程序要完成两个步骤：  </p>
+<ol>
+<li>解析xml文件</li>
+<li>执行sql导入文章<a id="more"></a>
+</li>
+</ol>
+<h2 id="1-解析xml文件"><a href="#1-解析xml文件" class="headerlink" title="1.解析xml文件"></a>1.解析xml文件</h2><p>这一步需要从xml文件中解析出每一篇文章的 <strong>标题、发布时间、文章内容、作者</strong> 这些信息。</p>
+<p>Python中常用的xml解析库有 <strong>xml.dom</strong> 和 <strong>xml.sax</strong>，他们的主要<strong>区别</strong>是xml.dom一次性读取整个文档，将解析出来的元素树保存在内存中；xml.sax则是动态解析xml文件，一边读取一边解析。相对来说，在读取大文件的时候，sax更加节省内存。在这里我选择使用 <strong>xml.sax</strong>。</p>
+<p>xml.sax的使用方法可以看这里：<a href="http://www.cnblogs.com/hongfei/p/python-xml-sax.html" target="_blank" rel="noopener">Python：使用基于事件驱动的SAX解析XML</a></p>
+<h2 id="2-执行sql导入文章"><a href="#2-执行sql导入文章" class="headerlink" title="2.执行sql导入文章"></a>2.执行sql导入文章</h2><p>这一步很简单，Python中操作mysql数据库的教程很多，随便搜一篇就可以了。</p>
+<p>连接数据库方法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> MySQLdb</span><br><span class="line"></span><br><span class="line">conn= MySQLdb.connect(</span><br><span class="line">        host=<span class="string">'localhost'</span>,</span><br><span class="line">        port = <span class="number">3306</span>,</span><br><span class="line">        user=<span class="string">'your_username'</span>,</span><br><span class="line">        passwd=<span class="string">'your_password'</span>,</span><br><span class="line">        db =<span class="string">'blog'</span>,</span><br><span class="line">        charset = <span class="string">'utf8'</span>,       <span class="comment"># 不声明编码导入的数据会显示出错</span></span><br><span class="line">        )</span><br><span class="line">cur = conn.cursor()</span><br></pre></td></tr></table></figure></p>
+<p>导入数据库部分代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sql =<span class="string">"insert into blog_article (`title`,`desc`,`content`,`click_count`,`is_recommend`,`date_publish`,`category_id`,`user_id`,`comment_cnt`) values('%s','%s','%s','%d','%d','%s','%d','%d','%d')"</span>%(MySQLdb.escape_string(self.title.encode(<span class="string">'utf8'</span>)),MySQLdb.escape_string(self.title.encode(<span class="string">'utf8'</span>)),MySQLdb.escape_string(self.description.encode(<span class="string">'utf8'</span>)),<span class="number">0</span>,<span class="number">0</span>,str(pubDate),<span class="number">11</span>,<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">cur.execute(sql)</span><br><span class="line">conn.commit()</span><br></pre></td></tr></table></figure></p>
+<h2 id="执行效果"><a href="#执行效果" class="headerlink" title="执行效果"></a>执行效果</h2><p><img src="http://yangyingming.com/uploads/markdownx/2017/1/aa0dd621-b524-4fc0-9b29-6955252a0603.png" alt=""></p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>下面是文章迁移程序的全部代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> xml.sax</span><br><span class="line"><span class="keyword">import</span> MySQLdb</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">conn= MySQLdb.connect(</span><br><span class="line">        host=<span class="string">'localhost'</span>,</span><br><span class="line">        port = <span class="number">3306</span>,</span><br><span class="line">        user=<span class="string">'your_username'</span>,</span><br><span class="line">        passwd=<span class="string">'your_password'</span>,</span><br><span class="line">        db =<span class="string">'blog'</span>,</span><br><span class="line">        charset = <span class="string">'utf8'</span>,       <span class="comment"># 不声明编码导入的数据会显示出错</span></span><br><span class="line">        )</span><br><span class="line"><span class="keyword">print</span> <span class="string">'正在连接数据库……'</span></span><br><span class="line">cur = conn.cursor()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MovieHandler</span><span class="params">(xml.sax.ContentHandler)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.cnt = <span class="number">1</span></span><br><span class="line">        self.CurrentData = <span class="string">""</span></span><br><span class="line">        self.title = <span class="string">""</span></span><br><span class="line">        self.link = <span class="string">""</span></span><br><span class="line">        self.creator = <span class="string">""</span></span><br><span class="line">        self.author = <span class="string">""</span></span><br><span class="line">        self.pubDate = <span class="string">""</span></span><br><span class="line">        self.guid = <span class="string">""</span></span><br><span class="line">        self.description = <span class="string">""</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 元素开始事件处理</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">startElement</span><span class="params">(self, tag, attributes)</span>:</span></span><br><span class="line">        self.CurrentData = tag</span><br><span class="line">        <span class="keyword">if</span> tag == <span class="string">"item"</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"*****Article*****"</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 元素结束事件处理</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">endElement</span><span class="params">(self, tag)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.CurrentData == <span class="string">"title"</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"Title:"</span>, self.title</span><br><span class="line">            self.CurrentData = <span class="string">""</span></span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"link"</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"Link:"</span>, self.link</span><br><span class="line">            self.CurrentData = <span class="string">""</span></span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"dc:creator"</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"Dc:creator:"</span>, self.creator</span><br><span class="line">            self.CurrentData = <span class="string">""</span></span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"author"</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"Author:"</span>, self.author</span><br><span class="line">            self.CurrentData = <span class="string">""</span></span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"pubDate"</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"PubDate:"</span>, self.pubDate</span><br><span class="line">            self.CurrentData = <span class="string">""</span></span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"guid"</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"Guid:"</span>, self.guid</span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"description"</span>:</span><br><span class="line">            <span class="comment"># 文章末尾</span></span><br><span class="line">            <span class="comment"># print "Description:", self.description</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># 文章描述不为空</span></span><br><span class="line">            <span class="keyword">if</span> len(self.description)!=<span class="number">0</span>:</span><br><span class="line">                pubDate = datetime.datetime.strptime(self.pubDate, <span class="string">"%a, %d %b %Y %X %Z"</span>)</span><br><span class="line">                sql =<span class="string">"insert into blog_article (`title`,`desc`,`content`,`click_count`,`is_recommend`,`date_publish`,`category_id`,`user_id`,`comment_cnt`) values('%s','%s','%s','%d','%d','%s','%d','%d','%d')"</span>%(MySQLdb.escape_string(self.title.encode(<span class="string">'utf8'</span>)),MySQLdb.escape_string(self.title.encode(<span class="string">'utf8'</span>)),MySQLdb.escape_string(self.description.encode(<span class="string">'utf8'</span>)),<span class="number">0</span>,<span class="number">0</span>,str(pubDate),<span class="number">11</span>,<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">                cur.execute(sql)</span><br><span class="line">                conn.commit()</span><br><span class="line">                <span class="keyword">print</span> <span class="string">'[%d] %s 导入数据库成功'</span>%(self.cnt,self.title.encode(<span class="string">'utf8'</span>))</span><br><span class="line">                self.cnt += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">            self.description = <span class="string">""</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 内容事件处理</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">characters</span><span class="params">(self, content)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.CurrentData == <span class="string">"title"</span>:</span><br><span class="line">            self.title = content</span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"link"</span>:</span><br><span class="line">            self.link = content</span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"dc:creator"</span>:</span><br><span class="line">            self.creator = content</span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"author"</span>:</span><br><span class="line">            self.author = content</span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"pubDate"</span>:</span><br><span class="line">            self.pubDate = content</span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"guid"</span>:</span><br><span class="line">            self.guid = content</span><br><span class="line">        <span class="keyword">elif</span> self.CurrentData == <span class="string">"description"</span>:</span><br><span class="line">            self.description += content</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (__name__ == <span class="string">"__main__"</span>):</span><br><span class="line">    <span class="comment"># 创建一个 XMLReader</span></span><br><span class="line">    parser = xml.sax.make_parser()</span><br><span class="line">    <span class="comment"># turn off namepsaces</span></span><br><span class="line">    parser.setFeature(xml.sax.handler.feature_namespaces, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 重写 ContextHandler</span></span><br><span class="line">    Handler = MovieHandler()</span><br><span class="line">    parser.setContentHandler(Handler)</span><br><span class="line"></span><br><span class="line">    parser.parse(<span class="string">"note.xml"</span>)</span><br><span class="line">    </span><br><span class="line">    cur.close()</span><br><span class="line">    conn.close()</span><br></pre></td></tr></table></figure>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/352" target="_blank" rel="noopener">博客园文章迁移脚本(xml.sax+mysqldb)</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/02/Django网站搭建心得汇总/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/01/24/Django-markdownx 修改预览页默认CSS样式/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-01-28 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

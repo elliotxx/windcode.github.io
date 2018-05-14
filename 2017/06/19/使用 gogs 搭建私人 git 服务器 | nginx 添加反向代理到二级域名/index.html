@@ -1,0 +1,345 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>使用 gogs 搭建私人 git 服务器 | nginx 添加反向代理到二级域名 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="##前言
+最近一直在云主机的 linux 系统上开发，久而久之也积累了一些代码，另外有些个人文件夹需要在不同电脑上增量编辑，比如在公司和实验室的电脑上共同维护自己的工作日志，于是需要一个类似于 github 的网站统一管理这些私人的代码和文件夹。
+在这里给大家提供一个搭建 私人 git 服务器 的思路，我选择的是 gogs。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用 gogs 搭建私人 git 服务器 | nginx 添加反向代理到二级域名"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 使用 gogs 搭建私人 git 服务器 | nginx 添加反向代理到二级域名</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p><img src="http://yangyingming.com/uploads/markdownx/2017/6/62d6f311-af73-489a-8975-a69298ebfb82.png" alt=""></p>
+<p>##前言</p>
+<p>最近一直在云主机的 linux 系统上开发，久而久之也积累了一些代码，另外有些个人文件夹需要在不同电脑上增量编辑，比如在公司和实验室的电脑上共同维护自己的工作日志，于是需要一个类似于 github 的网站统一管理这些私人的代码和文件夹。</p>
+<p>在这里给大家提供一个搭建 <strong>私人 git 服务器</strong> 的思路，我选择的是 gogs。<br><a id="more"></a></p>
+<p>##什么是 gogs？<br>它是一个基于 web 页面的可视化 git 服务器，相当于一个有无限私有仓库的 github，可以帮助你管理你的私有代码仓库。</p>
+<p>简单来说，有些代码你不想放到 github 上的公有仓库给别人看，私有仓库又要收费，于是自己搭建 git 服务器就是一个不错的选择。</p>
+<p>##为什么使用 gogs？</p>
+<p>裸的 git 服务器很容易搭建，可以参照廖雪峰的博客有关 git 的最后一节，缺点是没有web界面，不便于管理。</p>
+<p>提供 web 界面的开源 git 服务器，知名的有：<strong>gitlab、bitbucket 以及 gogs</strong>。</p>
+<p>为什么使用 gogs 呢？</p>
+<p>在这三个 git 服务器中我主要尝试了 gitlab 以及 gogs，最开始考虑的是 gitlab，原因是它在这个领域中知名度很高，功能比较齐全，项目迭代速度快，可靠性高。于是尝试搭建，但没多久便发现他们的开发团队只提供 64 位的安装包，也就是说只能安装到 64 位操作系统上。WTF，装了这么多年软件，遇到过只支持32位不兼容64位的软件，只支持64位的还是第一次碰到，我一个用 32位 ubuntu VPS 的渣渣只能放弃这个方案了 ╮(╯▽╰)╭</p>
+<p>然后便在不知道哪里的一篇文章上看到 gogs，了解了一下，gogs 是用 golang 开发的一款开源 git 服务器，小巧灵活，轻量稳定，目前已经有不少个人开发者和公司在使用，在写这篇博文的时候最新发布的版本才迭代到 0.11.19，可谓潜力巨大。</p>
+<p>相对于繁重臃肿的 gitlab，轻量级的 gogs 更适合个人开发者。</p>
+<p>##准备工作</p>
+<ol>
+<li><p>一台 云主机/VPS/远程主机，总之要有独立的 IP地址可供远程访问</p>
+</li>
+<li><p>独立域名，比如：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">www.yangyingming.com</a></p>
+</li>
+<li><p>软件：nginx（反向代理）、mysql（管理用户等）</p>
+</li>
+</ol>
+<p>##搭建 gogs 流程</p>
+<p>gogs 一个最显著的特点便是 <strong>部署十分方便</strong>。</p>
+<p>这里是 gogs 的<strong>下载地址</strong>： <a href="https://dl.gogs.io/" target="_blank" rel="noopener">官方网站</a> | <a href="https://github.com/gogits/gogs/releases" target="_blank" rel="noopener">github</a>。</p>
+<p>首先要在远程主机上 <strong>创建一个新的用户 git</strong>，用于放置 gogs 项目文件以及启动 gogs。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@iZ2zegis1iqwk7ddw7voqtZ:~$ useradd git</span><br><span class="line">root@iZ2zegis1iqwk7ddw7voqtZ:~$ passwd git</span><br></pre></td></tr></table></figure>
+<p>进入 git 用户目录，生成 ssh 密钥：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git@iZ2zegis1iqwk7ddw7voqtZ:~$ ssh-keygen -t rsa</span><br></pre></td></tr></table></figure></p>
+<p>下载安装包：我在 github 上下载了编译过的二进制安装包 <strong>linux_386.tar.gz</strong>，版本是 0.11.19，下载到本地后用 WinSCP 的 FTP 服务把安装包传送到我的远程主机（VPS）上。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git@iZ2zegis1iqwk7ddw7voqtZ:~$ ls</span><br><span class="line">linux_386.tar.gz</span><br></pre></td></tr></table></figure>
+<p>解压安装包 linux_386.tar.gz，解压之后会多出来一个 gogs 目录<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git@iZ2zegis1iqwk7ddw7voqtZ:~$ tar -zxvf linux_386.tar.gz</span><br><span class="line">……</span><br><span class="line">git@iZ2zegis1iqwk7ddw7voqtZ:~$ ls</span><br><span class="line">gogs  linux_386.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>这个时候 gogs 其实已经可以使用 <figure class="highlight plain"><figcaption><span>web``` 启动了，但是我们还要准备一下 mysql 数据库，以支持 gogs 的正确运行，有两个工作要做：</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">1. 在 mysql 中创建 gogs 数据库 </span><br><span class="line">2. 在 mysql 中创建 gogs 用户</span><br><span class="line"></span><br><span class="line">第一个工作，作用是在数据库中储存 gogs 服务的重要信息，比如用户数据。可以运行 gogs/scripts 目录中内置的 mysql 脚本自动完成：</span><br><span class="line">```python</span><br><span class="line">$ mysql -u root -p &lt; scripts/mysql.sql</span><br><span class="line">Enter password:</span><br></pre></td></tr></table></figure></p>
+<p>第二个工作，作用是将操作数据库 gogs 的所有权限赋给用户 gogs：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -u root -p</span><br><span class="line">Enter password:</span><br><span class="line">mysql&gt; create user <span class="string">'gogs'</span>@<span class="string">'localhost'</span> identified by <span class="string">'your_password'</span>;</span><br><span class="line">mysql&gt; grant all privileges on gogs.* to <span class="string">'gogs'</span>@<span class="string">'localhost'</span>;</span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line">mysql&gt; exit</span><br></pre></td></tr></table></figure></p>
+<p>数据库准备好之后，我们就可以启动 gogs 服务器啦！它的启动十分简单，在 gogs 目录下运行如下命令即可：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git@iZ2zegis1iqwk7ddw7voqtZ:~/gogs$ ./gogs web</span><br></pre></td></tr></table></figure></p>
+<p>看到有日志信息刷出，说明 gogs 服务器启动成功！</p>
+<p>gogs 服务器默认监听 3000 端口，我们在浏览器中输入 <strong>http://远程主机IP:3000</strong> 或者 <strong>http://域名:3000</strong> 便可以打开 gogs 的 web 界面：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/f892d45b-0231-4ccf-93ac-5f957f192ced.png" alt=""></p>
+<p>首次运行需要配置一些信息，采用 web 界面来配置很方便。注意最好把下面的 <strong>管理员账号</strong> 也配置一下，后面会方便不少，gogs 默认 id=1 的账户为管理员账户。<strong>注意</strong>：貌似账号名不能使用 admin。</p>
+<p>配置好之后，我们便可以看到登陆页面：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/0ee1f526-f1e4-4855-9bdc-72f0b4fdfca5.png" alt=""></p>
+<p>输入刚刚配置的管理员账号，登陆成功后进入用户界面：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/a7dde137-7e05-4f9e-b137-a7fc28a25232.png" alt=""></p>
+<p>界面和 github 类似，但是更简约，语言也是中文的。</p>
+<p>至此，你的私人 git 服务器便启动起来了！</p>
+<p>在我的教程之外，这里有两个教程可供你参考：<a href="https://gogs.io/docs/installation/install_from_binary" target="_blank" rel="noopener">官方文档</a> 和 <a href="https://blog.mynook.info/post/host-your-own-git-server-using-gogs" target="_blank" rel="noopener">网友写的一个比较详细的教程</a>。</p>
+<p>##nginx 反向代理至二级域名</p>
+<p>git 服务器已经启动成功，但是每次访问都需要加上端口号，比如： <strong><a href="http://yangyingming.com:3000" target="_blank" rel="noopener">http://yangyingming.com:3000</a></strong> 才能访问，未免太丑。</p>
+<p>于是我们便有了一个需求，以我的域名为例：设立二级域名 gogs，访问 <strong><a href="http://gogs.yangyingming.com" target="_blank" rel="noopener">http://gogs.yangyingming.com</a></strong> 便能跳转到 gogs web 页面。</p>
+<p>要做到这一点，需要两步：</p>
+<p>###1.添加二级域名的 DNS 解析，这里假设要设置的二级域名为 gogs</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/94e0ec90-e31a-4075-a770-0281e6a5b342.png" alt=""></p>
+<p>###2.修改 nginx 配置文件，添加反向代理</p>
+<p>进入 <figure class="highlight plain"><figcaption><span>目录，创建新的配置文件 gogs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">```python</span><br><span class="line">root@iZ2zegis1iqwk7ddw7voqtZ:/etc/nginx/sites-available# vi gogs</span><br></pre></td></tr></table></figure></p>
+<p>在新的配置文件 gogs 中，添加反向代理到二级域名<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    server_name gogs.yangyingming.com;</span><br><span class="line">    listen <span class="number">80</span>;</span><br><span class="line">    <span class="comment">#ssl on;</span></span><br><span class="line"></span><br><span class="line">    location /&#123;</span><br><span class="line">        proxy_pass http://<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">3000</span>/;</span><br><span class="line">        proxy_redirect default;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>重启 nginx 服务<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@iZ2zegis1iqwk7ddw7voqtZ:/etc/nginx/sites-available<span class="comment"># service nginx restart</span></span><br><span class="line">nginx stop/waiting</span><br><span class="line">nginx start/running, process <span class="number">13025</span></span><br></pre></td></tr></table></figure></p>
+<p>这里解释一下 <strong>配置文件 gogs</strong> 的意思：server_name 表示主机名，listen 表示这个服务监听的端口，这里监听 80 端口，<strong>proxy_pass <a href="http://127.0.0.1:3000/" target="_blank" rel="noopener">http://127.0.0.1:3000/</a>;</strong> 这条语句将 nginx 和 gogs 联系起来，意思是转发请求到 <a href="http://127.0.0.1:3000/。" target="_blank" rel="noopener">http://127.0.0.1:3000/。</a></p>
+<p>配置好 nginx 反向代理之后，<strong>访问的整个流程</strong> 便是</p>
+<blockquote>
+<ol>
+<li>访问二级域名</li>
+<li>DNS 服务器将二级域名解析到远程主机 的 IP 地址的 80 端口（ http 服务默认是 80 端口）</li>
+<li>远程主机上的 nginx 服务器监听 80 端口，接收到这个访问请求</li>
+<li>nginx 转发请求到 <a href="http://127.0.0.1:3000" target="_blank" rel="noopener">http://127.0.0.1:3000</a></li>
+<li><a href="http://127.0.0.1:3000" target="_blank" rel="noopener">http://127.0.0.1:3000</a> 端口位置上的 gogs 服务器处理请求</li>
+<li>将请求结果返回到客户端</li>
+</ol>
+</blockquote>
+<p>以上两步配置完成后，我们便可以丢掉端口号，通过二级域名直接访问 gogs web 服务啦！</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/5534c8dc-22ba-484f-b003-6f976cfa4212.png" alt=""></p>
+<p>##后台运行 gogs</p>
+<p>使用 nohup 可以后台运行 gogs ，这样即使关掉 ssh 连接也不会影响 gogs 的运行，运行如下命令：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git@iZ2zegis1iqwk7ddw7voqtZ:~$ nohup gogs/gogs web &gt; /dev/null <span class="number">2</span>&gt;&amp;<span class="number">1</span> &amp;</span><br></pre></td></tr></table></figure></p>
+<p>关闭 gogs 服务：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git@iZ2zegis1iqwk7ddw7voqtZ:~$ ps -aux | grep gogs | grep -v grep</span><br><span class="line">git      <span class="number">12755</span>  <span class="number">0.0</span>  <span class="number">1.6</span> <span class="number">860788</span> <span class="number">34012</span> pts/<span class="number">0</span>    Sl   <span class="number">09</span>:<span class="number">43</span>   <span class="number">0</span>:<span class="number">09</span> gogs/gogs web</span><br><span class="line">git@iZ2zegis1iqwk7ddw7voqtZ:~$ kill <span class="number">12755</span></span><br></pre></td></tr></table></figure></p>
+<p>##参考资料<br><a href="http://blog.csdn.net/u011138447/article/details/51363766" target="_blank" rel="noopener">CentOS7下搭建nginx反向代理服务器使得外网可以二级域名访问内网应用</a></p>
+<p><a href="http://blog.csdn.net/smartbetter/article/details/53615313" target="_blank" rel="noopener">Nginx + Tomcat 反向代理 如何高效的在一台服务器部署多个站点</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/383" target="_blank" rel="noopener">使用 gogs 搭建 git 服务器 + 反向代理到二级域名</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/06/21/神器清单/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/06/07/readfree.me 自动签到脚本获取免费积分/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-06-19 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

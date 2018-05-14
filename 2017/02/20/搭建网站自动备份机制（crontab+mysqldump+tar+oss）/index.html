@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>搭建网站自动备份机制（crontab+mysqldump+tar+oss） | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="个人网站在云服务器上部署好了之后，为了防止数据丢失，我们往往需要定期的备份网站的数据。
+每次手动去备份太麻烦，我们可以使用 Linux+Python 搭建一个 网站自动备份机制 来自动化、定时的去完成备份工作。
+简单来说这个机制可以 定时备份网站数据，并自动将备份文件上传到云上。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="搭建网站自动备份机制（crontab+mysqldump+tar+oss）"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 搭建网站自动备份机制（crontab+mysqldump+tar+oss）</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p><img src="http://yangyingming.com/uploads/markdownx/2017/2/8a79aeae-cf79-4929-be3d-787f87d110ba.jpg" alt=""></p>
+<p>个人网站在云服务器上部署好了之后，为了防止数据丢失，我们往往需要定期的备份网站的数据。</p>
+<p>每次手动去备份太麻烦，我们可以使用 <strong>Linux+Python</strong> 搭建一个 <strong>网站自动备份机制</strong> 来自动化、定时的去完成备份工作。</p>
+<p>简单来说这个机制可以 <strong>定时备份网站数据，并自动将备份文件上传到云上</strong>。<br><a id="more"></a></p>
+<p>##前言<br>首先我们要清楚需要备份的网站数据有哪些，对我自己的网站来说，主要是以下两个部分：</p>
+<ul>
+<li>网站项目源代码</li>
+<li>mysql数据库中的数据</li>
+</ul>
+<p>这两部分是动态变化的，特别是mysql数据库中的数据，几乎每天都会更新。</p>
+<p>为了加强备份，我的 <strong>网站自动备份机制</strong> 主要完成两个功能：</p>
+<ul>
+<li>定时生成备份文件（.sql 和 .tar）</li>
+<li>将备份文件上传到OSS中</li>
+</ul>
+<p>如此相当于有了双重保险，云服务器端和OSS都存有备份文件。</p>
+<p>涉及到的工具主要有：</p>
+<ul>
+<li>crontab：linux的计划任务功能，可以定时运行程序</li>
+<li>mysqldump：mysql的备份工具</li>
+<li>tar：linux的打包工具，用于备份项目源码</li>
+<li>oss：阿里云的对象存储服务，相当于一个网盘</li>
+</ul>
+<p>##搭建步骤<br>下面开始搭建 <strong>网站自动备份机制</strong>：</p>
+<ul>
+<li><p>在工作目录创建备份文件夹 <strong>Backup</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir Backup</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建两个shell脚本文件：<strong>MingBlog_mysql_backup.sh</strong> 和 <strong>MingBlog_src_backup.sh</strong>（MingBlog是我的项目名）<br>它们功能分别是：<br>1.使用mysqldump创建mysql备份文件，并上传到oss中<br>2.使用tar打包当前项目源码，并上传到oss中<br>此时目录结构为：</p>
+</li>
+</ul>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/9abaf9ee-fce0-4141-b27f-669d5cbf9a35.png" alt=""></p>
+<ul>
+<li>修改mysql配置文件 <strong>/etc/mysql/my.cnf</strong>，设置mysqldump的默认user和password，否则会提示“密码不能写在命令中”的warnning：</li>
+</ul>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[mysqldump]</span></span><br><span class="line">quick</span><br><span class="line">quote-names</span><br><span class="line"><span class="attr">max_allowed_packet</span> = <span class="number">1</span>G</span><br><span class="line"><span class="attr">user</span>=your_mysql_user</span><br><span class="line"><span class="attr">password</span>=your_mysql_password</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编写<strong>MingBlog_mysql_backup.sh</strong> 和 <strong>MingBlog_src_backup.sh</strong> shell代码（设置了my.cnf，sh中使用mysqldump时就不用user和password了）：</li>
+</ul>
+<p>MingBlog_mysql_backup.sh<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line"><span class="comment"># Database info</span></span><br><span class="line">DBNAME=<span class="string">"blog"</span></span><br><span class="line">BINDIR=<span class="string">"/usr/bin"</span></span><br><span class="line">BCKDIR=<span class="string">"/root/workspace/Backup/MingBlog_mysql_backup"</span></span><br><span class="line">DATE=`date +%Y%m%d_%H%M%S`</span><br><span class="line">FILENAME=mysql_$&#123;DBNAME&#125;_bak.$DATE.sql.gz</span><br><span class="line">FILEPATH=$BCKDIR/$FILENAME</span><br><span class="line"><span class="comment"># TODO</span></span><br><span class="line">$BINDIR/mysqldump $DBNAME | gzip &gt; $FILEPATH</span><br><span class="line">/usr/local/sbin/put_oss_backup $FILEPATH Backup/MingBlog_mysql_backup/$FILENAME</span><br></pre></td></tr></table></figure></p>
+<p>MingBlog_src_backup.sh<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh</span></span><br><span class="line">PRONAME=<span class="string">"MingBlog"</span></span><br><span class="line">PROPATH=<span class="string">"/root/workspace/MingBlog"</span></span><br><span class="line">DATE=`date +%Y%m%d_%H%M%S`</span><br><span class="line">FILENAME=$&#123;PRONAME&#125;_bak.$DATE.tar</span><br><span class="line">FILEPATH=/root/workspace/Backup/MingBlog_src_backup/$FILENAME</span><br><span class="line"><span class="comment"># TODO</span></span><br><span class="line">tar czvf $FILEPATH $PROPATH</span><br><span class="line">/usr/local/sbin/put_oss_backup $FILEPATH Backup/MingBlog_src_backup/$FILENAME</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>创建oss上传脚本 <strong>put_oss_backup.py</strong> ，编写代码：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment">#coding=utf8</span></span><br><span class="line"><span class="comment"># linux环境oss上传程序</span></span><br><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line"><span class="keyword">import</span> oss2</span><br><span class="line"><span class="keyword">import</span> sys,os</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">percentage</span><span class="params">(consumed_bytes, total_bytes)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> total_bytes:</span><br><span class="line">        rate = int(<span class="number">100</span> * (float(consumed_bytes) / float(total_bytes)))</span><br><span class="line">        print(<span class="string">'\r&#123;0&#125;% '</span>.format(rate), end=<span class="string">''</span>)</span><br><span class="line">        sys.stdout.flush()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upload</span><span class="params">(topath,filedata)</span>:</span></span><br><span class="line">    auth = oss2.Auth(<span class="string">'your_access_id'</span>, <span class="string">'your_access_key'</span>)</span><br><span class="line">    bucket = oss2.Bucket(auth, <span class="string">'your_endpoint'</span>, <span class="string">'your_bucket_name'</span>)</span><br><span class="line">    bucket.put_object(topath, filedata, progress_callback=percentage)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(filename,topath)</span>:</span></span><br><span class="line">    curdir_list = os.listdir(<span class="string">'.'</span>)</span><br><span class="line">    print(<span class="string">'\033[1;36;40m'</span>,end=<span class="string">''</span>)</span><br><span class="line">    print(<span class="string">'start uploading [%s]......'</span>%filename)</span><br><span class="line">    print(<span class="string">'\033[0m'</span>,end=<span class="string">''</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># 上传文件在当前目录下</span></span><br><span class="line">        fp = open(filename,<span class="string">'r'</span>)</span><br><span class="line">        data = fp.read()</span><br><span class="line">        fp.close()</span><br><span class="line">        upload(topath,data)</span><br><span class="line">        print(<span class="string">'\033[0;32;40m'</span>,end=<span class="string">''</span>)</span><br><span class="line">        print(<span class="string">'Upload success.'</span>)</span><br><span class="line">        print(<span class="string">'\033[0m'</span>,end=<span class="string">''</span>)</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        <span class="keyword">raise</span> Exception,<span class="string">'%s is not in the current directory,can\'t upload.'</span>%filename</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    <span class="comment"># 获取下载列表</span></span><br><span class="line">    <span class="keyword">if</span> len(sys.argv)==<span class="number">1</span>:</span><br><span class="line">        files = raw_input(<span class="string">'Please input upload filename : '</span>)</span><br><span class="line">        files = files.strip().split()</span><br><span class="line">    <span class="keyword">elif</span> len(sys.argv)&gt;=<span class="number">2</span>:</span><br><span class="line">        files = sys.argv[<span class="number">1</span>:]</span><br><span class="line">        filename = files[<span class="number">0</span>]</span><br><span class="line">        topath = files[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">        print(<span class="string">'\033[1;36;40m'</span>,end=<span class="string">''</span>)</span><br><span class="line">        <span class="keyword">print</span> (<span class="string">"[1]"</span>,end=<span class="string">' '</span>)</span><br><span class="line">        print(<span class="string">'\033[0m'</span>,end=<span class="string">''</span>)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            start(filename,topath)</span><br><span class="line">        <span class="keyword">except</span> Exception,e:</span><br><span class="line">            print(<span class="string">'\033[0;31;40m'</span>,end=<span class="string">''</span>)</span><br><span class="line">            print(<span class="string">'Upload failed.'</span>)</span><br><span class="line">            print(<span class="string">'[ERROR]:%s'</span>%e)</span><br><span class="line">            print(<span class="string">'\033[0m'</span>,end=<span class="string">''</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>代码写完之后，我们运行<figure class="highlight plain"><figcaption><span>put_oss_backup.py</span><a href="/usr/local/sbin/put_oss_backup```将脚本安装到默认搜索路径下，这样不管在什么目录下都可以运行该脚本。">link</a></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">同时，进入阿里云的OSS后台，创建 **Backup** 一级目录，并在其中创建两个二级目录 **MingBlog\_mysql\_backup** 和 **MingBlog\_src\_backup**，分别放置mysql和项目源码的备份文件。</span><br><span class="line"></span><br><span class="line">* 使用crontab设置定时任务，运行```crontab -e```添加新任务：</span><br><span class="line">```python</span><br><span class="line">0    3 * * *    ~/workspace/Backup/MingBlog_mysql_backup.sh &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">0    4 * * *    ~/workspace/Backup/MingBlog_src_backup.sh &gt;/dev/null 2&gt;&amp;1</span><br></pre></td></tr></table></figure></p>
+<p>好了，到这里整个 <strong>网站自动备份机制</strong> 已经基本上搭建完成，以上操作主要写了三个脚本，互相搭配使用，它们之间的逻辑关系为：  </p>
+<p>crontab每天凌晨3点和4点定时执行两个shell脚本，<strong>MingBlog_mysql_backup.sh</strong> 备份mysql数据并上传到oss，<strong>MingBlog_src_backup.sh</strong> 打包项目源码并上传到oss。两个sh脚本都使用了 <strong>put_oss_backup.py</strong> 上传文件到oss。</p>
+<p>##使用截图<br>运行MingBlog_mysql_backup.sh  </p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/6ca4227e-f344-40d0-a024-4d6f439e83cd.png" alt=""></p>
+<p>运行MingBlog_src_backup.sh  </p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/d9305def-ea89-4556-b53c-8da14c6fb42d.png" alt=""></p>
+<p>运行备份脚本之后的目录结构</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/2c15935f-7fe6-4fe7-bb3d-205e6422d615.png" alt=""></p>
+<p>阿里云OSS后台  </p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/5d305199-912e-444a-a3d2-372e31a974ae.png" alt=""></p>
+<p>mysql备份  </p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/5c32562c-a074-46df-b7e9-062769799338.png" alt=""></p>
+<p>项目源码备份  </p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/86ba406d-0c8b-47c2-9625-be64fa0127c5.png" alt=""></p>
+<p>##后记<br>当然网站备份的方式有很多，在这里我只利用手头的工具定期备份了网站的数据库和源码，还有很多可以改进的地方，比如将备份方式改成增量备份，可以节省很多空间。不过对我来说，目前够用就可以。</p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/359" target="_blank" rel="noopener">搭建网站自动备份机制（crontab+mysqldump+tar+oss）</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/22/修改博客系统的第三方库/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/14/【翻译】Django1.8 中文文档/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-20 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

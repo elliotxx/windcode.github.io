@@ -1,0 +1,287 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>【IJCAI-17 口碑商家客流量预测】使用Pandas计算商家平均客流量 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="这段时间参加了天池的 IJCAI-17 口碑商家客流量预测 大数据竞赛，初次参加此类竞赛，也是第一次使用pandas，折腾了许久，记录下自己的心得。代码很粗糙，仅作个人记录用。参考价值不大，大神勿喷。
+下面出现的代码已经提交检验通过，第一次提交混上了排行榜，400+左右的位置，第二次修改了一下混到了200+的位置，真是没有想到这么水的算法也能上排行榜……">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="【IJCAI-17 口碑商家客流量预测】使用Pandas计算商家平均客流量"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 【IJCAI-17 口碑商家客流量预测】使用Pandas计算商家平均客流量</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p><img src="http://yangyingming.com/uploads/markdownx/2017/2/039dd99e-d59c-4841-a1a4-995e71c58cf5.png" alt=""></p>
+<p>这段时间参加了天池的 <strong>IJCAI-17 口碑商家客流量预测</strong> 大数据竞赛，初次参加此类竞赛，也是第一次使用pandas，折腾了许久，记录下自己的心得。<strong>代码很粗糙，仅作个人记录用。参考价值不大，大神勿喷。</strong></p>
+<p>下面出现的代码已经提交检验通过，第一次提交混上了排行榜，400+左右的位置，第二次修改了一下混到了200+的位置，真是没有想到这么水的算法也能上排行榜……<br><a id="more"></a></p>
+<p>这场比赛 <strong>题目大意</strong> 是：<br>给你提供2000家商家的店铺信息，以及他们的历史支付记录（大概7000w条）和浏览记录（大概500w条），你需要预测每个商家未来14天每天的客流量，每家店铺的客流量是指“单位时间内在商家使用支付宝消费的用户人次”，即每天这家店铺的支付次数。</p>
+<p>##第一次提交</p>
+<p>一般来说，这种“预测”问题，需要用到机器学习或者数据挖掘等算法，但由于我是新手，所以打算采用最简单的办法先尝试一下。</p>
+<p>最简单的 <strong>思路</strong> 是：<br>统计每个商家每周的客流量均值，即统计这个商家每周一、周二、周三……平均每天有多少客流量。</p>
+<p>那么解决问题的 <strong>步骤</strong> 是：<br>1、统计每个商家历史日期每天的客流量。<br>2、计算每个商家历史日期分别对应的星期数，累加客流量和出现次数。<br>3、计算每个商家每周的客流量均值。</p>
+<p><strong>代码</strong>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取文件</span></span><br><span class="line"><span class="keyword">import</span> pandas</span><br><span class="line"></span><br><span class="line">user_pay = pandas.read_csv(<span class="string">r'.\dataset\dataset\user_pay.txt'</span>,header=<span class="keyword">None</span>,names=[<span class="string">'user_id'</span>,<span class="string">'shop_id'</span>,<span class="string">'time_stamp'</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分组操作</span></span><br><span class="line">grouped = user_pay.groupby( [user_pay[<span class="string">'shop_id'</span>],user_pay[<span class="string">'time_stamp'</span>]] )</span><br><span class="line"></span><br><span class="line"><span class="comment"># 得到每个商家历史日期每天的客流量</span></span><br><span class="line">groupcnt = grouped.count()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将每个商家每天的客流量写入到csv文件中</span></span><br><span class="line">fp = open(<span class="string">'user_pay_3.csv'</span>,<span class="string">'w'</span>)</span><br><span class="line"><span class="keyword">for</span> i,j <span class="keyword">in</span> grouped:</span><br><span class="line">    fp.write(<span class="string">'%s,%s,%d\n'</span>%(i[<span class="number">0</span>],i[<span class="number">1</span>],j.count()[<span class="string">'shop_id'</span>]))</span><br><span class="line">    <span class="keyword">print</span> i</span><br><span class="line">fp.close()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提取每位商家的客流量csv文件</span></span><br><span class="line">shop_cnt = pandas.read_csv(<span class="string">r'user_pay_3.csv'</span>, iterator=<span class="keyword">True</span>,chunksize=<span class="number">1</span>,header=<span class="keyword">None</span>,names=[<span class="string">'shop_id'</span>,<span class="string">'date'</span>,<span class="string">'cnt'</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 统计每个商家一个星期每天的总客流量 和 每天的计数</span></span><br><span class="line"><span class="comment"># shop_cnt是迭代的方式</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">num_week = [[<span class="number">0</span> <span class="keyword">for</span> col <span class="keyword">in</span> range(<span class="number">7</span>)] <span class="keyword">for</span> row <span class="keyword">in</span> range(<span class="number">2000</span>)]</span><br><span class="line">ave_week = [[<span class="number">0</span> <span class="keyword">for</span> col <span class="keyword">in</span> range(<span class="number">7</span>)] <span class="keyword">for</span> row <span class="keyword">in</span> range(<span class="number">2000</span>)]</span><br><span class="line"><span class="keyword">for</span> shop <span class="keyword">in</span> shop_cnt:</span><br><span class="line">    <span class="comment">#print shop</span></span><br><span class="line">    shop_id = shop.values[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line">    date = shop.values[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line">    cnt = shop.values[<span class="number">0</span>][<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">print</span> shop_id</span><br><span class="line">    w = int(time.strftime(<span class="string">'%w'</span>,time.strptime(date,<span class="string">'%Y-%m-%d'</span>)))</span><br><span class="line">    ave_week[shop_id<span class="number">-1</span>][w] += cnt</span><br><span class="line">    num_week[shop_id<span class="number">-1</span>][w] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算均值</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2000</span>):</span><br><span class="line">    <span class="keyword">print</span> i+<span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">7</span>):</span><br><span class="line">        ave_week[i][j] = int( ave_week[i][j] / num_week[i][j] )</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出为结果csv</span></span><br><span class="line">fp = open(<span class="string">'answer.csv'</span>,<span class="string">'w'</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2000</span>):</span><br><span class="line">    <span class="keyword">print</span> i+<span class="number">1</span></span><br><span class="line">    fp.write(<span class="string">'%d'</span>%(i+<span class="number">1</span>))</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">2</span>,<span class="number">7</span>):</span><br><span class="line">        fp.write(<span class="string">',%d'</span>%(ave_week[i][j]))</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        fp.write(<span class="string">',%d'</span>%(ave_week[i][j]))</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">2</span>,<span class="number">7</span>):</span><br><span class="line">        fp.write(<span class="string">',%d'</span>%(ave_week[i][j]))</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">2</span>):</span><br><span class="line">        fp.write(<span class="string">',%d'</span>%(ave_week[i][j]))</span><br><span class="line">    fp.write(<span class="string">'\n'</span>)</span><br><span class="line">fp.close()</span><br></pre></td></tr></table></figure></p>
+<p>##第二次提交<br>以上代码提交之后，Loss值是0.16，排名400+，和当时排名第一的0.07相差甚远。我思考了一下，发现其实不必计算全局的均值，<strong>只取后四周的均值</strong> 可能更接近实际结果。</p>
+<p>于是我改进了一下算法，把统计总客流量那里的代码改成：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 非迭代方式读取</span></span><br><span class="line">shop_cnt = pandas.read_csv(<span class="string">r'user_pay_3.csv'</span>,header=<span class="keyword">None</span>,names=[<span class="string">'shop_id'</span>,<span class="string">'date'</span>,<span class="string">'cnt'</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 统计每个商家一个星期每天的总客流量 和 每天的计数</span></span><br><span class="line"><span class="comment"># shop_cnt是列表</span></span><br><span class="line">num_week = [[<span class="number">0</span> <span class="keyword">for</span> col <span class="keyword">in</span> range(<span class="number">7</span>)] <span class="keyword">for</span> row <span class="keyword">in</span> range(<span class="number">2000</span>)]</span><br><span class="line">ave_week = [[<span class="number">0</span> <span class="keyword">for</span> col <span class="keyword">in</span> range(<span class="number">7</span>)] <span class="keyword">for</span> row <span class="keyword">in</span> range(<span class="number">2000</span>)]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(shop_cnt)):</span><br><span class="line">    shop_id = shop_cnt[i:i+<span class="number">1</span>].values[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line">    date = shop_cnt[i:i+<span class="number">1</span>].values[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line">    cnt = shop_cnt[i:i+<span class="number">1</span>].values[<span class="number">0</span>][<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">print</span> shop_id,date,cnt</span><br><span class="line">    w = int(time.strftime(<span class="string">'%w'</span>,time.strptime(date,<span class="string">'%Y-%m-%d'</span>)))</span><br><span class="line">    <span class="keyword">if</span> sum(num_week[shop_id<span class="number">-1</span>]) &lt; <span class="number">28</span>:</span><br><span class="line">        ave_week[shop_id<span class="number">-1</span>][w] += cnt</span><br><span class="line">        num_week[shop_id<span class="number">-1</span>][w] += <span class="number">1</span></span><br><span class="line">        <span class="keyword">print</span> sum(num_week[shop_id<span class="number">-1</span>])</span><br></pre></td></tr></table></figure>
+<p>这次提交之后，Loss值变成了0.96，排名提高到了200+。</p>
+<p>##总结<br>虽然算法很简单，但也算是我第一次参加大数据比赛的经历。第一次处理这么大规模的数据，虽然和生产环境相比，这点数据还是小儿科，但对我来说，是一笔宝贵的经验。7000w条数据，可能一条语句就会处理半天，所以使用更好的工具——比如pandas效率就很高——就变得尤为重要；处理时的策略也一定要想清楚，否则就是在浪费时间。</p>
+<p>其实接触这个比赛才没几天，但已经给我打开了一扇关于数据处理的新的大门。相信继续研究下去会很有意思。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://my.oschina.net/lionets/blog/280332" target="_blank" rel="noopener">pandas 数据分组运算</a></p>
+<p><a href="http://blog.csdn.net/leonis_v/article/details/51832916" target="_blank" rel="noopener">pandas聚合和分组运算之groupby</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/357" target="_blank" rel="noopener">【IJCAI-17 口碑商家客流量预测】使用Pandas计算商家平均客流量</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/14/【翻译】Django1.8 中文文档/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/12/谈谈《克苏鲁神话》/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-14 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

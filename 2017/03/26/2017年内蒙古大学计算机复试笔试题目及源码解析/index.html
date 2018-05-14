@@ -1,0 +1,319 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>2017年内蒙古大学计算机复试笔试题目及源码解析 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="题目是考完了去网吧回忆出来的，除了一些细节，大体意思基本和原题一样。如果你看着没毛病，那说明我语言描述能力还行，哈哈。
+代码也是我在网吧现敲出来的，由于源码在网吧 vc++6.0 和 codeblocks 以及 dev c 等IDE环境中编译运行有问题（可能网吧做了限制？百思不得姐），所以用 ssh 远程连接了我的 VPS，在 linux 环境下用 g++ 编译运行测试的。
+以下输入输出测试样例均在 g++ 编译器下测试成功。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="2017年内蒙古大学计算机复试笔试题目及源码解析"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 2017年内蒙古大学计算机复试笔试题目及源码解析</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>题目是考完了去网吧回忆出来的，除了一些细节，大体意思基本和原题一样。如果你看着没毛病，那说明我语言描述能力还行，哈哈。</p>
+<p>代码也是我在网吧现敲出来的，由于源码在网吧 vc++6.0 和 codeblocks 以及 dev c 等IDE环境中编译运行有问题（可能网吧做了限制？百思不得姐），所以用 ssh 远程连接了我的 VPS，在 linux 环境下用 g++ 编译运行测试的。</p>
+<p>以下输入输出测试样例均在 g++ 编译器下测试成功。<br><a id="more"></a></p>
+<p>##第一题</p>
+<p><strong>题目</strong></p>
+<p>输入一组由正整数组成的数字序列，序列大小不超过500，遇到-1结束输入，判断这个数字序列是否是升序。如果是升序，输出“YES”，如果不是升序，输出“NO”。</p>
+<p><strong>源码</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a[<span class="number">600</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">600</span>;i++)&#123;		<span class="comment">//输入数字序列</span></span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;a[i];</span><br><span class="line">        <span class="keyword">if</span>(a[i]==<span class="number">-1</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;<span class="number">600</span>;i++)&#123;		<span class="comment">//判断是否升序</span></span><br><span class="line">        <span class="keyword">if</span>(a[i]==<span class="number">-1</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">if</span>(a[i]&lt;=a[i<span class="number">-1</span>])</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(a[i]==<span class="number">-1</span>)		<span class="comment">//输出判断结果</span></span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"YES"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"NO"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>输入样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">-1</span></span><br><span class="line"><span class="number">1</span> <span class="number">3</span> <span class="number">2</span> <span class="number">-1</span></span><br><span class="line"><span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">3</span> <span class="number">5</span> <span class="number">8</span> <span class="number">7</span> <span class="number">10</span> <span class="number">-1</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>输出样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">YES</span><br><span class="line">NO</span><br><span class="line">NO</span><br></pre></td></tr></table></figure></p>
+<p><strong>注：每组样例请分开测试，即一次只运行一组。下同。</strong></p>
+<p>##第二题<br><strong>题目</strong></p>
+<p>输入一个正整数n，判断不超过n的所有数中与7有关的数有多少个。如果某个数是7或者是7的倍数，或者这个数的某一位是7，那么这个数便与7有关。举个例子，如果输入的n是20，那么20以内与7有关的数便是：7、14、17，最终输出结果是3。</p>
+<p><strong>源码</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getAnswer</span><span class="params">(<span class="keyword">int</span> n)</span>	<span class="comment">//计算与7有关的数字个数</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i,cnt=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">1</span>;i&lt;=n;i++)&#123;	<span class="comment">//循环n以内的所有数</span></span><br><span class="line">        <span class="keyword">if</span>(i%<span class="number">7</span>==<span class="number">0</span>)		<span class="comment">//如果当前数是7的倍数，计数+1</span></span><br><span class="line">            cnt++;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">int</span> t = i;</span><br><span class="line">            <span class="keyword">while</span>(t)&#123;</span><br><span class="line">                <span class="keyword">if</span>(t%<span class="number">10</span>==<span class="number">7</span>)&#123;	<span class="comment">//如果当前数的某一位是7，计数+1</span></span><br><span class="line">                    cnt++;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                t/=<span class="number">10</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;getAnswer(n)&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>输入样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5</span></span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="number">20</span></span><br><span class="line"><span class="number">100</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>输出样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">30</span></span><br></pre></td></tr></table></figure></p>
+<p>##第三题<br><strong>题目</strong></p>
+<p>输入一个正整数，判断这个数是否是“回文数”。所谓“回文数”，便是正着念和反着念都一样的数。比如，1、11、121、1221、12321，都是回文数。如果这个输入的数是回文数，那么输出“YES”，如果不是回文数，输出“NO”。</p>
+<p><strong>源码</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">isHuiwen</span><span class="params">(<span class="keyword">char</span> num[])</span>	<span class="comment">//判断是否是回文数</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i,len = <span class="built_in">strlen</span>(num);</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;len;i++)		<span class="comment">//前后依次对比每一位数字，遇到不相等的情况，退出循环</span></span><br><span class="line">        <span class="keyword">if</span>(num[i]!=num[len-i<span class="number">-1</span>])</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">if</span>(i&lt;len)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> num[<span class="number">1000</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;num;</span><br><span class="line">    <span class="keyword">if</span>(isHuiwen(num))		<span class="comment">//输出判断结果</span></span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"YES"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"NO"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>输入样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">11</span></span><br><span class="line"><span class="number">121</span></span><br><span class="line"><span class="number">1221</span></span><br><span class="line"><span class="number">12321</span></span><br><span class="line"><span class="number">123</span></span><br><span class="line"><span class="number">1313</span></span><br><span class="line"><span class="number">123456789876543210</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>输出样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">YES</span><br><span class="line">YES</span><br><span class="line">YES</span><br><span class="line">YES</span><br><span class="line">YES</span><br><span class="line">NO</span><br><span class="line">NO</span><br><span class="line">NO</span><br></pre></td></tr></table></figure></p>
+<p>##第四题<br><strong>题目</strong></p>
+<p>输入两个字符串，str1 和 str2，将字符串 str2 逆序之后连接到字符串 str1 后面，最后输出str1。举个例子，如果输入的字符串 str1 是”abc”, 字符串 str2 是”123”，那么逆序连接之后，输出的结果为”abc321”。</p>
+<p><strong>源码</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mycat</span><span class="params">(<span class="keyword">char</span> str1[],<span class="keyword">char</span> str2[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="built_in">strlen</span>(str2)<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="built_in">strlen</span>(str1);</span><br><span class="line">    <span class="keyword">for</span>(;i&gt;=<span class="number">0</span>;i--)	<span class="comment">//逆序连接</span></span><br><span class="line">        str1[j++] = str2[i];</span><br><span class="line">    str1[j] = <span class="string">'\0'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> str1[<span class="number">1100</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">char</span> str2[<span class="number">1100</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;str1;		<span class="comment">//输入两个字符串</span></span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;str2;</span><br><span class="line">    mycat(str1,str2);	<span class="comment">//逆序连接</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;str1&lt;&lt;<span class="built_in">endl</span>;	<span class="comment">//输出连接后的结果</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>输入样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">abc <span class="number">123</span></span><br><span class="line"><span class="number">12345</span> <span class="number">12345</span></span><br><span class="line"><span class="comment">/*** /***</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>输出样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">abc321</span><br><span class="line"><span class="number">1234554321</span></span><br><span class="line"><span class="comment">/******/</span></span><br></pre></td></tr></table></figure></p>
+<p>##第五题<br><strong>题目</strong></p>
+<p>首先输入两个正整数，m(2&lt;=m&lt;=36)和n(2&lt;=m&lt;=36)，然后输入一个m进制的数字串，将这个数字串转换为n进制并输出。如果进制超过9，那么用小写字母’a’到’z’依次表示10~35的数字。（假设数字串对应的十进制数用int存储不溢出）</p>
+<p><strong>源码</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">toTen</span><span class="params">(<span class="keyword">int</span> m,<span class="keyword">char</span> s[])</span>	<span class="comment">//将m进制的数字串转换为十进制并返回</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">    <span class="keyword">int</span> i,d = <span class="number">1</span>,num = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="built_in">strlen</span>(s)<span class="number">-1</span>;i&gt;=<span class="number">0</span>;i--)&#123;	<span class="comment">//循环该数字串，将每一位上的位值和位权相乘，累加结果便为对应的十进制数</span></span><br><span class="line">        <span class="keyword">int</span> t;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">'a'</span>&lt;=s[i] &amp;&amp; s[i]&lt;=<span class="string">'z'</span>)</span><br><span class="line">            t = <span class="keyword">int</span>(s[i]-<span class="string">'a'</span>+<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            t = <span class="keyword">int</span>(s[i]-<span class="string">'0'</span>);</span><br><span class="line">        num+=t*d;</span><br><span class="line">        d*=m;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> num;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">toN</span><span class="params">(<span class="keyword">int</span> num,<span class="keyword">int</span> n,<span class="keyword">char</span> ans[])</span>	<span class="comment">//将十进制数num转换为n进制数，并存储在ans数组中</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">char</span> temp[<span class="number">1100</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">while</span>(num)&#123;			<span class="comment">//辗转相除法</span></span><br><span class="line">        <span class="keyword">int</span> yu = num%n;</span><br><span class="line">        num/=n;</span><br><span class="line">        <span class="keyword">if</span>(yu&gt;<span class="number">9</span>)</span><br><span class="line">            temp[i++] = <span class="keyword">char</span>(yu<span class="number">-10</span>+<span class="string">'a'</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            temp[i++] = <span class="keyword">char</span>(yu+<span class="string">'0'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> len = i;</span><br><span class="line">    <span class="keyword">for</span>(i=i<span class="number">-1</span>;i&gt;=<span class="number">0</span>;i--)</span><br><span class="line">        ans[len-i<span class="number">-1</span>] = temp[i];</span><br><span class="line">    ans[len] = <span class="string">'\0'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m,n;</span><br><span class="line">    <span class="keyword">char</span> s[<span class="number">1100</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">char</span> ans[<span class="number">1100</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;m&gt;&gt;n;			<span class="comment">//输入m和n，以及m进制的数字串</span></span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;s;</span><br><span class="line">    <span class="keyword">int</span> num = toTen(m,s);	<span class="comment">//将m进制的数字串转换为十进制数</span></span><br><span class="line">    toN(num,n,ans);		<span class="comment">//将十进制数转换为n进制数</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;ans&lt;&lt;<span class="built_in">endl</span>;		<span class="comment">//输出转换后的结果</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>输入样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10</span> <span class="number">2</span></span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="number">10</span> <span class="number">2</span></span><br><span class="line"><span class="number">64</span></span><br><span class="line"><span class="number">10</span> <span class="number">2</span></span><br><span class="line"><span class="number">1024</span></span><br><span class="line"><span class="number">16</span> <span class="number">2</span></span><br><span class="line">ffff</span><br><span class="line"><span class="number">16</span> <span class="number">8</span></span><br><span class="line">ffff</span><br><span class="line"><span class="number">16</span> <span class="number">10</span></span><br><span class="line">ffff</span><br><span class="line"><span class="number">20</span> <span class="number">10</span></span><br><span class="line">g</span><br></pre></td></tr></table></figure></p>
+<p><strong>输出样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">101</span></span><br><span class="line"><span class="number">1000000</span></span><br><span class="line"><span class="number">10000000000</span></span><br><span class="line"><span class="number">1111111111111111</span></span><br><span class="line"><span class="number">177777</span></span><br><span class="line"><span class="number">65535</span></span><br><span class="line"><span class="number">16</span></span><br></pre></td></tr></table></figure></p>
+<p>##第六题<br><strong>题目</strong></p>
+<p>输入一个正整数n(n&lt;=30)，输出n所对应的蛇形矩阵。举两个例子：</p>
+<p>n=10时，蛇形矩阵为：<br>10 9 5 4<br> 8 6 3<br> 7 2<br> 1 </p>
+<p>n=9时，蛇形矩阵为：<br> 9 8 4 3<br> 7 5 2<br> 6 1  </p>
+<p>具体的蛇形矩阵变化路径见下图：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/34aa4fd4-e8e0-4f56-886f-a46ec69e4fd0.png" alt=""></p>
+<p>所以只要根据路径的变化规律依次生成蛇形矩阵中的数字，然后输出矩阵就可以了。</p>
+<p>生成矩阵的主要 <strong>思路</strong> 是按顺序将递减的数字依次填到相应的位置，解题的关键是如何确认下一步的矩阵位置。在我的算法里，我用变量 s 控制路径拐弯之后到下一次拐角之间的路径长度，变量 i 控制下一个位置的行号，s-i 控制下一个位置的列号，d 控制路径方向（向下走还是向上走），n 控制下一个要填的数字。有了下一个矩阵的位置和数字，将数字递减到 1 即可生成蛇形矩阵。</p>
+<p>一个 <strong>小窍门</strong> 是在矩阵中标出每个位置的行号和列号 (i,j) ，然后观察 i 和 j 的变化规律，想出办法用几个变量去控制这个规律即可。</p>
+<p><strong>源码</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">display</span><span class="params">(<span class="keyword">int</span> n,<span class="keyword">int</span> a[][<span class="number">10</span>])</span>		<span class="comment">//输出n对应的蛇形矩阵</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> s =<span class="number">0</span>,i=<span class="number">0</span>,d=<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">while</span>(n&gt;=<span class="number">1</span>)&#123;	<span class="comment">//生成蛇形矩阵，存储在a[][10]数组中</span></span><br><span class="line">        <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(cnt&lt;=s)&#123;</span><br><span class="line">            a[i][s-i] = n--;</span><br><span class="line">            cnt++;</span><br><span class="line">            i+=d;</span><br><span class="line">        &#125;</span><br><span class="line">        s++;</span><br><span class="line">        d = -d;</span><br><span class="line">        i = d&gt;<span class="number">0</span>?<span class="number">0</span>:s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> j;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;	<span class="comment">//输出n对应的蛇形矩阵</span></span><br><span class="line">        <span class="keyword">if</span>(a[i][<span class="number">0</span>]&lt;=<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;<span class="number">10</span>;j++)</span><br><span class="line">            <span class="keyword">if</span>(a[i][j]&gt;<span class="number">0</span>)</span><br><span class="line">                <span class="built_in">cout</span>&lt;&lt;a[i][j]&lt;&lt;<span class="string">' '</span>;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n,a[<span class="number">10</span>][<span class="number">10</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n;</span><br><span class="line">    display(n,a);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>输入样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10</span></span><br><span class="line"><span class="number">9</span></span><br><span class="line"><span class="number">30</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>输出样例</strong><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10</span> <span class="number">9</span> <span class="number">5</span> <span class="number">4</span></span><br><span class="line"><span class="number">8</span> <span class="number">6</span> <span class="number">3</span></span><br><span class="line"><span class="number">7</span> <span class="number">2</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="number">9</span> <span class="number">8</span> <span class="number">4</span> <span class="number">3</span></span><br><span class="line"><span class="number">7</span> <span class="number">5</span> <span class="number">2</span></span><br><span class="line"><span class="number">6</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="number">30</span> <span class="number">29</span> <span class="number">25</span> <span class="number">24</span> <span class="number">16</span> <span class="number">15</span> <span class="number">3</span> <span class="number">2</span></span><br><span class="line"><span class="number">28</span> <span class="number">26</span> <span class="number">23</span> <span class="number">17</span> <span class="number">14</span> <span class="number">4</span> <span class="number">1</span></span><br><span class="line"><span class="number">27</span> <span class="number">22</span> <span class="number">18</span> <span class="number">13</span> <span class="number">5</span></span><br><span class="line"><span class="number">21</span> <span class="number">19</span> <span class="number">12</span> <span class="number">6</span></span><br><span class="line"><span class="number">20</span> <span class="number">11</span> <span class="number">7</span></span><br><span class="line"><span class="number">10</span> <span class="number">8</span></span><br><span class="line"><span class="number">9</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/371" target="_blank" rel="noopener">2017年内蒙古大学计算机复试笔试题目及源码解析</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/04/04/“一波三折”的考研调剂之路/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/03/14/爬取知乎百万用户数据！/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-03-26 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

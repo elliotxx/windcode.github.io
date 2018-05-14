@@ -1,0 +1,295 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>如何配置 Sublime Text 3 的 Python 编程环境 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="前言用 IDLE 写 python 习惯了，还是发现它有些简陋，于是准备转向 Sublime 的怀抱。（我比较喜欢轻量级的 IDE）
+为了方便用 Sublime 写 python 代码，我搜集了网上的一些资料，选出了常用 Python 编程的3个插件，整理出一篇轻量级的配置教程。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="如何配置 Sublime Text 3 的 Python 编程环境"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 如何配置 Sublime Text 3 的 Python 编程环境</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p><img src="http://yangyingming.com/uploads/markdownx/2017/7/335b2f4d-65bd-4454-a016-a6ef8d571907.jpg" alt=""></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>用 IDLE 写 python 习惯了，还是发现它有些简陋，于是准备转向 Sublime 的怀抱。（我比较喜欢轻量级的 IDE）</p>
+<p>为了方便用 Sublime 写 python 代码，我搜集了网上的一些资料，选出了常用 Python 编程的3个插件，整理出一篇轻量级的配置教程。<br><a id="more"></a></p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h4 id="1-生成包管理（Package-Control）界面："><a href="#1-生成包管理（Package-Control）界面：" class="headerlink" title="1. 生成包管理（Package Control）界面："></a>1. 生成包管理（Package Control）界面：</h4><p>View &gt; Show Console 或者按住快捷键： <figure class="highlight plain"><figcaption><span>+ ` ``` 调出 sublime 的命令行，然后在最下方的输入条中粘贴以下代码，回车，等待 Package Control 安装结束，随后重启Sublime。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">```python</span><br><span class="line">import urllib.request,os; pf = &apos;Package Control.sublime-package&apos;; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); open(os.path.join(ipp, pf), &apos;wb&apos;).write(urllib.request.urlopen( &apos;http://sublime.wbond.net/&apos; + pf.replace(&apos; &apos;,&apos;%20&apos;)).read())</span><br></pre></td></tr></table></figure></p>
+<p>如果在 <strong>Perferences -&gt; package settings</strong> 中看到 <strong>package control</strong> 这一项，代表包管理器（Package Control）安装成功。</p>
+<h4 id="2-插件安装方法："><a href="#2-插件安装方法：" class="headerlink" title="2. 插件安装方法："></a>2. 插件安装方法：</h4><p>打开 <strong>Perferences -&gt; package control</strong>，输入 <strong>install Package</strong>，回车。</p>
+<p>或者，按住快捷键 <strong>ctrl+shift+p</strong>，在弹出的搜索框中输入 <strong>Package Control: install Package</strong>，回车。</p>
+<p>以上两个方法都可以打开插件搜索框，输入要安装的插件，直接回车，Sublime 会自动将插件安装好。</p>
+<h4 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h4><p><a href="http://www.cnblogs.com/RunForLove/p/5133824.html" target="_blank" rel="noopener">Sublime搭建Python开发环境</a></p>
+<h4 id="3-安装插件"><a href="#3-安装插件" class="headerlink" title="3. 安装插件"></a>3. 安装插件</h4><p>要安装的插件有三个：<strong>SublimeREPL、SublimeCodeIntel、SideBarEnhancements</strong>。</p>
+<p><strong>SublimeREPL</strong> 可以在 Sublime 中直接运行 python 代码。</p>
+<p><strong>SublimeCodeIntel</strong> 会自动补全 python 代码。</p>
+<p><strong>SideBarEnhancements</strong> 是侧边栏，显示工作空间。</p>
+<p>参考第二步的方法安装以上三个插件。</p>
+<p>下面分别介绍三个插件的单独设置：</p>
+<h2 id="SublimeREPL-python-运行调试插件"><a href="#SublimeREPL-python-运行调试插件" class="headerlink" title="SublimeREPL - python 运行调试插件"></a>SublimeREPL - python 运行调试插件</h2><p>绑定快捷键：</p>
+<p><strong>Preferences–&gt;Key Bindings User</strong> 添加以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">            <span class="string">"keys"</span>: [<span class="string">"f5"</span>],//这是自己设的快捷键　</span><br><span class="line">            <span class="string">"command"</span>: <span class="string">"run_existing_window_command"</span>, </span><br><span class="line">            <span class="string">"args"</span>:</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">"id"</span>: <span class="string">"repl_python_run"</span>,</span><br><span class="line">                <span class="string">"file"</span>: <span class="string">"config/Python/Main.sublime-menu"</span></span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>如果提示没找到，重启下 Sublime。</p>
+<h4 id="参考资料：-1"><a href="#参考资料：-1" class="headerlink" title="参考资料："></a>参考资料：</h4><p><a href="http://blog.csdn.net/example440982/article/details/52080585" target="_blank" rel="noopener">Sublime Text3设置SublimeREPL快捷键的方法（Python）</a></p>
+<h2 id="SublimeCodeIntel-代码补全插件"><a href="#SublimeCodeIntel-代码补全插件" class="headerlink" title="SublimeCodeIntel - 代码补全插件"></a>SublimeCodeIntel - 代码补全插件</h2><p><strong>Preferences –&gt; Package Settings –&gt; SublimeCodeIntel —&gt; Settings - Default</strong>    弟119行，添加以下代码（假设安装的是 python2.7，且为默认安装位置）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"python"</span>:&#123;  </span><br><span class="line">    <span class="string">"python"</span>:<span class="string">"C:/Python27/python.exe"</span>,  </span><br><span class="line">    <span class="string">"pythonExtraPaths"</span>:[  </span><br><span class="line">         <span class="string">"C:/Python27/DLLs"</span>,  </span><br><span class="line">         <span class="string">"C:/Python27/Lib"</span>,  </span><br><span class="line">         <span class="string">"C:/Python27/Lib/lib-tk"</span>,  </span><br><span class="line">         <span class="string">"C:/Python27/Lib/site-packages"</span>,  </span><br><span class="line">  </span><br><span class="line">    ]  </span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h4 id="参考资料：-2"><a href="#参考资料：-2" class="headerlink" title="参考资料："></a>参考资料：</h4><p><a href="http://blog.csdn.net/u013887008/article/details/49815567" target="_blank" rel="noopener">Sublime Text3中SublimeCodeIntel插件配置python环境</a></p>
+<h2 id="SideBarEnhancements-侧边栏增强工具"><a href="#SideBarEnhancements-侧边栏增强工具" class="headerlink" title="SideBarEnhancements - 侧边栏增强工具"></a>SideBarEnhancements - 侧边栏增强工具</h2><p>如果 <strong>Preferences –&gt; Package Settings –&gt; Side Bar</strong> 存在，表明安装成功</p>
+<p><strong>View —&gt; Side Bar</strong> 打开侧边栏</p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/394" target="_blank" rel="noopener">如何配置 Sublime Text 3 的 Python 编程环境</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/08/22/2017 年 8 月份阅读记录/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/08/06/2017 年 7 月份阅读记录/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-08-09 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

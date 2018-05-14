@@ -1,0 +1,297 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Pandas读取csv表格数据 &amp;&amp; 存入数据库 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="作为一只萌新报名参加了阿里的天池大数据比赛，参加的这场比赛的题目是 预测商家未来14天的客流量 。由于第一次做ML/DM方面的比赛，所以上手需要学习不少新知识，比如读取数据这方面。
+Pandas是基于NumPy 的一种工具，该工具是为了解决数据分析任务而创建的，经常用于数据分析和科学计算领域。
+不管参加天池大数据比赛或者是Kaggle，首先要做得都是从比赛提供的数据文件中将数据提取出来，即 提取数据。
+为了更好的提取数据我不可避免的用到了Pandas，在这里我把用pandas提取csv表格数据的心得记录下来。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Pandas读取csv表格数据 &amp;&amp; 存入数据库"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Pandas读取csv表格数据 &amp;&amp; 存入数据库</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>作为一只萌新报名参加了阿里的天池大数据比赛，参加的这场比赛的题目是 <strong>预测商家未来14天的客流量</strong> 。由于第一次做ML/DM方面的比赛，所以上手需要学习不少新知识，比如读取数据这方面。</p>
+<p>Pandas是基于NumPy 的一种工具，该工具是为了解决数据分析任务而创建的，经常用于数据分析和科学计算领域。</p>
+<p>不管参加天池大数据比赛或者是Kaggle，首先要做得都是从比赛提供的数据文件中将数据提取出来，即 <strong>提取数据</strong>。</p>
+<p>为了更好的提取数据我不可避免的用到了Pandas，在这里我把用pandas提取csv表格数据的心得记录下来。<br><a id="more"></a></p>
+<p>比赛地址：<a href="https://tianchi.shuju.aliyun.com/competition/information.htm?spm=5176.100069.5678.2.9a1AC5&amp;raceId=231591" target="_blank" rel="noopener">IJCAI-17 口碑商家客流量预测</a></p>
+<h2 id="提取过程"><a href="#提取过程" class="headerlink" title="提取过程"></a>提取过程</h2><p>这一节里先不考虑导入数据库，只探讨如何用pandas提取数据。</p>
+<p>1.数据文件</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/37a27ecd-0987-42f4-a3be-0328884dec8a.png" alt=""></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/d90ac373-1b23-4124-9465-891f7c952420.png" alt=""></p>
+<p>2.提取代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf8</span></span><br><span class="line"><span class="keyword">import</span> pandas</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Init</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在提取商家数据……'</span></span><br><span class="line">    shop_info = pandas.read_csv(<span class="string">r'.\dataset\dataset\shop_info.txt'</span>,header=<span class="keyword">None</span>,names=[<span class="string">'shop_id'</span>,<span class="string">'city_name'</span>,<span class="string">'location_id'</span>,<span class="string">'per_pay'</span>,<span class="string">'score'</span>,<span class="string">'comment_cnt'</span>,<span class="string">'shop_level'</span>,<span class="string">'cate_1_name'</span>,<span class="string">'cate_2_name'</span>,<span class="string">'cate_3_name'</span>])</span><br><span class="line">    <span class="keyword">print</span> shop_info.head(<span class="number">5</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在提取支付数据……'</span></span><br><span class="line">    user_pay = pandas.read_csv(<span class="string">r'.\dataset\dataset\user_pay.txt'</span>, iterator=<span class="keyword">True</span>,header=<span class="keyword">None</span>,names=[<span class="string">'user_id'</span>,<span class="string">'shop_id'</span>,<span class="string">'time_stamp'</span>])</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        df = user_pay.get_chunk(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">except</span> StopIteration:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Iteration is stopped."</span></span><br><span class="line">    <span class="keyword">print</span> df</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在提取浏览数据……'</span></span><br><span class="line">    user_view = pandas.read_csv(<span class="string">r'.\dataset\dataset\user_view.txt'</span>,header=<span class="keyword">None</span>,names=[<span class="string">'user_id'</span>,<span class="string">'shop_id'</span>,<span class="string">'time_stamp'</span>])</span><br><span class="line">    <span class="keyword">print</span> user_view.head(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    Init()</span><br></pre></td></tr></table></figure></p>
+<p>pandas.read_csv()的参数说明：  </p>
+<p><strong>header</strong>：指定某一行为列名，默认header=0，即指定第一行的所有元素名对应为每一列的列名。若header=None，则不指定列名行。</p>
+<p><strong>names</strong>：与header配合使用，若header=None，则可以使用该参数手动指定列名。</p>
+<p><strong>iterator</strong>：返回一个TextFileReader 对象，以便逐块处理文件。默认值为False。</p>
+<p>3.运行结果</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/4c4338f8-189e-4cce-8e17-ddc35033dc4d.png" alt=""></p>
+<h2 id="存入数据库"><a href="#存入数据库" class="headerlink" title="存入数据库"></a>存入数据库</h2><p>上一节探讨了如何提取数据，这一节我们探讨如何将数据导入到mysql数据库中。</p>
+<p>观察上一节提取代码，你会发现user_pay的数据提取我使用了<strong>迭代</strong>提取的办法，这是因为user_pay的csv文件有2G大小。我使用的windows 32bit python，内存有限制，无法一次性读取这么大的数据集（会提示MemoryError）。</p>
+<p>在这一节里，我要把数据都存入数据库，所以干脆都采用了迭代的方式，迭代的过程中执行sql将数据插入表中。</p>
+<p><strong>完整代码</strong>如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf8</span></span><br><span class="line"><span class="keyword">import</span> pandas</span><br><span class="line"><span class="keyword">import</span> MySQLdb</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Init</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 连接数据库</span></span><br><span class="line">    conn= MySQLdb.connect(</span><br><span class="line">            host=<span class="string">'localhost'</span>,</span><br><span class="line">            port = <span class="number">3306</span>,</span><br><span class="line">            user=<span class="string">'root'</span>,</span><br><span class="line">            passwd=<span class="string">'1234'</span>,</span><br><span class="line">            db =<span class="string">'tianchi_1'</span>,</span><br><span class="line">            charset = <span class="string">'utf8'</span>,       <span class="comment"># 不声明编码导入的数据会显示出错</span></span><br><span class="line">            )</span><br><span class="line">    cur = conn.cursor()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在提取商家数据……'</span></span><br><span class="line">    shop_info = pandas.read_csv(<span class="string">r'.\dataset\dataset\shop_info.txt'</span>, iterator=<span class="keyword">True</span>,chunksize=<span class="number">1</span>,header=<span class="keyword">None</span>,names=[<span class="string">'shop_id'</span>,<span class="string">'city_name'</span>,<span class="string">'location_id'</span>,<span class="string">'per_pay'</span>,<span class="string">'score'</span>,<span class="string">'comment_cnt'</span>,<span class="string">'shop_level'</span>,<span class="string">'cate_1_name'</span>,<span class="string">'cate_2_name'</span>,<span class="string">'cate_3_name'</span>])</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在将数据导入到数据库……'</span></span><br><span class="line">    <span class="keyword">for</span> i,shop <span class="keyword">in</span> enumerate(shop_info):</span><br><span class="line">        <span class="comment"># 用-1或者''代替空值NAN</span></span><br><span class="line">        shop = shop.fillna(&#123;<span class="string">'cate_1_name'</span>:<span class="string">''</span>,<span class="string">'cate_2_name'</span>:<span class="string">''</span>,<span class="string">'cate_3_name'</span>:<span class="string">''</span>&#125;)      <span class="comment"># 替换字符串空值</span></span><br><span class="line">        shop = shop.fillna(<span class="number">-1</span>)      <span class="comment"># 替换整数空值</span></span><br><span class="line">        shop = shop.values[<span class="number">0</span>]   <span class="comment"># Series类型转换成列表类型</span></span><br><span class="line">        <span class="comment">#print shop</span></span><br><span class="line">        sql =<span class="string">"insert into shop_info (`shop_id`,`city_name`,`location_id`,`per_pay`,`score`,`comment_cnt`,`shop_level`,`cate_1_name`,`cate_2_name`,`cate_3_name`) values('%d','%s','%d','%d','%d','%d','%d','%s','%s','%s')"</span>\</span><br><span class="line">              %(shop[<span class="number">0</span>],shop[<span class="number">1</span>],shop[<span class="number">2</span>],shop[<span class="number">3</span>],shop[<span class="number">4</span>],shop[<span class="number">5</span>],shop[<span class="number">6</span>],shop[<span class="number">7</span>],shop[<span class="number">8</span>],shop[<span class="number">9</span>])</span><br><span class="line">        cur.execute(sql)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'%d / 2000'</span>%(i+<span class="number">1</span>)</span><br><span class="line">    conn.commit()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在提取支付数据……'</span></span><br><span class="line">    user_pay = pandas.read_csv(<span class="string">r'.\dataset\dataset\user_pay.txt'</span>, iterator=<span class="keyword">True</span>,chunksize=<span class="number">1</span>,header=<span class="keyword">None</span>,names=[<span class="string">'user_id'</span>,<span class="string">'shop_id'</span>,<span class="string">'time_stamp'</span>])</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在将数据导入到数据库……'</span></span><br><span class="line">    <span class="keyword">for</span> i,user <span class="keyword">in</span> enumerate(user_pay):</span><br><span class="line">        <span class="comment"># 用-1代替空值NAN</span></span><br><span class="line">        user = user.fillna(<span class="number">-1</span>)      <span class="comment"># 替换整数空值</span></span><br><span class="line">        user = user.values[<span class="number">0</span>]   <span class="comment"># Series类型转换成列表类型</span></span><br><span class="line">        <span class="comment">#print user</span></span><br><span class="line">        sql =<span class="string">"insert into user_pay (`user_id`,`shop_id`,`time_stamp`) values('%d','%d','%s')"</span>\</span><br><span class="line">              %(user[<span class="number">0</span>],user[<span class="number">1</span>],user[<span class="number">2</span>])</span><br><span class="line">        cur.execute(sql)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'%d'</span>%(i+<span class="number">1</span>)</span><br><span class="line">    conn.commit()</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在提取浏览数据……'</span></span><br><span class="line">    user_view = pandas.read_csv(<span class="string">r'.\dataset\dataset\user_view.txt'</span>, iterator=<span class="keyword">True</span>,chunksize=<span class="number">1</span>,header=<span class="keyword">None</span>,names=[<span class="string">'user_id'</span>,<span class="string">'shop_id'</span>,<span class="string">'time_stamp'</span>])</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在将数据导入到数据库……'</span></span><br><span class="line">    <span class="keyword">for</span> i,user <span class="keyword">in</span> enumerate(user_view):</span><br><span class="line">        <span class="comment"># 用-1代替空值NAN</span></span><br><span class="line">        user = user.fillna(<span class="number">-1</span>)      <span class="comment"># 替换整数空值</span></span><br><span class="line">        user = user.values[<span class="number">0</span>]   <span class="comment"># Series类型转换成列表类型</span></span><br><span class="line">        <span class="comment">#print user</span></span><br><span class="line">        sql =<span class="string">"insert into user_view (`user_id`,`shop_id`,`time_stamp`) values('%d','%d','%s')"</span>\</span><br><span class="line">              %(user[<span class="number">0</span>],user[<span class="number">1</span>],user[<span class="number">2</span>])</span><br><span class="line">        cur.execute(sql)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'%d'</span>%(i+<span class="number">1</span>)</span><br><span class="line">    conn.commit()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    Init()</span><br></pre></td></tr></table></figure></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://www.cnblogs.com/datablog/p/6127000.html" target="_blank" rel="noopener">pandas.read_csv参数详解</a></p>
+<p><a href="http://blog.csdn.net/chuanda112233/article/details/51707386" target="_blank" rel="noopener">使用Python Pandas处理亿级数</a></p>
+<p><a href="http://www.cnblogs.com/chaosimple/p/4153083.html" target="_blank" rel="noopener">【原】十分钟搞定pandas</a></p>
+<p><a href="http://jingyan.baidu.com/article/93f9803fe29aece0e46f55cb.html" target="_blank" rel="noopener">pandas教程：[22]填充缺失值</a></p>
+<p><a href="http://blog.sina.com.cn/s/blog_c8bffac20102wj14.html" target="_blank" rel="noopener">pandas入门之查询和分析数据</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/355" target="_blank" rel="noopener">Pandas读取csv表格数据 &amp;&amp; 存入数据库</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/12/谈谈《克苏鲁神话》/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/02/Django网站搭建心得汇总/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-10 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

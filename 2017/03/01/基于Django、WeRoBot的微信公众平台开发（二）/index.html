@@ -1,0 +1,350 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>基于Django、WeRoBot的微信公众平台开发（二） | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="上一节，我在一个Django项目中集成了 基于WeRoBot的微信公众号后台，成功与服务器完成了对接，并且可以对用户的任意消息做出响应（回复一个“hello”），简单来说，就是搭建起了一个开发框架。
+这一节中，我将继续用 WeRoBot 在这个开发框架上扩展一些功能，让公众号的交互丰富起来，思来想去，我挑了三个相对简单的功能进行实现：简单的聊天功能，天气查询，讲笑话。
+下面是实现这三个功能的过程和心得记录，分享给大家。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="基于Django、WeRoBot的微信公众平台开发（二）"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 基于Django、WeRoBot的微信公众平台开发（二）</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>上一节，我在一个Django项目中集成了 <strong>基于WeRoBot的微信公众号后台</strong>，成功与服务器完成了对接，并且可以对用户的任意消息做出响应（回复一个“hello”），简单来说，就是搭建起了一个开发框架。</p>
+<p>这一节中，我将继续用 <strong>WeRoBot</strong> 在这个开发框架上扩展一些功能，让公众号的交互丰富起来，思来想去，我挑了三个相对简单的功能进行实现：<strong>简单的聊天功能，天气查询，讲笑话</strong>。</p>
+<p>下面是实现这三个功能的过程和心得记录，分享给大家。<br><a id="more"></a></p>
+<p>##简单的聊天机器人<br><strong>原理</strong>：文本匹配</p>
+<p><strong>WeRoBot</strong> 也有微信机器人的意思，你可以使用它定制公众号的响应。</p>
+<p>WeRoBot中有这么一个消息处理函数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@robot.text</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">echo</span><span class="params">(message)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> message.content</span><br></pre></td></tr></table></figure></p>
+<p>他只能响应用户发送过来的 <strong>文本消息</strong>。</p>
+<p>文本消息存储在参数 <strong>message</strong> 变量中，我们可以通过 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">（详情见官方文档：[WeRoBot官方文档](https://werobot.readthedocs.io/zh_CN/latest/index.html)）</span><br><span class="line"></span><br><span class="line">而通过对消息文本```msg```进行匹配，我们可以为公众号加入简单的聊天功能。</span><br><span class="line"></span><br><span class="line">机器人代码如下：</span><br><span class="line">```python</span><br><span class="line">@robot.text</span><br><span class="line">def echo(message):</span><br><span class="line">    try:</span><br><span class="line">        # 提取消息</span><br><span class="line">        msg = message.content.strip().lower().encode(&apos;utf8&apos;)</span><br><span class="line">        # 解析消息</span><br><span class="line">        if  re.compile(&quot;.*?你好.*?&quot;).match(msg) or\</span><br><span class="line">            re.compile(&quot;.*?嗨.*?&quot;).match(msg) or\</span><br><span class="line">            re.compile(&quot;.*?哈喽.*?&quot;).match(msg) or\</span><br><span class="line">            re.compile(&quot;.*?hello.*?&quot;).match(msg) or\</span><br><span class="line">            re.compile(&quot;.*?hi.*?&quot;).match(msg) or\</span><br><span class="line">            re.compile(&quot;.*?who are you.*?&quot;).match(msg) or\</span><br><span class="line">            re.compile(&quot;.*?你是谁.*?&quot;).match(msg) or\</span><br><span class="line">            re.compile(&quot;.*?你的名字.*?&quot;).match(msg) or\</span><br><span class="line">            re.compile(&quot;.*?什么名字.*?&quot;).match(msg) :</span><br><span class="line">            return &quot;你好~\n我是呓语的管家机器人，主人还没给我起名字 T_T\n有什么能帮您的吗？（绅士脸）&quot;</span><br><span class="line">        elif re.compile(&quot;.*?厉害.*?&quot;).match(msg):</span><br><span class="line">            return &apos;承让承让 (๑•̀ㅂ•́)ﻭ✧&apos;</span><br><span class="line">        elif re.compile(&quot;.*?想你.*?&quot;).match(msg):</span><br><span class="line">            return &apos;我也想你&apos;</span><br><span class="line">        elif re.compile(&quot;.*?miss you.*?&quot;).match(msg):</span><br><span class="line">            return &apos;I miss you,too&apos;</span><br><span class="line">        elif re.compile(&quot;.*?我爱你.*?&quot;).match(msg):</span><br><span class="line">            return &apos;我也爱你&apos;</span><br><span class="line">        elif re.compile(&quot;.*?love you.*?&quot;).match(msg):</span><br><span class="line">            return &apos;I love you,too&apos;</span><br><span class="line">        elif re.compile(&quot;.*?美女.*?&quot;).match(msg):</span><br><span class="line">            return &apos;我是男生哦♂&apos;</span><br><span class="line">        elif re.compile(&quot;.*?帅哥.*?&quot;).match(msg):</span><br><span class="line">            return &apos;谢谢夸奖 (๑•̀ㅂ•́)ﻭ✧&apos;</span><br><span class="line">        elif re.compile(&quot;.*?傻逼.*?&quot;).match(msg):</span><br><span class="line">            return &apos;爸爸不想理你&apos;</span><br><span class="line">    except Exception as e:</span><br><span class="line">        print e</span><br></pre></td></tr></table></figure></p>
+<p>运行效果：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/3/0ca0fa2a-9d64-4c36-82d4-886edfe35850.jpg" alt=""></p>
+<p>##“天气查询” 功能实现<br><strong>原理</strong>：封装城市解析接口，调用百度天气API</p>
+<p>要实现天气查询功能其实比较简单，网上不少现成的API，不过到底选哪一家的API是个值得商榷的问题，因为我们选取的API最好要 <strong>稳定、信息丰富、免费、准确</strong>。</p>
+<ul>
+<li>接口的<strong>稳定性</strong>毋庸置疑，如果用着用着接口提供方突然不提供服务，你还要临时换接口，维护成本高。</li>
+<li>使用的天气接口最好能提供比较<strong>丰富</strong>的天气信息，比如最高温、最低温、实时温度、未来X天的温度、PM2.5值、风力风向、天气情况等等，这样展示给用户的信息会比较全面。</li>
+<li><strong>免费</strong>更不用说，刚开始维护公众号能找到免费的优质服务就不掏腰包，毕竟够用就行。</li>
+<li>接口提供的天气信息一定要<strong>准确</strong>，如果信息不准确，这个服务也就没有了价值。</li>
+</ul>
+<p>秉承着以上原则筛选网上的天气API，下面分享几个我尝试过的：</p>
+<ul>
+<li><strong>中国天气网</strong>的API是中国气象局提供的，应该是最官方的，但是用起来有各种问题，提供的天气信息也不够丰富，不推荐使用。</li>
+<li><strong>心知天气</strong> 专业提供天气服务的公司，网站界面高大上，文档详细，服务稳定，使用舒服，唯一的缺点是免费版只提供全国地级市的天气查询，像我们这儿一个小小县城就没法查询 _(:3」∠)_。</li>
+<li><strong>百度天气API</strong>，目前在使用的，以上条件基本都符合，稳定性待观察，刚开始用。需要申请AccessKey，我直接用了一个博客上分享的（因为自己的ak使用有问题，无法正确请求到天气信息，论坛上很多人反映这个问题），博客链接见：<a href="http://www.jianshu.com/p/84fc2258c277" target="_blank" rel="noopener">百度天气接口api - 简书</a>。<strong>【来自后期的提示：该AK已过期】</strong></li>
+</ul>
+<p>顺便贴上知乎上关于天气API的讨论：<a href="https://www.zhihu.com/question/20575288" target="_blank" rel="noopener">网上的天气 API 哪一个更加可靠？</a></p>
+<p>我封装了<strong>“解析消息中包含的城市”</strong>接口，由于代码太长，就不在这里帖出来了，感兴趣的，可以在浏览器中输入这段url 或者直接点击尝试：</p>
+<p><a href="http://www.yangyingming.com/api/parse_city/?msg=http://www.yangyingming.com/api/parse_city/?msg=蒋介石预见到中央红军的意图，在红军前往湘西的必经之路上集结大量兵力组成四道封锁线。10月21日晚，中央红军在赣县王母渡至信丰县一带突破国民革命军第一道封锁线，25日全部渡过信丰河，携大量辎重沿粤赣、湘粤、湘桂边缓慢西行。1934年11月5日至8日，突破了广东城口与湖南汝城之间的第二道封锁线。13日至15日，在郴县、良田、宜章、乐昌之间突破第三道封锁线。25日，中央红军决定从兴安、全州之间西渡湘江。中央红军面对国民革命军全面进攻，于1934年11月27日至12月1日历时5天，从广西兴安县至全州县间，才渡过湘江，突破第四道封锁线。湘江战役之后，出发时的八万余中央红军仅剩下3万余人。" target="_blank" rel="noopener">http://www.yangyingming.com/api/parse_city/?msg=蒋介石预见到中央红军的意图，在红军前往湘西的必经之路上集结大量兵力组成四道封锁线。10月21日晚，中央红军在赣县王母渡至信丰县一带突破国民革命军第一道封锁线，25日全部渡过信丰河，携大量辎重沿粤赣、湘粤、湘桂边缓慢西行。1934年11月5日至8日，突破了广东城口与湖南汝城之间的第二道封锁线。13日至15日，在郴县、良田、宜章、乐昌之间突破第三道封锁线。25日，中央红军决定从兴安、全州之间西渡湘江。中央红军面对国民革命军全面进攻，于1934年11月27日至12月1日历时5天，从广西兴安县至全州县间，才渡过湘江，突破第四道封锁线。湘江战役之后，出发时的八万余中央红军仅剩下3万余人。</a></p>
+<p>它会返回msg参数中包含的所有城市名称。</p>
+<p>我将它集成到了天气查询功能中，使其显得更加智能。</p>
+<p>下面是天气查询的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf8</span></span><br><span class="line"><span class="keyword">from</span> werobot <span class="keyword">import</span> WeRoBot</span><br><span class="line"><span class="keyword">from</span> werobot.replies <span class="keyword">import</span> WeChatReply, TextReply, ImageReply, MusicReply</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> urllib,urllib2</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">timeout=<span class="number">30</span>                              						 <span class="comment"># 超时时间</span></span><br><span class="line">bdkey = <span class="string">'FK9mkfdQsloEngodbFl4FeY3'</span>      <span class="comment"># 百度天气ak</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_citys_in_msg</span><span class="params">(msg)</span>:</span></span><br><span class="line">    <span class="comment"># 获取消息中包含的城市</span></span><br><span class="line">    api_url = <span class="string">'http://www.yangyingming.com/api/parse_city?%s'</span>%(urllib.urlencode(&#123;<span class="string">'msg'</span>:msg&#125;))</span><br><span class="line">    citys = get_html(api_url,timeout=timeout)</span><br><span class="line">    <span class="keyword">return</span> citys</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_weather</span><span class="params">(city)</span>:</span></span><br><span class="line">    <span class="comment"># 获取天气数据</span></span><br><span class="line">    url = <span class="string">'http://api.map.baidu.com/telematics/v3/weather'</span></span><br><span class="line">    param = urllib.urlencode(&#123;</span><br><span class="line">        <span class="string">'location'</span>:city,</span><br><span class="line">        <span class="string">'ak'</span>:bdkey,</span><br><span class="line">        <span class="string">'output'</span>:<span class="string">'json'</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    api_url = <span class="string">'%s?%s'</span>%(url,param)</span><br><span class="line">    wdata = get_html(api_url,timeout=timeout)</span><br><span class="line">    <span class="keyword">return</span> wdata</span><br><span class="line"></span><br><span class="line"><span class="meta">@robot.text</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">echo</span><span class="params">(message)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> re.compile(<span class="string">".*?天气.*?"</span>).match(msg):</span><br><span class="line">        res_msg = <span class="string">''</span></span><br><span class="line">        <span class="comment"># 取出该消息中包含的所有城市</span></span><br><span class="line">        citys = get_citys_in_msg(msg).split(<span class="string">','</span>)</span><br><span class="line">        <span class="comment"># 获得每一座城市的天气状况</span></span><br><span class="line">        <span class="keyword">if</span> citys[<span class="number">0</span>]==<span class="string">''</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'亲爱的，你想知道哪座城市的天气呢？'</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">for</span> city <span class="keyword">in</span> citys:</span><br><span class="line">                <span class="keyword">if</span> res_msg!=<span class="string">''</span>:</span><br><span class="line">                    res_msg += <span class="string">'\n\n'</span></span><br><span class="line">                wdata = get_weather(city)</span><br><span class="line">                wdata = json.loads(wdata)</span><br><span class="line">                <span class="keyword">if</span> wdata[<span class="string">'status'</span>]==<span class="string">'success'</span>:</span><br><span class="line">                    index = wdata[<span class="string">'results'</span>][<span class="number">0</span>][<span class="string">'index'</span>]</span><br><span class="line">                    pm25 = wdata[<span class="string">'results'</span>][<span class="number">0</span>][<span class="string">'pm25'</span>]</span><br><span class="line">                    w = wdata[<span class="string">'results'</span>][<span class="number">0</span>][<span class="string">'weather_data'</span>]</span><br><span class="line">                    today = w[<span class="number">0</span>]</span><br><span class="line">                    future = w[<span class="number">1</span>:]  <span class="comment"># 未来几天的预报</span></span><br><span class="line">                    res_msg += <span class="string">'【%s】\n☀ 今天 %s\n当日温度：%s\n天气情况：%s\n风向风力：%s\nPM2.5：%s'</span>%\</span><br><span class="line">                    (city,today[<span class="string">'date'</span>].encode(<span class="string">'utf8'</span>),today[<span class="string">'temperature'</span>].encode(<span class="string">'utf8'</span>),today[<span class="string">'weather'</span>].encode(<span class="string">'utf8'</span>),today[<span class="string">'wind'</span>].encode(<span class="string">'utf8'</span>),pm25.encode(<span class="string">'utf8'</span>))</span><br><span class="line">                    <span class="keyword">for</span> today <span class="keyword">in</span> future:</span><br><span class="line">                        res_msg += <span class="string">'\n☀ %s\n当日温度：%s\n天气情况：%s\n风向风力：%s'</span>%\</span><br><span class="line">                        (today[<span class="string">'date'</span>].encode(<span class="string">'utf8'</span>),today[<span class="string">'temperature'</span>].encode(<span class="string">'utf8'</span>),today[<span class="string">'weather'</span>].encode(<span class="string">'utf8'</span>),today[<span class="string">'wind'</span>].encode(<span class="string">'utf8'</span>))</span><br><span class="line">                    res_msg += <span class="string">'\n【温馨提示】'</span></span><br><span class="line">                    <span class="keyword">for</span> i <span class="keyword">in</span> index:</span><br><span class="line">                        res_msg += <span class="string">'\n❤ %s：%s\n%s'</span>%\</span><br><span class="line">                        (i[<span class="string">'tipt'</span>].encode(<span class="string">'utf8'</span>),i[<span class="string">'zs'</span>].encode(<span class="string">'utf8'</span>),i[<span class="string">'des'</span>].encode(<span class="string">'utf8'</span>))</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    res_msg += <span class="string">'没有找到%s的天气信息'</span>%city</span><br><span class="line">            <span class="keyword">return</span> res_msg</span><br></pre></td></tr></table></figure>
+<p>运行效果：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/3/a929199f-7b47-4f93-8913-f41d8376ba57.jpg" alt=""></p>
+<p>##“讲个段子” 功能实现</p>
+<p>“讲个段子”<strong>应用场景</strong>是这样的：在你烦心的时候，在公众号中输入“xxx，讲个段子”，它便会机智的回复一个段子给你，让你在愁眉紧锁之余也能轻松一下。</p>
+<p>实现这个功能大体需要两个步骤：<strong>接口实现</strong> 和 <strong>微信后台调用逻辑</strong>。</p>
+<p>和天气查询不同，我打算自己实现这个接口，<strong>原理</strong>是编写一个脚本定期抓取糗事百科上的段子，存储在服务器的数据库中，再编写接口函数，用于从数据库中随机抽取段子并返回。</p>
+<p>以下是实现这个功能的<strong>步骤</strong>：</p>
+<p>###1、创建数据库表</p>
+<p><strong>作用</strong>：在数据库(mysql)中创建用于存储段子的表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="string">`qiushi_joke`</span> ( </span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">  <span class="string">`username`</span> <span class="built_in">varchar</span>(<span class="number">128</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`content`</span> <span class="built_in">varchar</span>(<span class="number">1024</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`laugh_num`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`comment_num`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`imgurl`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span></span><br><span class="line">) <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure>
+<p>###2、编写段子抓取脚本  </p>
+<p><strong>作用</strong>：抓取糗事百科官网“文本”栏目下所有页面的段子，存储在数据库中（只存储之前没出现过的段子，避免重复）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">import</span> urllib2</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> MySQLdb</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">timeout=<span class="number">5</span>														<span class="comment"># 超时时间</span></span><br><span class="line">host = <span class="string">'http://www.qiushibaike.com'</span>     	<span class="comment"># 糗事百科主页面</span></span><br><span class="line">target = <span class="string">'text'</span>                         				 <span class="comment"># 糗事百科的"文字"栏目</span></span><br><span class="line">min_laugh_num = <span class="number">500</span>                     	<span class="comment"># 好笑数低于该值，不保留</span></span><br><span class="line">min_joke_num = <span class="number">10</span>                       		<span class="comment"># 一次性最少抓到的笑话个数</span></span><br><span class="line"><span class="comment"># 数据库设置</span></span><br><span class="line">username = <span class="string">'YOUR_USERNAME'</span>		<span class="comment"># 你的数据库用户名</span></span><br><span class="line">password = <span class="string">'YOUR_PASSWORD'</span>		<span class="comment"># 你的数据库密码</span></span><br><span class="line">dbname = <span class="string">'YOUR_DB'</span>							<span class="comment"># 你创建的表所在的数据库</span></span><br><span class="line">dbport = <span class="number">3306</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_html</span><span class="params">(url,timeout=None)</span>:</span></span><br><span class="line">    <span class="comment"># 获取指定url的html源码</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        headers = &#123;<span class="string">'User-Agent'</span>:<span class="string">'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6'</span>  &#125;</span><br><span class="line">        request = urllib2.Request(url,headers=headers)</span><br><span class="line">        response = urllib2.urlopen(request,timeout=timeout)</span><br><span class="line">    <span class="keyword">except</span> urllib2.HTTPError,e:</span><br><span class="line">        time.sleep(<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">print</span> e</span><br><span class="line">        <span class="keyword">raise</span> Exception,<span class="string">'[Error] 遇到HTTP 503 错误，程序休眠了一下……'</span></span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        <span class="keyword">raise</span> Exception,<span class="string">'[Error] get_html()获取源码失败\n%s'</span>%e</span><br><span class="line">    <span class="keyword">return</span> response.read()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getPagesum</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 获取总页数</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        url = <span class="string">'%s/%s'</span>%(host,target)</span><br><span class="line">        html = get_html(url,timeout)</span><br><span class="line">        pattern = re.compile(<span class="string">r'&lt;span class="page-numbers"&gt;(.*?)&lt;/span&gt;.*?&lt;/a&gt;.*?&lt;/li&gt;'</span>,re.S)</span><br><span class="line">        items = re.findall(pattern,html)</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        <span class="keyword">raise</span> Exception,<span class="string">'[Error] getPagesum()获取总页数失败\n%s'</span>%e</span><br><span class="line">    <span class="keyword">return</span> int(items[<span class="number">-1</span>])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connectMySQL</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 连接mysql数据库</span></span><br><span class="line">    conn = MySQLdb.connect(</span><br><span class="line">        host=<span class="string">'localhost'</span>,</span><br><span class="line">        port=dbport,</span><br><span class="line">        user=username,</span><br><span class="line">        passwd=password,</span><br><span class="line">        db=dbname,</span><br><span class="line">        charset=<span class="string">'utf8'</span>,</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">return</span> conn</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getJokes</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 抓取糗事百科的段子</span></span><br><span class="line">    <span class="comment"># 获取总页数</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'开始抓取……'</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        pagesum = getPagesum()</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        <span class="keyword">print</span> e</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line"></span><br><span class="line">    joke_list = []</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 开始爬取</span></span><br><span class="line">    <span class="keyword">for</span> page <span class="keyword">in</span> range(<span class="number">1</span>,pagesum+<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'当前页数：'</span>,page</span><br><span class="line">        url = <span class="string">'%s/%s/page/%d/'</span>%(host,target,page)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            html = get_html(url,timeout)</span><br><span class="line">        <span class="keyword">except</span> Exception,e:</span><br><span class="line">            <span class="keyword">print</span> e</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'抓取出错，跳过第%s页'</span>%page</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">'正在匹配……'</span></span><br><span class="line">        pattern = re.compile(<span class="string">'&lt;div.*?author clearfix"&gt;.*?&lt;h2&gt;(.*?)&lt;/h2&gt;.*?&lt;div class="content"&gt;.*?&lt;span&gt;(.*?)&lt;/span&gt;.*?&lt;/div&gt;(.*?)&lt;i class="number"&gt;(.*?)&lt;/i&gt;.*?&lt;i class="number"&gt;(.*?)&lt;/i&gt;'</span>,re.S)</span><br><span class="line">        items = re.findall(pattern,html)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 匹配到段子</span></span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> items:</span><br><span class="line">            joke = &#123;&#125;</span><br><span class="line">            joke[<span class="string">'username'</span>] = item[<span class="number">0</span>].strip()</span><br><span class="line">            joke[<span class="string">'content'</span>] = item[<span class="number">1</span>].strip().replace(<span class="string">'&lt;br/&gt;'</span>,<span class="string">'\n'</span>).replace(<span class="string">'&amp;quot;'</span>,<span class="string">'\"'</span>)</span><br><span class="line">            joke[<span class="string">'imgsrc'</span>] = re.findall(<span class="string">'&lt;img.*?src="(.*?)".*?'</span>,item[<span class="number">2</span>])</span><br><span class="line">            <span class="keyword">if</span> len(joke[<span class="string">'imgsrc'</span>])==<span class="number">0</span>:</span><br><span class="line">                joke[<span class="string">'imgsrc'</span>] =  <span class="string">''</span></span><br><span class="line">            joke[<span class="string">'laugh_num'</span>]= int(item[<span class="number">3</span>].strip())</span><br><span class="line">            joke[<span class="string">'comment_num'</span>] = int(item[<span class="number">4</span>].strip())</span><br><span class="line"></span><br><span class="line">            info = <span class="string">'用户名：%s\n内容：\n%s\n图片地址：%s\n好笑数：%d\n评论数：%d\n'</span>%\</span><br><span class="line">                   ( joke[<span class="string">'username'</span>] , joke[<span class="string">'content'</span>] , joke[<span class="string">'imgsrc'</span>] , joke[<span class="string">'laugh_num'</span>] , joke[<span class="string">'comment_num'</span>] )</span><br><span class="line">            <span class="keyword">if</span> joke[<span class="string">'imgsrc'</span>]==<span class="string">''</span> <span class="keyword">and</span> joke[<span class="string">'laugh_num'</span>] &gt; min_laugh_num:</span><br><span class="line">                <span class="keyword">print</span> len(joke_list)</span><br><span class="line">                <span class="keyword">print</span> info</span><br><span class="line">                joke_list.append(joke)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> joke_list</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">save2mysql</span><span class="params">(joke_list)</span>:</span></span><br><span class="line">    <span class="comment"># 将抓取的段子存入数据库</span></span><br><span class="line">    conn = connectMySQL()</span><br><span class="line">    cur = conn.cursor()</span><br><span class="line">    <span class="keyword">for</span> i,joke <span class="keyword">in</span> enumerate(joke_list):</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'正在插入第%d条段子……'</span>%(i+<span class="number">1</span>)</span><br><span class="line">        sql = <span class="string">'select 1 from qiushi_joke where content = "%s" limit 1; '</span>%(joke[<span class="string">'content'</span>])</span><br><span class="line">        isExist = cur.execute(sql)</span><br><span class="line">        <span class="keyword">if</span> isExist==<span class="number">1</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'-&gt; 该段子已存在于数据库！放弃插入！'</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            sql = <span class="string">'insert into qiushi_joke (`username`,`content`,`laugh_num`,`comment_num`,`imgurl`) values ("%s","%s","%d",</span></span><br><span class="line"><span class="string">"%d","%s")'</span>%\</span><br><span class="line">                  ( joke[<span class="string">'username'</span>] , joke[<span class="string">'content'</span>] , joke[<span class="string">'laugh_num'</span>] , joke[<span class="string">'comment_num'</span>] , joke[<span class="string">'imgsrc'</span>] )</span><br><span class="line">            cur.execute(sql)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'正在提交以上所有操作……'</span></span><br><span class="line">    conn.commit()</span><br><span class="line"></span><br><span class="line">    cur.close()</span><br><span class="line">    conn.close()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment">#  主程序</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">            joke_list = getJokes()</span><br><span class="line">            <span class="keyword">if</span> len(joke_list)&gt;=min_joke_num:   <span class="comment"># 抓取到至少min_joke_num条笑话才行</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            time.sleep(<span class="number">2</span>)</span><br><span class="line">        save2mysql(joke_list)</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        <span class="keyword">print</span> e</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>运行效果：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/3/318519bf-f4d5-47b5-b56b-fb5eb8223438.png" alt=""></p>
+<p>###3、cron定期运行脚本</p>
+<p><strong>作用</strong>：定期抓取优质段子，存入数据库</p>
+<p><strong>步骤</strong>：</p>
+<p>在命令行中运行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br></pre></td></tr></table></figure>
+<p>在编辑页面加入新的计划任务<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*/<span class="number">10</span>  * * * *    /root/workspace/BLOG_VENV/bin/python /root/workspace/crawler/craw_jokes.py</span><br></pre></td></tr></table></figure></p>
+<p>这里解释一下上面这条命令的意思：</p>
+<ul>
+<li><p><strong>*/10  <em> </em> <em> </em></strong> —-&gt; 代表每10分钟执行一次后面的命令。五个“*”分别代表“分 时 日 月 周”，如果在第一个“*”后面加上除号/和一个数字N，代表每N分钟执行一次后面的命令。以上是crontab计划任务时间控制的格式。</p>
+</li>
+<li><p><strong>/root/workspace/BLOG_VENV/bin/python</strong> —-&gt; 这个是我的python解释器的地址</p>
+</li>
+<li><p><strong>/root/workspace/crawler/craw_jokes.py</strong> —-&gt; 这是我们上一节所写的脚本的存放地址</p>
+</li>
+</ul>
+<p>以上命令合起来就是：<strong>每十分钟抓取糗事百科，将优质段子存入数据库</strong>。</p>
+<p>好了，段子我们有了，接下来我们只要写一个接口函数，每次调用便从数据库中随机取出一条段子，并以json的格式返回（json是一种表示和存储数据的形式，和字典类似）。</p>
+<p>###4、接口函数实现</p>
+<p><strong>作用</strong>：每次调用，从数据库中随机取出一条段子，以json的格式返回。</p>
+<p><strong>前言</strong>：代码集成在django中，不想在django中使用的可以适当修改代码。</p>
+<p><strong>代码</strong>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpResponse</span><br><span class="line"><span class="keyword">import</span> MySQLdb</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 公共部分</span></span><br><span class="line"><span class="comment"># 数据库设置</span></span><br><span class="line">username = <span class="string">'YOUR_USERNAME'</span>		<span class="comment"># 你的数据库用户名</span></span><br><span class="line">password = <span class="string">'YOUR_PASSWORD'</span>		<span class="comment"># 你的数据库密码</span></span><br><span class="line">dbname = <span class="string">'YOUR_DB'</span>							<span class="comment"># 你创建的表所在的数据库</span></span><br><span class="line">dbport = <span class="number">3306</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据库连接函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">connectMySQL</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 连接mysql数据库</span></span><br><span class="line">    conn = MySQLdb.connect(</span><br><span class="line">        host=<span class="string">'localhost'</span>,</span><br><span class="line">        port=dbport,</span><br><span class="line">        user=username,</span><br><span class="line">        passwd=password,</span><br><span class="line">        db=dbname,</span><br><span class="line">        charset=<span class="string">'utf8'</span>,</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">return</span> conn</span><br><span class="line"></span><br><span class="line"><span class="comment"># 接口部分</span></span><br><span class="line"><span class="comment"># 返回一条糗事百科上的段子</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_joke</span><span class="params">(request)</span>:</span></span><br><span class="line">    response = <span class="string">''</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># 连接数据库</span></span><br><span class="line">        conn = connectMySQL()</span><br><span class="line">        cur = conn.cursor()</span><br><span class="line">        <span class="comment"># 生成随机抓取id</span></span><br><span class="line">        sql = <span class="string">'select count(*) from qiushi_joke'</span></span><br><span class="line">        cur.execute(sql)</span><br><span class="line">        joke_sum = cur.fetchone()[<span class="number">0</span>]</span><br><span class="line">        joke_idx = random.randint(<span class="number">1</span>,joke_sum)</span><br><span class="line">        <span class="comment"># 抓取该id的段子数据</span></span><br><span class="line">        sql = <span class="string">'select * from qiushi_joke where id=%d'</span>%joke_idx</span><br><span class="line">        cur.execute(sql)</span><br><span class="line">        joke = &#123;&#125;</span><br><span class="line">	joke[<span class="string">'id'</span>],joke[<span class="string">'username'</span>],joke[<span class="string">'content'</span>],joke[<span class="string">'laugh_num'</span>],joke[<span class="string">'comment_num'</span>],joke[<span class="string">'imgurl'</span>] = cur.fetchone()</span><br><span class="line">        response = json.dumps(joke,ensure_ascii=<span class="keyword">False</span>)</span><br><span class="line">        <span class="comment"># 关闭数据库连接</span></span><br><span class="line">        cur.close()</span><br><span class="line">        conn.close()</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">print</span> e</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(response)</span><br></pre></td></tr></table></figure></p>
+<p>前端接口封装好之后，可以在浏览器中输入以下url测试这个接口：</p>
+<p><a href="http://www.yangyingming.com/api/get_joke/" target="_blank" rel="noopener">http://www.yangyingming.com/api/get_joke/</a></p>
+<p>每次刷新都会返回不同的段子。</p>
+<p>###5、集成在微信机器人中</p>
+<p><strong>作用</strong>：将“讲个段子”功能集成到微信机器人的聊天功能中，用户在聊天窗口发送“讲个段子”类似的消息时，随机回复一条段子。</p>
+<p><strong>代码</strong>：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@robot.text</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">echo</span><span class="params">(message)</span>:</span></span><br><span class="line">    <span class="keyword">if</span>  re.compile(<span class="string">".*?笑话.*?"</span>).match(msg) <span class="keyword">or</span>\</span><br><span class="line">     	re.compile(<span class="string">".*?段子.*?"</span>).match(msg):</span><br><span class="line">        apiurl = <span class="string">"http://www.yangyingming.com/api/get_joke"</span></span><br><span class="line">        response = get_html(apiurl,timeout=timeout)</span><br><span class="line">        joke = json.loads(response)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'%s\n搞笑指数：%d'</span>%(joke[<span class="string">'content'</span>].encode(<span class="string">'utf8'</span>),joke[<span class="string">'laugh_num'</span>])</span><br></pre></td></tr></table></figure></p>
+<p>运行效果：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/3/af56e3eb-1de3-4eff-bb1b-617a85be7993.jpg" alt=""></p>
+<p>以上，就是我的微信公众号开发中 <strong>简单的聊天功能，天气查询，讲笑话</strong> 三个功能的实现过程，在这里分享给大家，欢迎吐槽！</p>
+<p>##后续<br><a href="http://www.yangyingming.com/article/368/" target="_blank" rel="noopener">基于Django、WeRoBot的微信公众平台开发（二） - 后续</a></p>
+<p>##参考资料</p>
+<p><a href="http://www.cnblogs.com/fatcat132006/p/4081576.html" target="_blank" rel="noopener">python中cursor操作数据库</a></p>
+<p><a href="http://www.cnblogs.com/yd1227/archive/2011/03/18/1988015.html" target="_blank" rel="noopener">Python中的random模块</a>转载请注明：</p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/03/02/记录安装 mysql5.7 过程中遇到的两个坑/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/27/什么是《轻量级Django》？/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-03-01 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

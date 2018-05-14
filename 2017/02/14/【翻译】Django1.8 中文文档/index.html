@@ -1,0 +1,394 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>【翻译】Django1.8 中文文档 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="原文链接：Django documentation
+关于Django你需要知道的一些事情。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="【翻译】Django1.8 中文文档"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 【翻译】Django1.8 中文文档</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>原文链接：<a href="https://docs.djangoproject.com/en/1.8/" target="_blank" rel="noopener">Django documentation</a></p>
+<p>关于Django你需要知道的一些事情。<br><a id="more"></a></p>
+<p>##开始你的第一步<br>你是第一次接触Django或者……编程吗？那就从这里开始吧！</p>
+<ul>
+<li>从零开始：概览 | 安装</li>
+<li>教程：第一章: 模型 | 第二章: 用admin管理站点 | 第三章: 视图和模板 | 第四章: 表单和通用视图 | 第五章: 测试你的网站 | 第六章: 静态文件</li>
+<li>高级教程：怎样写一个复用性强的应用 | 编写你的第一个Django补丁</li>
+</ul>
+<p>##模型层</p>
+<p>为了构建和操作你的网站应用数据，Django提供了一个抽象层（即“模型层”）。继续读你可以学习到更多关于模型层的知识：</p>
+<ul>
+<li>模型：什么是模型？ |  字段类型 | 元选项 | 模型类</li>
+<li>QuerySets：执行查询 | QuerySet API参考 | 查找表达式</li>
+<li>模型的实例：实例方法 | 访问关联对象</li>
+<li>迁移：什么是迁移？ | 迁移 API参考 | 模式编辑器 | 编写迁移脚本</li>
+<li>高级篇：管理器 | 执行原始SQL语句 | 事务 | 聚合 | 自定义字段 | 多数据库 | 自定义查找 | 查询表达式 | 条件表达式 | 数据库函数</li>
+<li>其它：支持的数据库 | 其它数据库 | 提供初始数据 | 优化数据库访问 | PostgreSQL特殊特征</li>
+</ul>
+<p>##视图层</p>
+<p>Django具有“视图”的概念，以便更好的封装用户的请求以及返回响应这一逻辑过程。通过以下链接你可以找到你想了解的内容：</p>
+<ul>
+<li>基础：URL设置 | 视图函数 | 快捷函数 | 装饰器</li>
+<li>参考：内建的视图 | 请求/响应对象 | 模板响应对象</li>
+<li>文件上传：概览 | 文件对象 | 存储API | 管理文件 | 自定义存储</li>
+<li>基于类的视图：概览 | 内建展示视图 | 内建编辑视图 | 使用Mixins | API参考 | 各种视图的分类</li>
+<li>高级：生成 CSV | 生成 PDF</li>
+<li>中间件：概览 | 内建中间件类</li>
+</ul>
+<p>##模板层</p>
+<p>模型层提供设计友好的语法来渲染用户要请求的信息。设计师可以学习它的语法，程序员可以学习如何扩展它：</p>
+<ul>
+<li>基础：概览</li>
+<li>面向设计师：语法概览 | 内建标签和过滤器 | 人性化</li>
+<li>面向程序员：模板API | 自定义标签和过滤器</li>
+</ul>
+<p>##表单</p>
+<p>Django提供一个多功能的框架来便捷的创建表单和操作表单数据。</p>
+<ul>
+<li>基础：概览 | 表单 API | 内建字段 | 内建Widget</li>
+<li>高级：表单和模型 | 整合媒体文件 | 表单集 | 自定义验证</li>
+</ul>
+<p>##开发流程</p>
+<p>学习多种组件和工具帮助你开发和测试你的Django应用：</p>
+<ul>
+<li>设置：概览 | 设置清单</li>
+<li>应用：概览</li>
+<li>异常：概览</li>
+<li>django-admin 和 manage.py：概览 | 添加自定义命令</li>
+<li>测试：简介 | 编写并运行测试脚本 | 包含的测试工具 | 高级主题</li>
+<li>部署：概览 | WSGI 服务 | 部署静态文件 | 通过email追踪代码错误</li>
+</ul>
+<p>##Admin界面</p>
+<p>自动生成admin管理界面的接口是Django中最受欢迎的功能之一：</p>
+<ul>
+<li>admin管理界面</li>
+<li>admin管理操作</li>
+<li>admin文档生成器</li>
+</ul>
+<p>##安全</p>
+<p>安全是web开发领域中一项至关重要的话题，Django提供多种保护网站的工具和机制。</p>
+<ul>
+<li>安全概览</li>
+<li>Django中公开的安全问题</li>
+<li>点击劫持保护</li>
+<li>伪造跨站请求保护</li>
+<li>加密签名</li>
+<li>安全中间件</li>
+</ul>
+<p>##国际化和本地化</p>
+<p>Django提供一种健壮的国际化和本地化框架来协助你开发跨多种语言和地区的应用。</p>
+<ul>
+<li>概览 | 国际化 | 本地化 | 本地化Web UI格式化和表单输入</li>
+<li>时区</li>
+</ul>
+<p>##性能和优化</p>
+<p>Django提供多种技术和工具使你的代码更有效的运行、获得更快的速度，以及更好的使用系统资源。</p>
+<ul>
+<li>性能和优化概览</li>
+</ul>
+<p>##Python的兼容性</p>
+<p>Django的目标是兼容不同的python版本和特性：</p>
+<ul>
+<li>关于Jython支持</li>
+<li>关于Python 3 的兼容性</li>
+</ul>
+<p>##Geographic框架</p>
+<p>GeoDjango旨在成为一个世界级的地理框架。它的目标是尽可能简单的建立GIS地理信息网站应用，以及更好的利用可用的空间数据。</p>
+<p>##常用的Web应用工具</p>
+<p>Django提供多种常用的工具帮助你开发Web应用：</p>
+<ul>
+<li>认证：概览 | 使用认证系统 | 密码管理 | 自定义认证 | API 参考</li>
+<li>缓存</li>
+<li>日志</li>
+<li>发送邮件</li>
+<li>聚合内容（RSS/Atom）</li>
+<li>分页</li>
+<li>消息框架</li>
+<li>序列化</li>
+<li>会话</li>
+<li>站点地图</li>
+<li>静态文件管理</li>
+<li>数据验证</li>
+</ul>
+<p>##其它核心功能</p>
+<p>学习Django框架的其它核心功能：</p>
+<ul>
+<li>条件内容处理</li>
+<li>内容类型和泛型的关系</li>
+<li>Flatpages数据浏览</li>
+<li>重定向</li>
+<li>信号</li>
+<li>系统检查框架</li>
+<li>“sites”框架</li>
+<li>Django中的unicode编码</li>
+</ul>
+<p>##Django开源项目</p>
+<p>了解Django项目的开发进度，以及如何贡献你的力量：</p>
+<ul>
+<li>社区：如何成为社区的一员？ | 发布流程 | 团队组织 | 约见团队 | 当前角色 | Django源码库 | 安全策略 | 邮件列表</li>
+<li>设计理念：概览</li>
+<li>文档：关于该文档</li>
+<li>第三方发行：概览</li>
+<li>Django路线图：API 兼容性 | Release 与 Upgrade | 废弃用法</li>
+</ul>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/358" target="_blank" rel="noopener">【翻译】Django1.8 中文文档</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/20/搭建网站自动备份机制（crontab+mysqldump+tar+oss）/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/14/【IJCAI-17 口碑商家客流量预测】使用Pandas计算商家平均客流量/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-14 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

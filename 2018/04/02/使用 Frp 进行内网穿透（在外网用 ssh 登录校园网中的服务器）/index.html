@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>使用 Frp 进行内网穿透（在外网用 ssh 登录校园网中的服务器） | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="前言最近想在外网用 ssh 登录内网（校园网）的服务器，以便在外网也能跑跑实验什么的，于是研究了一下常用的内网穿透工具，下面分享下我的心得。
+首先介绍一下 内网穿透解决的痛点，比如导师在你们实验室买了一台高配服务器，装配有高端显卡，可以用来跑深度学习模型，你在实验室玩的很开心。但是到了暑假你不得不离开实验室，回到家里的外网没法访问处于实验室内网的服务器，vpn也没法用！这怎么办呢，这个时候可以用内网穿透工具来解决这个问题啦！
+部署的思路 是把内网穿透工具的客户端部署在内网服务器中，然后在有独立域名的 VPS 中部署内网穿透工具的服务端，然后你在外网的随便一台机器上用 ssh 登录你的 VPS 的 IP 和配置好的端口，便可以登录内网的服务器啦！
+其实 原理 就是把 VPS 当做一个“桥”，和内网的操作全部通过互联网和这个“桥”连通，这样便打穿了内网和外网的界限。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用 Frp 进行内网穿透（在外网用 ssh 登录校园网中的服务器）"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 使用 Frp 进行内网穿透（在外网用 ssh 登录校园网中的服务器）</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近想在外网用 ssh 登录内网（校园网）的服务器，以便在外网也能跑跑实验什么的，于是研究了一下常用的内网穿透工具，下面分享下我的心得。</p>
+<p>首先介绍一下 <strong>内网穿透解决的痛点</strong>，比如导师在你们实验室买了一台高配服务器，装配有高端显卡，可以用来跑深度学习模型，你在实验室玩的很开心。但是到了暑假你不得不离开实验室，回到家里的外网没法访问处于实验室内网的服务器，vpn也没法用！这怎么办呢，这个时候可以用内网穿透工具来解决这个问题啦！</p>
+<p><strong>部署的思路</strong> 是把内网穿透工具的客户端部署在内网服务器中，然后在有独立域名的 VPS 中部署内网穿透工具的服务端，然后你在外网的随便一台机器上用 ssh 登录你的 VPS 的 IP 和配置好的端口，便可以登录内网的服务器啦！</p>
+<p>其实 <strong>原理</strong> 就是把 VPS 当做一个“桥”，和内网的操作全部通过互联网和这个“桥”连通，这样便打穿了内网和外网的界限。<br><a id="more"></a></p>
+<h2 id="三款内网穿透工具"><a href="#三款内网穿透工具" class="headerlink" title="三款内网穿透工具"></a>三款内网穿透工具</h2><p>下面介绍一下我了解的三种内网穿透工具，花生壳、Ngrok 和 Frp。</p>
+<p>最常见也是最知名的内网穿透工具大概就是花生壳了，优点是功能强大，配置完善，缺点是要花钱，这个方案果断放弃。</p>
+<p>然后我尝试了 Ngrok，相比花生壳它的优点是开源、免费，缺点是部署偏麻烦，编译到一半的时候发现 Frp 可以直接使用二进制包，果断弃坑。</p>
+<p>Frp 也是一款开源、免费的内网穿透工具，诞生时间晚，但是十分具有活力，简单实用。按照教程部署了 Frp 的服务端和客户端，5分钟便实现了内网穿透，在外网通过 ssh 访问了内网的服务器。赞一个。</p>
+<h2 id="部署-Frp"><a href="#部署-Frp" class="headerlink" title="部署 Frp"></a>部署 Frp</h2><p>部署的方法我就不啰嗦了，参考 <a href="https://github.com/fatedier/frp" target="_blank" rel="noopener">github 的 Frp 主页</a> 或者 看教程都行。教程可见：<a href="https://blog.csdn.net/qq_25351621/article/details/78947477" target="_blank" rel="noopener">frp内网穿透搭建，超级简单实用</a>，亲测可用。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><p>一分钟实现内网穿透（ngrok服务器搭建）<br><a href="https://blog.csdn.net/zhangguo5/article/details/77848658" target="_blank" rel="noopener">https://blog.csdn.net/zhangguo5/article/details/77848658</a></p>
+</li>
+<li><p>搭建 ngrok 实现内网穿透<br><a href="https://blog.csdn.net/per_son/article/details/53738330" target="_blank" rel="noopener">https://blog.csdn.net/per_son/article/details/53738330</a></p>
+</li>
+<li><p>如何远程登录家里的Ubuntu电脑(命令行模式)？ - 知乎<br><a href="https://www.zhihu.com/question/27771692" target="_blank" rel="noopener">https://www.zhihu.com/question/27771692</a></p>
+</li>
+<li><p>frp内网穿透搭建，超级简单实用<br><a href="https://blog.csdn.net/qq_25351621/article/details/78947477" target="_blank" rel="noopener">https://blog.csdn.net/qq_25351621/article/details/78947477</a></p>
+</li>
+</ul>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/407" target="_blank" rel="noopener">使用 Ngrok 进行内网穿透（在外网用 ssh 登录校园网中的服务器）</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2018/04/02/解决VPS经SS访问Google Schoolar受限（补充）/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2018/03/18/2018 年 4 月份阅读记录/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2018-04-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

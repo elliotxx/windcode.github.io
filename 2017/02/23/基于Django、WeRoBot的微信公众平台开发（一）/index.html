@@ -1,0 +1,325 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>基于Django、WeRoBot的微信公众平台开发（一） | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="* 该教程基于第三方微信公众号开发框架 WeRoBot* 该教程在已有Django项目上开发，即在一个已上线网站项目中集成微信公众平台后台* 你需要有一个VPS/云服务器
+今天突发奇想，打算申请一个微信公众账号玩玩，以便同步博客上的一些文章。
+由于在学python，于是打算用Python来开发微信公众号的后台。
+为了方便开发，我在github上寻找微信公众号开发的框架，最后锁定了 WeRoBot。
+下面我将使用WeRoBot搭建一个简单的微信公众号后台，并集成在一个已上线的Django网站项目中。
+废话不多说了，我们开始吧！">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="基于Django、WeRoBot的微信公众平台开发（一）"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 基于Django、WeRoBot的微信公众平台开发（一）</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>* 该教程基于第三方微信公众号开发框架 <a href="https://github.com/whtsky/WeRoBot" target="_blank" rel="noopener">WeRoBot</a><br>* 该教程在已有Django项目上开发，即在一个已上线网站项目中集成微信公众平台后台<br>* 你需要有一个VPS/云服务器</p>
+<p>今天突发奇想，打算申请一个微信公众账号玩玩，以便同步博客上的一些文章。</p>
+<p>由于在学python，于是打算用Python来开发微信公众号的后台。</p>
+<p>为了方便开发，我在github上寻找微信公众号开发的框架，最后锁定了 <a href="https://github.com/whtsky/WeRoBot" target="_blank" rel="noopener">WeRoBot</a>。</p>
+<p>下面我将使用WeRoBot搭建一个简单的微信公众号后台，并集成在一个已上线的Django网站项目中。</p>
+<p>废话不多说了，我们开始吧！<br><a id="more"></a></p>
+<p>##注册一个微信公众账号</p>
+<p>首先我们要有一个微信公众号，申请过程很简单。</p>
+<p>注册位置：<a href="https://mp.weixin.qq.com/cgi-bin/registermidpage?action=index&amp;lang=zh_CN" target="_blank" rel="noopener">微信公众账号 - 注册</a></p>
+<p>注册一个 <strong>订阅号/个人</strong> ，填写 <strong>公众号名称</strong>，具体注册过程这里不赘述。</p>
+<p>注册成功之后，可进入微信公众号后台：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/aa170133-2bab-45b6-8a66-aae38aff0d34.png" alt=""></p>
+<p>##配置开发者页面</p>
+<p>点击 <strong>开发 -&gt; 基本配置</strong>，进入开发者页面</p>
+<p>首先在 <strong>开发者ID</strong> 栏目中生成你的 <strong>AppSecret(应用密钥)</strong>，记下你的AppID和AppSecret，后面验证身份的时候会用到。</p>
+<p>然后修改你的 <strong>服务器配置</strong>，点击后面的 <strong>修改配置</strong>，填写你的服务器配置。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/7832a412-a2ec-47d7-87a3-71639029919e.png" alt=""></p>
+<p>这里你需要自定义你的 <strong>URL</strong> 和 <strong>Token</strong>。</p>
+<ul>
+<li><p>URL是你的微信公众号后台地址，客户端所有的请求都会发到这个地址上，你需要编写后台程序响应这些请求。</p>
+</li>
+<li><p>Token是用来验证你的开发者身份的，只有通过了身份验证，后台程序才能生效。</p>
+</li>
+</ul>
+<p>注意：URL一栏中 <figure class="highlight plain"><figcaption><span>不要写成 ```/robot```，否则会无响应。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">配置好之后先不要点击提交，因为我们还没有写后台程序。</span><br><span class="line"></span><br><span class="line">接下来我们就要请出WeRoBot来协助我们开发微信公众号的后台。</span><br><span class="line"></span><br><span class="line">##安装WeRoBot</span><br><span class="line"></span><br><span class="line">执行代码  </span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">pip install werobot</span><br></pre></td></tr></table></figure></p>
+<p>安装过程</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/d82566a1-cc08-4217-be1c-66225a4787e3.png" alt=""></p>
+<p>##在Django中集成基于WeRoBot的微信公众号后台</p>
+<p>在Django中添加robot.py文件，负责响应微信客户端请求</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/7024b0e4-4d1f-4bfa-9a59-c68ce57fc1f6.png" alt=""></p>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">1</span> <span class="comment">#coding=utf8</span></span><br><span class="line"> <span class="number">2</span> <span class="keyword">from</span> werobot <span class="keyword">import</span> WeRoBot</span><br><span class="line"> <span class="number">3</span></span><br><span class="line"> <span class="number">4</span> robot = WeRoBot(enable_session=<span class="keyword">False</span>,</span><br><span class="line"> <span class="number">5</span>                 token=<span class="string">'yourtoken'</span>,</span><br><span class="line"> <span class="number">6</span>                 APP_ID=<span class="string">'yourappid'</span>,</span><br><span class="line"> <span class="number">7</span>                 APP_SECRET=<span class="string">'yourappsecret'</span>)</span><br><span class="line"> <span class="number">8</span></span><br><span class="line"> <span class="number">9</span> @robot.handler</span><br><span class="line"><span class="number">10</span> <span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">(message)</span>:</span></span><br><span class="line"><span class="number">11</span>     <span class="keyword">return</span> <span class="string">'Hello world'</span></span><br><span class="line"><span class="number">12</span></span><br></pre></td></tr></table></figure>
+<p>@robot.handler表示对任何消息都做回复，这里的代码表示所有请求都回复“hello world”。</p>
+<p>在Django中修改url.py文件，将微信客户端的请求指向到robot.py</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/f2bd8b4f-dff2-4d6f-b5c6-e4d988cb97ae.png" alt=""></p>
+<p>代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">16</span> <span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> include, url</span><br><span class="line"><span class="number">17</span> <span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="number">18</span></span><br><span class="line"><span class="number">19</span> <span class="keyword">from</span> blog.views <span class="keyword">import</span> index,archive,category,tag,article,search,board,about</span><br><span class="line"><span class="number">20</span> <span class="keyword">from</span> django.conf <span class="keyword">import</span> settings</span><br><span class="line"><span class="number">21</span> <span class="keyword">from</span> blog.upload <span class="keyword">import</span> upload_image</span><br><span class="line"><span class="number">22</span> <span class="keyword">from</span> werobot.contrib.django <span class="keyword">import</span> make_view</span><br><span class="line"><span class="number">23</span> <span class="keyword">from</span> robot <span class="keyword">import</span> robot</span><br><span class="line"><span class="number">24</span></span><br><span class="line"><span class="number">25</span> urlpatterns = [</span><br><span class="line"><span class="number">26</span>     <span class="comment"># 微信公众号响应页面</span></span><br><span class="line"><span class="number">27</span>     url(<span class="string">r'^robot/'</span>,make_view(robot)),</span><br><span class="line"><span class="number">28</span></span><br></pre></td></tr></table></figure>
+<p>##微信后台提交修改</p>
+<p>微信后台的代码我们已经写好了，回到后台的服务器配置页面，点击 <strong>提交</strong>。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/6b640bc8-8ea1-44c0-a369-052ad145329c.png" alt=""></p>
+<p>若token验证成功，会提示“提交成功”</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/9cba591c-af84-4f1a-a1bf-fb1abd1ab312.png" alt=""></p>
+<p>##启动服务器配置</p>
+<p>启动配置</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/0a44fcc2-0d21-4b06-965d-2315f9362c63.png" alt=""></p>
+<p>启动成功</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/0f0f9f3e-144d-4f77-a8ca-ad87e8c46bdd.png" alt=""></p>
+<p>##手机端验证</p>
+<p>打开手机微信客户端，关注公众号，并回复任意消息。若收到 “hello world”，证明微信公众号后台已搭建成功。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/2/6a4a0ed9-6cc2-4410-8830-a1733a64d0b3.jpg" alt=""></p>
+<p>##下一篇<br><a href="http://www.yangyingming.com/article/364/" target="_blank" rel="noopener">基于Django、WeRoBot的微信公众平台开发（二）</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/361" target="_blank" rel="noopener">基于Django、WeRoBot的微信公众平台开发（一）</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/27/什么是《轻量级Django》？/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/22/修改博客系统的第三方库/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-23 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

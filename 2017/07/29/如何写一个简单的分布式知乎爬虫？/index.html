@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>如何写一个简单的分布式知乎爬虫？ | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="前言很早就有采集知乎用户数据的想法，要实现这个想法，需要写一个网络爬虫（Web Spider）。因为在学习 python，正好 python 写爬虫也是极好的选择，于是就写了一个基于 python 的网络爬虫。
+几个月前写了爬虫的初版，后来因为一些原因，暂时搁置了下来，最近重新拾起这个想法。首先优化了代码的结构，然后在学弟的提醒下，从多线程改成了多进程，一台机器上运行一个爬虫程序，会启动几百个子进程加速抓取。
+但是一台机器的性能是有极限的，所以后来我使用 MongoDB 和 Redis 搭建了一个主从结构的分布式爬取系统，来进一步加快抓取的速度。
+然后我就去好几个服务器厂商申请免费的试用，比如百度云、腾讯云、Ucloud…… 加上自己的笔记本，断断续续抓取了一个多周，才采集到300万知乎用户数据。中间还跑坏了运行网站的云主机，还好 自动备份 起作用，数据没有丢失，但那又是另外一个故事了……
+完整版的爬虫链接在这儿：windcode/zhihu-crawler-people，走过路过别忘了点个 star ~
+废话不多说，下面我介绍一下如何写一个简单的分布式知乎爬虫。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="如何写一个简单的分布式知乎爬虫？"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 如何写一个简单的分布式知乎爬虫？</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p><img src="http://yangyingming.com/uploads/markdownx/2017/7/9c92390b-a18e-45ca-9452-4d43607c3d83.jpg" alt=""></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>很早就有采集知乎用户数据的想法，要实现这个想法，需要写一个网络爬虫（Web Spider）。因为在学习 python，正好 python 写爬虫也是极好的选择，于是就写了一个基于 python 的网络爬虫。</p>
+<p>几个月前写了爬虫的初版，后来因为一些原因，暂时搁置了下来，最近重新拾起这个想法。首先优化了代码的结构，然后在学弟的提醒下，从多线程改成了多进程，一台机器上运行一个爬虫程序，会启动几百个子进程加速抓取。</p>
+<p>但是一台机器的性能是有极限的，所以后来我使用 MongoDB 和 Redis 搭建了一个主从结构的分布式爬取系统，来进一步加快抓取的速度。</p>
+<p>然后我就去好几个服务器厂商申请免费的试用，比如百度云、腾讯云、Ucloud…… 加上自己的笔记本，断断续续抓取了一个多周，才采集到300万知乎用户数据。中间还跑坏了运行网站的云主机，还好 <a href="http://yangyingming.com/article/359/" target="_blank" rel="noopener">自动备份</a> 起作用，数据没有丢失，但那又是另外一个故事了……</p>
+<p>完整版的爬虫链接在这儿：<a href="https://github.com/windcode/zhihu-crawler-people" target="_blank" rel="noopener">windcode/zhihu-crawler-people</a>，走过路过别忘了点个 star ~</p>
+<p>废话不多说，下面我介绍一下如何写一个简单的分布式知乎爬虫。<br><a id="more"></a></p>
+<h2 id="抓取知乎用户的个人信息"><a href="#抓取知乎用户的个人信息" class="headerlink" title="抓取知乎用户的个人信息"></a>抓取知乎用户的个人信息</h2><p>我们要抓取知乎用户数据，首先要知道在哪个页面可以抓取到用户的数据。知乎用户的个人信息在哪里呢，当然是在用户的主页啦，我们以轮子哥为例 ~</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/662dde31-6aff-431c-853c-5fa7cfab620a.png" alt=""></p>
+<p>红框里的便我们要抓取的用户关键信息（的一部分）。</p>
+<p>最上面是我们的目标URL：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">观察一下这个URL的组成：</span><br><span class="line"></span><br><span class="line">http://www.zhihu.com + /people + **/excited-vczh** + /answer</span><br><span class="line"></span><br><span class="line">可以发现只有 **excited-vczh** 这部分是会变化的，它代表着知乎用户的唯一ID，在知乎的数据格式中，它的键名叫做 **urlToken**。</span><br><span class="line"></span><br><span class="line">所以我们可以用拼接字符串的形式，得到我们待抓取页面的URL：</span><br><span class="line">```python</span><br><span class="line">url = &apos;%s/people/%s/answers&apos;%(host,urlToken)</span><br></pre></td></tr></table></figure></p>
+<p>页面URL有了，而且从上图我们可以发现 <strong>不登录</strong> 也可以访问用户主页，这说明我们可以不用考虑模拟登陆的问题，可以自由的获取用户主页面源码。</p>
+<p>那么我们如何从用户主页的源码中获取用户的数据呢？一开始我以为需要挨个匹配页面中对应的部分，但我查看源码的时候发现知乎把用户数据集集中放到了源码的一个地方，那就是 id=”data” 的 div 的 <strong>data-state</strong> 属性的值中，看下图：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/f3dd2c9c-3bed-4a85-9410-03ec7c0e195d.png" alt=""></p>
+<p>从上图我们可以发现，<strong>date-state</strong> 的属性值中藏有用户的信息，比如我们可以依次找到用户的教育经历（educations）、简介（headline）、参与的 Live 数量（participatedLiveCount）、关注的收藏夹数量（followingFavlistsCount）、被收藏的次数（favoritedCount）、关注他的用户数（followerCount）、关注的话题数量（followingTopicCount）、用户描述（description）等信息。通过观察我们也可以发现，数据应该是以 JSON 格式存储。</p>
+<p>知道了用户数据都藏在 <strong>date-state</strong> 中，我们 <strong>用 BeautifulSoup 把该属性的值取出来，然后作为 JSON 格式读取，再把数据集中存储用户数据的部分提取出来即可</strong>，看代码：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解析html</span></span><br><span class="line">s = BS(html,<span class="string">'html.parser'</span>)</span><br><span class="line"><span class="comment"># 获得该用户藏在主页面中的json格式数据集</span></span><br><span class="line">data = s.find(<span class="string">'div'</span>,attrs=&#123;<span class="string">'id'</span>:<span class="string">'data'</span>&#125;)[<span class="string">'data-state'</span>]</span><br><span class="line">data = json.loads(data)</span><br><span class="line">data = data[<span class="string">'entities'</span>][<span class="string">'users'</span>][urlToken]</span><br></pre></td></tr></table></figure></p>
+<p>如此，我们便得到了某一个用户的个人信息。</p>
+<h2 id="抓取知乎用户的关注者列表"><a href="#抓取知乎用户的关注者列表" class="headerlink" title="抓取知乎用户的关注者列表"></a>抓取知乎用户的关注者列表</h2><p>刚刚我们讨论到可以通过抓取用户主页面源码来获取个人信息，而用户主页面可以通过拼接字符串的形式得到 URL，其中拼接的关键是 <strong>如何获取用户唯一ID —— urlToken</strong>？</p>
+<p>我采用的方法是 <strong>抓取用户的关注者列表</strong>。</p>
+<p>每个用户都会有关注者列表，比如轮子哥的：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/124e8122-d70b-4f8d-b1c0-264d7c8d508e.png" alt=""></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/f035788a-8d0b-4704-8ee6-970e6fb44996.png" alt=""></p>
+<p>和获取个人信息同样的方法，我们可以在该页面源码的 <strong>date-state</strong> 属性值中找到关注他的用户（一部分）：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/dae73fe7-a0e4-4500-87a8-fcd5cae55d3b.png" alt=""></p>
+<p>名为 <strong>ids</strong> 的键值中存储有当前列表页的所有用户的 <strong>urlToken</strong>，默认列表的每一页显示20个用户，所以我们写一个循环便可以获取<strong>当前页</strong>该用户的所有关注者的 <strong>urlToken</strong>。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解析当前页的 html   </span></span><br><span class="line">url = <span class="string">'%s/people/%s/followers?page=%d'</span>%(host,urlToken,page)</span><br><span class="line">html = c.get_html(url)</span><br><span class="line">s = BS(html,<span class="string">'html.parser'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获得当前页的所有关注用户</span></span><br><span class="line">data = s.find(<span class="string">'div'</span>,attrs=&#123;<span class="string">'id'</span>:<span class="string">'data'</span>&#125;)[<span class="string">'data-state'</span>]</span><br><span class="line">data = json.loads(data)</span><br><span class="line">items = data[<span class="string">'people'</span>][<span class="string">'followersByUser'</span>][urlToken][<span class="string">'ids'</span>]</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> items:</span><br><span class="line">	<span class="keyword">if</span> item!=<span class="keyword">None</span> <span class="keyword">and</span> item!=<span class="keyword">False</span> <span class="keyword">and</span> item!=<span class="keyword">True</span> <span class="keyword">and</span> item!=<span class="string">'知乎用户'</span>.decode(<span class="string">'utf8'</span>):</span><br><span class="line">		node = item.encode(<span class="string">'utf8'</span>)</span><br><span class="line">		follower_list.append(node)</span><br></pre></td></tr></table></figure></p>
+<p>再写一个循环遍历关注者列表的所有页，便可以获取用户的所有关注者的 urlToken。</p>
+<p>有了每个用户在知乎的唯一ID，我们便可以通过拼接这个ID得到每个用户的主页面URL，进一步获取到每个用户的个人信息。</p>
+<p>我选择抓取的是用户的<strong>关注者列表</strong>，即关注这个用户的所有用户（follower）的列表，其实你也可以选择抓取用户的<strong>关注列表</strong>（following）。我希望抓取更多知乎非典型用户（潜水用户），于是选择了抓取关注者列表。当时抓取的时候有这样的担心，万一这样抓不到主流用户怎么办？毕竟很多知乎大V虽然关注者很多，但是主动关注的人相对都很少，而且关注的很可能也是大V。但事实证明，主流用户基本都抓取到了，看来基数提上来后，总有缝隙出现。</p>
+<h2 id="反爬虫机制"><a href="#反爬虫机制" class="headerlink" title="反爬虫机制"></a>反爬虫机制</h2><p>频繁抓取会被知乎封IP，也就是常说的反爬虫手段之一，不过俗话说“道高一尺，魔高一丈”，既然有反爬虫手段，那么就一定有反反爬虫手段，咳，我自己起的名……</p>
+<p>言归正传，如果知乎封了你的IP，那么怎么办呢？很简单，换一个IP。这样的思想催生了 <strong>代理IP池</strong> 的诞生。所谓代理IP池，是一个代理IP的集合，使用代理IP可以伪装你的访问请求，让服务器以为你来自不同的机器。</p>
+<p>于是我的 <strong>应对知乎反爬虫机制的策略</strong> 就很简单了：全力抓取知乎页面 –&gt; 被知乎封IP –&gt; 换代理IP –&gt; 继续抓 –&gt; 知乎继续封 –&gt; 继续换 IP….. （手动斜眼）</p>
+<p>使用 代理IP池，你可以选择用付费的服务，也可以选择自己写一个，或者选择用现成的轮子。我选择用七夜写的 <a href="https://github.com/qiyeboy/IPProxyPool" target="_blank" rel="noopener">qiyeboy/IPProxyPool</a> 搭建代理池服务，部署好之后，修改了一下代码让它只保存https协议的代理IP，因为 <strong>使用http协议的IP访问知乎会被拒绝</strong>。</p>
+<p>搭建好代理池服务后，我们便可以随时在代码中获取以及使用代理 IP 来伪装我们的访问请求啦！</p>
+<p>（其实反爬手段有很多，代理池只是其中一种）</p>
+<h2 id="简单的分布式架构"><a href="#简单的分布式架构" class="headerlink" title="简单的分布式架构"></a>简单的分布式架构</h2><p>多线程/多进程只是最大限度的利用了单台机器的性能，如果要利用多台机器的性能，便需要分布式的支持。</p>
+<p>如何搭建一个简单的分布式爬虫？</p>
+<p>我采用了 <strong>主从结构</strong>，即一台主机负责调度、管理待抓取节点，多台从机负责具体的抓取工作。</p>
+<p>具体到这个知乎爬虫来说，<strong>主机上搭建了两个数据库</strong>：<strong>MongoDB 和 Redis</strong>。MongoDB 负责存储抓取到的知乎用户数据，Redis 负责维护待抓取节点集合。<strong>从机上可以运行两个不同的爬虫程序</strong>，一个是抓取用户关注者列表的爬虫（list_crawler），一个是抓取用户个人资料的爬虫（info_crawler），他们可以配合使用，但是互不影响。</p>
+<p>我们重点讲讲主机上维护的集合，主机的 Redis 数据库中一共维护了5个集合：</p>
+<ul>
+<li>waiting：待抓取节点集合</li>
+<li>info_success：个人信息抓取成功节点集合</li>
+<li>info_failed：个人信息抓取失败节点集合</li>
+<li>list_success：关注列表抓取成功节点集合</li>
+<li>list_failed：关注列表抓取失败节点集合</li>
+</ul>
+<p>这里插一句，<strong>之所以采用集合（set），而不采用队列（queue）</strong>，是因为集合天然的带有唯一性，也就是说可以加入集合的节点一定是集合中没有出现过的节点，这里在5个集合中流通的节点其实是 <strong>urlToken</strong>。</p>
+<p>（其实集合可以缩减为3个，省去失败集合，失败则重新投入原来的集合，但我为了测速所以保留了5个集合的结构）</p>
+<p>他们的关系是：<br><img src="http://yangyingming.com/uploads/markdownx/2017/7/c4595153-977e-4ee0-b5a7-217c31157ce2.png" alt=""></p>
+<p><strong>举个具体的栗子</strong>：从一个 urlToken 在 waiting 集合中出现开始，经过一段时间，它被 info_crawler 爬虫程序从 waiting 集合中随机获取到，然后在 info_crawler 爬虫程序中抓取个人信息，如果抓取成功将个人信息存储到主机的 MongoDB 中，将该 urlToken 放到 info_success 集合中；如果抓取失败则将该 urlToken 放置到 info_failed 集合中。下一个阶段，经过一段时间后，list_crawler 爬虫程序将从 info_success 集合中随机获取到该 urlToken，然后尝试抓取该 urlToken 代表用户的关注者列表，如果关注者列表抓取成功，则将抓取到的所有关注者放入到 waiting 集合中，将该 urlToken 放到 list_success 集合中；如果抓取失败，将该 urlToken 放置到 list_failed 集合中。</p>
+<p>如此，主机维护的数据库，配合从机的 info_crawler 和 list_crawler 爬虫程序，便可以循环起来：<strong>info_crawler 不断从 waiting 集合中获取节点，抓取个人信息，存入数据库；list_crawler 不断的补充 waiting 集合</strong>。</p>
+<p>主机和从机的关系如下图：<br><img src="http://yangyingming.com/uploads/markdownx/2017/7/b08b1bc1-36a0-46a9-a844-3def95e249f1.png" alt=""></p>
+<p>主机是一台外网/局域网可以访问的“服务器”，从机可以是PC/笔记本/Mac/服务器，这个架构可以部署在外网也可以部署在内网。</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>本文分享的是如何写一个简单的分布式知乎爬虫，但愿能带给你启发。</p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/392" target="_blank" rel="noopener">如何写一个简单的分布式知乎爬虫？</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/08/06/2017 年 7 月份阅读记录/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/07/21/第一届 Bilibili World 参加体验！/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-07-29 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

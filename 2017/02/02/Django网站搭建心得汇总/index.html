@@ -1,0 +1,292 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Django网站搭建心得汇总 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="搭建该网站过程中的心得汇总。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Django网站搭建心得汇总"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Django网站搭建心得汇总</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p><img src="http://yangyingming.com/uploads/markdownx/2017/2/ed8eb5b9-9aed-4076-bf22-783b6034bc88.jpg" alt=""></p>
+<p>搭建该网站过程中的心得汇总。<br><a id="more"></a></p>
+<p>网站采用Django web框架开发，完全从0开始搭建。之所以不采用wordpress，主要是嫌它有些臃肿，另一方面也是为了学习一下Django，总之各有所好吧。</p>
+<p>一开始是一边学教程一边搭建，到后来发现我想实现的功能教程里根本没有提及，于是渐渐的开始抛开教程自己边查文档边改进。到后期基本是自己在瞎捣鼓研究，往往一个简单问题要花费半天时间才能解决，过后再回头看，发现走了不少冤枉路。不过捣鼓网站这段时间，前端和后端方面确实都有所提高。</p>
+<p>在这里将搭建网站期间的心得做一下汇总，短的直接写在这篇博文里，长的我写在了新博文里，在这里只汇总链接。</p>
+<h2 id="Django-markdownx-配置"><a href="#Django-markdownx-配置" class="headerlink" title="Django-markdownx 配置"></a>Django-markdownx 配置</h2><p>Django-markdownx是一款轻量级的Markdown编辑器，主要用于后台编辑文章。</p>
+<p>以下是Django-markdownx的配置心得：</p>
+<p><a href="http://www.yangyingming.com/article/12/" target="_blank" rel="noopener">Django-markdownx 支持gif动态图片上传</a></p>
+<p>[Django-markdownx 修改默认渲染引擎，支持GFM的<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[Django-markdownx 修改预览页默认CSS样式](http://www.yangyingming.com/article/351/)</span><br><span class="line"></span><br><span class="line">## Django-admin 相关</span><br><span class="line"></span><br><span class="line">Django-admin是网站的后台应用，写文章、添加用户、添加分类/标签 等常用操作都在这里。</span><br><span class="line"></span><br><span class="line">以下是与 Django-admin 相关的心得：</span><br><span class="line"></span><br><span class="line">[Django 后台添加more标签识别（自动截取文章简介）](http://www.yangyingming.com/article/350/)</span><br><span class="line"></span><br><span class="line">[Django admin 自定义Choice_field](http://www.yangyingming.com/article/14/)</span><br><span class="line"></span><br><span class="line">## 数据库相关</span><br><span class="line"></span><br><span class="line">[博客园文章迁移脚本(xml.sax+mysqldb)](http://www.yangyingming.com/article/352/)</span><br><span class="line"></span><br><span class="line">## Nginx和uWSGI 配置</span><br><span class="line"></span><br><span class="line">Nginx是一款服务器程序，与apache相比，它更轻量和快速。</span><br><span class="line"></span><br><span class="line">uWSGI是一款符合WSGI规范的服务器程序，由于nginx无法直接和Django通信，所以需要用它来做消息中转。</span><br><span class="line"></span><br><span class="line">部署Django网站的时候nginx和uWSGI的配置是主要难点。</span><br><span class="line"></span><br><span class="line">参考自：  </span><br><span class="line">[如何理解Nginx, WSGI, Flask之间的关系](http://blog.csdn.net/lihao21/article/details/52304119)  </span><br><span class="line">[Ubuntu上通过nginx部署Django笔记 - j_hao104](http://www.cnblogs.com/jhao/p/6071790.html)  </span><br><span class="line">[通过Nginx部署Django（基于ubuntu) - 虫师](http://www.cnblogs.com/fnng/p/5268633.html)  </span><br><span class="line">[uwsgi初始配置问题 - segmentsfault](https://segmentfault.com/q/1010000002523354)  </span><br><span class="line">[如何将django项目用Nginx部署到服务器? - 知乎](https://www.zhihu.com/question/22850801)</span><br><span class="line"></span><br><span class="line">## 修改博客系统的第三方库</span><br><span class="line">部署好nginx和uWSGI后，运行博客系统就要先搭建运行环境。</span><br><span class="line"></span><br><span class="line">博客系统的运行环境由Django、markdownx、markdown-deux、markdown2等第三方库组成。</span><br><span class="line"></span><br><span class="line">在写博客系统的过程中，为了实现自己的意图，我修改了一些第三方库的源代码。</span><br><span class="line"></span><br><span class="line">为了以后方便部署，在这里记录一下我修改的地方。</span><br><span class="line"></span><br><span class="line">详情见博文：[修改博客系统的第三方库](http://www.yangyingming.com/article/360/)</span><br><span class="line"></span><br><span class="line">## uWSGI 启动/关闭/重启脚本</span><br><span class="line"></span><br><span class="line">部署Django网站的时候经常需要重启uWSGI服务，每次操作都很麻烦，于是参考别人的代码整理了一个uWSGI启动/关闭/重启的脚本。</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">#!/bin/bash</span><br><span class="line">if [ ! -n &quot;$1&quot; ]</span><br><span class="line">then</span><br><span class="line">    echo &quot;Usages: sh uwsgiserver.sh [start|stop|restart]&quot;</span><br><span class="line">    exit 0</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ $1 = start ]</span><br><span class="line">then</span><br><span class="line">    psid=`ps aux | grep &quot;uwsgi&quot; | grep -v &quot;grep&quot; | wc -l`</span><br><span class="line">    if [ $psid -gt 5 ]</span><br><span class="line">    then</span><br><span class="line">        echo &quot;uwsgi is running!&quot;</span><br><span class="line">        exit 0</span><br><span class="line">    else</span><br><span class="line">        /root/workspace/BLOG_VENV/bin/uwsgi --ini uwsgi.ini --daemonize log/uwsgi.log</span><br><span class="line">        echo &quot;Start uwsgi service [OK]&quot;</span><br><span class="line">    fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">elif [ $1 = stop ];then</span><br><span class="line">    killall -9 uwsgi</span><br><span class="line">    echo &quot;Stop uwsgi service [OK]&quot;</span><br><span class="line">elif [ $1 = restart ];then</span><br><span class="line">    killall -9 uwsgi</span><br><span class="line">    echo &quot;Stop uwsgi service [OK]&quot;</span><br><span class="line">    /root/workspace/BLOG_VENV/bin/uwsgi --ini uwsgi.ini --daemonize log/uwsgi.log</span><br><span class="line">    echo &quot;Start uwsgi service [OK]&quot;</span><br><span class="line"></span><br><span class="line">else</span><br><span class="line">    echo &quot;Usages: sh uwsgiserver.sh [start|stop|restart]&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure></p>
+<p>支持uWSGI后台运行。</p>
+<p>使用步骤：</p>
+<ol>
+<li><p>在项目下创建一个脚本文件 <strong>uwsgiserver.sh</strong>，将代码复制进去。</p>
+</li>
+<li><p>执行命令 <figure class="highlight plain"><figcaption><span>+x uwsgiserver.sh```， 添加脚本的执行权限。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">3. 执行命令 ```./uwsgiserver.sh start```，启动uWSGI。</span><br><span class="line"></span><br><span class="line">参考自：[uwsgi启动和停止脚本](http://www.gowhich.com/blog/116)</span><br><span class="line"></span><br><span class="line">##搭建网站自动备份机制</span><br><span class="line">![](http://yangyingming.com/uploads/markdownx/2017/2/8a79aeae-cf79-4929-be3d-787f87d110ba.jpg)</span><br><span class="line"></span><br><span class="line">个人网站在云服务器上部署好了之后，为了防止数据丢失，我们往往需要定期的备份网站的数据。</span><br><span class="line"></span><br><span class="line">每次手动去备份太麻烦，我们可以使用 **Linux+Python** 搭建一个 **网站自动备份机制** 来自动化、定时的去完成备份工作。</span><br><span class="line"></span><br><span class="line">简单来说这个机制可以 **定时备份网站数据，并自动将备份文件上传到云上**。</span><br><span class="line"></span><br><span class="line">详见博文：[搭建网站自动备份机制（crontab+mysqldump+tar+oss）](http://www.yangyingming.com/article/359/)</span><br><span class="line"></span><br><span class="line">##网站CSS样式</span><br><span class="line">网站中使用的一些CSS样式：</span><br><span class="line">[网站CSS样式](http://www.yangyingming.com/article/24/)</span><br><span class="line"></span><br><span class="line">##uWSGI 优化</span><br><span class="line">###1. 开启 disable-logging，不记录请求信息的日志</span><br><span class="line"></span><br><span class="line">logging 会产生大量请求信息的日志，这是一种低效率的做法，不适合在生产环境中使用。如果不开启这项，那么你的日志中会大量出现这种记录：</span><br><span class="line">[pid: 347|app: 0|req: 106/367] 117.116.122.172 () &#123;52 vars in 961 bytes&#125; [Thu Jul  7 19:20:56 2016] POST /post =&gt; generated 65 bytes in 6 msecs (HTTP/1.1 200) 2 headers in 88 bytes (1 switches on core 0)</span><br><span class="line"></span><br><span class="line">开启方法：修改 ini 配置文件，添加一行：</span><br><span class="line">```python</span><br><span class="line">disable-logging=true</span><br></pre></td></tr></table></figure></p>
+</li>
+</ol>
+<p>或者在 uWSGI 启动命令里添加 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">参考资料：</span><br><span class="line"></span><br><span class="line">[uWSGI的安装与配置（官网摘录）](http://blog.csdn.net/chenggong2dm/article/details/43937433)</span><br><span class="line"></span><br><span class="line">[python uwsgi 部署以及优化](http://www.cnblogs.com/sky20081816/p/3398864.html)</span><br><span class="line"></span><br><span class="line">[uWSGI参考资料（1.0版本的配置选项列表）](http://blog.csdn.net/kevin6216/article/details/15378617)</span><br><span class="line"></span><br><span class="line">###2. 配置 evil-reload-on-as 和 evil-reload-on-rss 自动释放内存</span><br><span class="line"></span><br><span class="line">网站运行了几个月之后发现，uwsgi 不会主动释放内存，导致开启的几个进程占用了不少内存资源。</span><br><span class="line"></span><br><span class="line">![](http://yangyingming.com/uploads/markdownx/2017/6/93a56f0c-4639-46e8-84e2-ba5c05059e6f.png)</span><br><span class="line"></span><br><span class="line">这个时候有两个办法：1.定期手动重启uwsgi  2.修改配置文件让它以后自动重启</span><br><span class="line"></span><br><span class="line">我首先手动重启了 uwsgi ，结果内存一下子释放了 500+M，爽。</span><br><span class="line"></span><br><span class="line">但是每次手动重启也不是办法，我们要想办法把一切变得自动化，于是采用第二个方法，解决方案就是：**修改配置文件，添加 evil-reload-on-as 和 evil-reload-on-rss 的设置**。</span><br><span class="line">```python</span><br><span class="line">evil-reload-on-as = 100</span><br><span class="line">evil-reload-on-rss = 100</span><br></pre></td></tr></table></figure></p>
+<p>这两行代码的意思分别是当 <strong>虚拟内存 / 物理内存</strong> 使用超过100M时，重启对应的 uwsgi 工作进程。</p>
+<p>as 对应虚拟内存、 rss 对应物理内存。</p>
+<p>参考资料：</p>
+<p><a href="http://blog.csdn.net/kevin6216/article/details/15378521" target="_blank" rel="noopener">UWSGI关于内存释放问题</a></p>
+<p><a href="http://blog.csdn.net/kevin6216/article/details/15378617" target="_blank" rel="noopener">uWSGI参考资料（1.0版本的配置选项列表）</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/353" target="_blank" rel="noopener">Django网站搭建心得汇总</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/10/Pandas读取csv表格数据 && 存入数据库/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/01/28/博客园文章迁移脚本(xml.sax+mysqldb)/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

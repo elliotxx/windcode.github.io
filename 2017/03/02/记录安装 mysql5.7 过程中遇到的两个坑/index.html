@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>记录安装 mysql5.7 过程中遇到的两个坑 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="最近在windows下安装了一下 mysql5.7解压版（64位），因为官方更新了不少东西，所以和5.6的安装过程大有区别。因为这些不知道的坑，折腾了一个晚上，在这里记录一下。
+下载的mysql5.7解压版（64位）就是这货：
+
+注意：安装环境为windows
+安装的过程中主要遇到两个坑（和之前的版本安装不同的地方）：
+
+启动mysql服务之前需要手动初始化data目录（第5步）
+root 用户登陆初始密码为一个随机密码，而不是空密码（第7步）
+
+下面在安装过程中介绍这两个坑。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="记录安装 mysql5.7 过程中遇到的两个坑"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 记录安装 mysql5.7 过程中遇到的两个坑</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>最近在windows下安装了一下 <strong>mysql5.7解压版（64位）</strong>，因为官方更新了不少东西，所以和5.6的安装过程大有区别。因为这些不知道的坑，折腾了一个晚上，在这里记录一下。</p>
+<p>下载的mysql5.7解压版（64位）就是这货：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/3/01fa61a2-9e27-47b2-b20e-98d2ae7c2e54.png" alt=""></p>
+<p>注意：安装环境为windows</p>
+<p>安装的过程中主要遇到两个坑（和之前的版本安装不同的地方）：</p>
+<ul>
+<li>启动mysql服务之前需要手动初始化data目录（<strong>第5步</strong>）</li>
+<li>root 用户登陆初始密码为一个随机密码，而不是空密码（<strong>第7步</strong>）</li>
+</ul>
+<p>下面在安装过程中介绍这两个坑。<br><a id="more"></a></p>
+<p>##安装过程<br>mysql5.7前面的安装过程和5.6一样：</p>
+<ol>
+<li><p>解压</p>
+</li>
+<li><p>配置环境变量</p>
+</li>
+<li><p>修改配置文件 my-default.ini<br>添加 basedir、datadir、port 设置。</p>
+</li>
+<li><p>安装服务<br>在命令行中运行 <figure class="highlight plain"><figcaption><span>--install```  </span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">**注意**：一定要在mysql安装目录下的bin目录中运行该命令，否则服务启动路径会出错，启动服务的时候报错。</span><br><span class="line"></span><br><span class="line">5. 手动初始化（**从这一步开始不同，第一个坑**）  </span><br><span class="line">在命令行中运行 ```mysqld --initialize --user=mysql --console``` 初始化data目录  </span><br><span class="line">如果不运行这条命令，服务会无法启动  </span><br><span class="line">这里是 **第一个坑**，和之前的版本不同，mysql5.7解压之后默认不再带有data文件夹，需要你手动初始化生成它。  </span><br><span class="line">运行之后mysql安装目录下会多出一个data文件夹，里面存储有数据库的初始数据，包括登陆信息。  </span><br><span class="line">**注意**：这里先不要关命令行！登陆密码就藏在输出的日志中。  </span><br><span class="line"></span><br><span class="line">5. 启动服务  </span><br><span class="line">```net start mysql</span><br></pre></td></tr></table></figure></p>
+</li>
+<li><p>登陆mysql（<strong>这里是第二个坑</strong>）<br><strong>说在前面</strong>：Oracle为了一些安全策略上的考虑，在5.7中 <strong>不再以空密码来作为安装完成之后的初始密码，而是在初始化的时候生成一个随机密码作为代替</strong>。<br>从第5步输出的日志信息最后可以找到一组随机密码，这就是mysql root用户登陆的初始密码。<br>找到这个随机密码，在命令行中运行命令：mysql -uroot -p ，然后输入这个随机密码，回车。<br>如果出现了mysql的欢迎界面，那么恭喜你，你跳过了第二个坑，成功登录进了mysq5.7。</p>
+</li>
+<li><p>修改root用户密码  （<strong>小坑一个</strong>）<br>登陆进mysql之后，还没完。<br>第一次登录进mysql5.7，他会反复提示你修改登录密码。<br>运行命令：<code>use mysql;</code>    选中mysql数据库<br>运行命令：<code>alter user &#39;root&#39;@&#39;localhost&#39; identified by &#39;mysql&#39;;</code><br>运行命令：<code>update user set authentication\_string=&quot;YOUR\_PASSWORD&quot; where user=&quot;root&quot;;</code>     更新root用户密码，YOUR_PASSWORD是你要设置的密码。<br>运行命令：<code>SET PASSWORD = PASSWORD(&#39;YOUR\_PASSWORD&#39;);</code>    再设置一遍密码（好麻烦）<br>运行命令：<code>flush privileges;</code>    让以上命令立刻生效  </p>
+</li>
+<li><p>退出，重新登录<br>好了，到了这一步，基本已经完成了。<br>我们只要重新登录，验证我们新的密码即可。<br>5.7的安装过程也就告一段落。<br>你可以欢乐的使用它了。  </p>
+</li>
+</ol>
+<p>（完结撒花）</p>
+<p>##后记<br>吐槽一下Oracle，收购了mysql之后，感觉把mysql怎么难用就怎么改。</p>
+<p>它的官网也很强大，不是有经验的人第一次进入一定很懵逼，恩……大公司眼花缭乱的官方网站，这很Oracle。</p>
+<p>##参考资料<br>研究登陆的时候这篇博文给了我很大帮助：<a href="http://blog.csdn.net/hyl963254113/article/details/50117455" target="_blank" rel="noopener">MySQL 5.7.9 （64位）解压版正确修改默认密码</a></p>
+<p>Initialize的官方文档：<a href="https://dev.mysql.com/doc/refman/5.7/en/data-directory-initialization-mysqld.html" target="_blank" rel="noopener">2.10.1.1 Initializing the Data Directory Manually Using mysqld - 官方文档</a></p>
+<p><a href="http://blog.csdn.net/mhmyqn/article/details/17043921" target="_blank" rel="noopener">mysql安装常见问题（系统找不到指定的文件、发生系统错误 1067 进程意外终止）</a></p>
+<p><a href="http://www.cnblogs.com/rainheader/p/4574097.html" target="_blank" rel="noopener">如何安装zip格式的MySQL</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/365" target="_blank" rel="noopener">记录安装 mysql5.7 过程中遇到的两个坑</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/03/03/Navicat远程连接阿里云上的mysql/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/03/01/基于Django、WeRoBot的微信公众平台开发（二）/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-03-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

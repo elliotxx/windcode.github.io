@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>爬取知乎百万用户数据！ | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="并发限制因为我的vps是一核的小水管，为了防止爬虫占用太多cpu资源，影响网站的访问，所以我将爬虫的线程最大并发数限制为20在，这样cpu的资源占用率就可以保持在15%以下。（有money了一定去换个高配vps……）
+
+##tmux
+我在vps上运行的爬虫的时候遇到一个问题：
+如果我在vps上运行爬虫，那么我关掉ssh连接之后，下次要怎么查看爬虫的运行状态呢？
+要知道ssh连接关掉之后，工作状态就丢失了啊！
+然后我只能在 top 或 ps -aux 命令中找到爬虫还在运行的证据…… 但是我想看爬虫的输出信息啊…… 
+这个时候我灵光一现，想起《MacTalk 人生元编程》中提到的一款终端管理神器——tmux。它不就是用来保存工作状态的嘛！
+于是我查了查tmux的用法，在vps上安装好，简单的尝试了一下，发现可以使用。每次用ssh连接上vps之后，只要在终端中输入一条命令就可以进入之前保存的工作区中！而工作的状态还保存在tmux的session中！
+也就是说，我在一个tmux创建的终端中运行爬虫，爬虫持续的输出爬取的状态信息，当我关掉ssh连接下次重新登陆的时候，只要输入tmux a -t 1（我的爬虫工作区为1） 就可以重新看到爬虫的输出信息了！
+这就是tmux的作用。
+它的安装过程也十分简单，在ubuntu下用 apt-get 安装即可：1apt-get install tmux
+常用命令：
+进入指定工作区
+1tmux a -t target_session
+删除指定工作区
+1tmux kill-session -t target_session
+妈妈再也不用担心我的工作状态找不到了！
+##完成最后形成的样子就是这样：
+
+左边在tmux终端（优点是可以持续性的保存工作状态）中运行爬虫，右边用top监控爬虫的资源占用情况。
+原创声明转载请注明：呓语 » 爬取知乎百万用户数据！">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="爬取知乎百万用户数据！"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 爬取知乎百万用户数据！</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <h2 id="并发限制"><a href="#并发限制" class="headerlink" title="并发限制"></a>并发限制</h2><p>因为我的vps是一核的小水管，为了防止爬虫占用太多cpu资源，影响网站的访问，所以我将爬虫的线程最大并发数限制为20在，这样cpu的资源占用率就可以保持在15%以下。（有money了一定去换个高配vps……）</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/3/adafa505-d1c2-4cc0-8800-97a5e9dc347b.png" alt=""></p>
+<p>##tmux</p>
+<p>我在vps上运行的爬虫的时候遇到一个问题：</p>
+<p><strong>如果我在vps上运行爬虫，那么我关掉ssh连接之后，下次要怎么查看爬虫的运行状态呢？</strong></p>
+<p>要知道ssh连接关掉之后，工作状态就丢失了啊！</p>
+<p>然后我只能在 top 或 ps -aux 命令中找到爬虫还在运行的证据…… 但是我想看爬虫的输出信息啊…… </p>
+<p>这个时候我灵光一现，想起《MacTalk 人生元编程》中提到的一款终端管理神器——<strong>tmux</strong>。它不就是用来保存工作状态的嘛！</p>
+<p>于是我查了查tmux的用法，在vps上安装好，简单的尝试了一下，发现可以使用。每次用ssh连接上vps之后，只要在终端中输入一条命令就可以进入之前保存的工作区中！而工作的状态还保存在tmux的session中！</p>
+<p>也就是说，我在一个tmux创建的终端中运行爬虫，爬虫持续的输出爬取的状态信息，当我关掉ssh连接下次重新登陆的时候，只要输入<strong>tmux a -t 1</strong>（我的爬虫工作区为1） 就可以重新看到爬虫的输出信息了！</p>
+<p>这就是tmux的作用。</p>
+<p>它的<strong>安装过程</strong>也十分简单，在ubuntu下用 apt-get 安装即可：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install tmux</span><br></pre></td></tr></table></figure></p>
+<p><strong>常用命令</strong>：</p>
+<p>进入指定工作区</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux a -t target_session</span><br></pre></td></tr></table></figure>
+<p>删除指定工作区</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux kill-session -t target_session</span><br></pre></td></tr></table></figure>
+<p>妈妈再也不用担心我的工作状态找不到了！</p>
+<p>##完成<br>最后形成的样子就是这样：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/3/b96359ed-dbe9-4bff-95a9-aa0cd11bf8be.png" alt=""></p>
+<p>左边在tmux终端（优点是可以持续性的保存工作状态）中运行爬虫，右边用top监控爬虫的资源占用情况。</p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/370" target="_blank" rel="noopener">爬取知乎百万用户数据！<br><a id="more"></a>
+</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/03/26/2017年内蒙古大学计算机复试笔试题目及源码解析/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/03/09/最终的归宿，《三体：死神永生》/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-03-14 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

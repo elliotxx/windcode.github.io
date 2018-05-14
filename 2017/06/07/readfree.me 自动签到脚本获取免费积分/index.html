@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>readfree.me 自动签到脚本获取免费积分 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="##前言这又是一个 python 脚本，这次的目标是 readfree.me ，一个比较正规的 kindle 电子书资源站。这个网站做了限制，电子书需要积分才能下载，积分有两种获取方式：1.充会员 2.每天领免费积分。本着能免费就不掏腰包的革命原则，我自然而然的把目光瞄到了每天的免费积分上…… 
+脚本目的：每天自动登录 readfree.me 进行签到  —&amp;gt;  领取积分">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="readfree.me 自动签到脚本获取免费积分"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> readfree.me 自动签到脚本获取免费积分</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>##前言<br>这又是一个 python 脚本，这次的目标是 <a href="http://www.readfree.me" target="_blank" rel="noopener">readfree.me</a> ，一个比较正规的 kindle 电子书资源站。这个网站做了限制，电子书需要积分才能下载，积分有两种获取方式：1.充会员 2.每天领免费积分。本着能免费就不掏腰包的革命原则，我自然而然的把目光瞄到了每天的免费积分上…… </p>
+<p><strong>脚本目的</strong>：每天自动登录 readfree.me 进行签到  —&gt;  领取积分<br><a id="more"></a></p>
+<p>另外<strong>推荐</strong>一个免费的 kindle 电子书网站：<a href="http://www.52kindle.top" target="_blank" rel="noopener">52kindle.top</a>（这个网站经常挂，能否打开看运气）</p>
+<p>##分析过程<br>最一开始的思路是用 post 模拟登录网站，登陆之后再访问签到页面。</p>
+<p>于是很开心的打开 chrome F12 分析登录流程，发现 post 的数据不仅有用户名和密码，还有验证码 和 csrf 验证。csrf 验证好说，在登录页面的源码中就能找到关键字。但是验证码不好整，找了一些自动识别验证码的库，比如 pytesser 什么的，但由于各种原因，失败。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/fcdbfca7-a4f8-401c-993b-e7d10bf89673.png" alt=""></p>
+<p>遂不能使用以上思路，想了另一种办法：<strong>直接把登录之后的 cookie 复制到脚本中使用</strong>。</p>
+<p>回到刚刚 chrome 的登录路程分析中，在登陆成功之后，访问的第二个页面的 Request Headers 中，找到一个字段 <strong>Cookie</strong>：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/9322a7c1-88e0-40a4-9942-533077234c5e.png" alt=""></p>
+<p>它的值大概是这种格式：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hm_lvt_375aa6d601368176e50751c1c6bf0e82=<span class="number">1495876976</span>; Hm_lpvt_375aa6d601368176e50751c1c6bf0e82=<span class="number">1496806049</span>; sessionid=bo8x9rupjckoaxjk20igguxxxxxxxxxx; csrftoken=LOYvRkFdyosLgGXdabsETfwPp6XKpMEpzGIWd0ELByicRows4oqEnAxxxxxxxxxx</span><br></pre></td></tr></table></figure></p>
+<p>这就是登录之后服务器返回给当前用户所在客户端的 cookie，分析一下：</p>
+<p>他一共有4个字段，<strong>sessionid、csrftoken、Hm_lvt_375aa6d601368176e50751c1c6bf0e82、Hm_lpvt_375aa6d601368176e50751c1c6bf0e82</strong>。其中 sessionid 最重要，它是代表当前客户端用户已经登录的唯一标识，和服务器端遥相呼应，有了它服务器才承认你在这个浏览器上登录过了。</p>
+<p>有了cookie，我们就可以在脚本中使用它登录了！</p>
+<p>具体的方法很简单，需要使用 Requests 库的 get 方法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">res = requests.get(check_url,cookies=cookie)</span><br></pre></td></tr></table></figure></p>
+<p>具体见完整源码。</p>
+<p>另外关于 cookie 的过期时间，我们看一下登陆之后服务器返回的头部：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/7aaf0ba6-b157-47d1-9fcf-affbffffe0f9.png" alt=""></p>
+<p><strong>expires</strong> 代表 cookie 过期时间，这个属性有些过时。<strong>Max-Age</strong> 作为替代，代表cookie的生存期，以秒为单位。按照这个时间来计算，这个 cookie 可以用将近4年……这算它们网站设计的一个小bug…… 不过方便了我们，利用这个漏洞，不用频繁更新 cookie了。</p>
+<p>脚本写好了剩下的就简单了，在 windows 的计划任务中设置成每天执行一次脚本（或者在linux 中设置 crontab），这样就做到了每天自动签到。</p>
+<p><strong>注意</strong>：通过网友 <strong>懒</strong> 的提醒，发现现在 readfree.me 的 cookie 似乎做了修改，不再是那几个字段，如过发现其中没有时间相关的字段，那么直接复制 cookie 过来到代码中就行，时间相关字段部分无需我们再手动生成。</p>
+<p>##使用方法<br>1.从 chrome F12 中把登陆之后的 Cookie 复制到脚本中，具体方法是（熟手请忽略）：</p>
+<p>Chrome浏览器中打开网站 readfree.me —&gt;  按住F12调出调试页面 —&gt; 在调试页面最上方点击 Network 栏目 —&gt; 选中顶部第二行的 Preserve log —&gt; 回到登录页面填上你的用户名密码验证码进行登录 —&gt; 后面刷出一大堆信息，移动到最上方，点击第二行名字为 readfree.me 的请求 —&gt; 在右边弹出的 Headers 栏目的 Request Headers 条目中找到 Cookie 字段 —&gt; 将 Cookie 的值复制到脚本代码的 cookie_str 变量中</p>
+<p>2.设置计划任务，每天执行一次脚本</p>
+<p>##代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录验证地址</span></span><br><span class="line">check_url = <span class="string">'http://readfree.me/accounts/checkin'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 记录程序运行时的时间</span></span><br><span class="line">fp = open(<span class="string">'auto_signon_readfree.log'</span>,<span class="string">'a'</span>)</span><br><span class="line">ISOTIMEFORMAT=<span class="string">'%Y-%m-%d %X'</span></span><br><span class="line">curtime = time.strftime( ISOTIMEFORMAT, time.localtime( time.time() ) )</span><br><span class="line"><span class="keyword">print</span> <span class="string">'at %s'</span>%curtime</span><br><span class="line">fp.write(<span class="string">'at %s\n'</span>%curtime)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 准备cookie</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">'准备cookie中……'</span></span><br><span class="line">fp.write(<span class="string">'准备cookie中……\n'</span>)</span><br><span class="line">cookie_str = <span class="string">'Hm_lvt_375aa6d601368176e50751c1c6bf0e82=1495876976; Hm_lpvt_375aa6d601368176e50751c1c6bf0e82=%s; sessionid=bo8x9rupjckoaxjk20igguxxxxxxxxxx; csrftoken=LOYvRkFdyosLgGXdabsETfwPp6XKpMEpzGIWd0ELByicRows4oqEnAxxxxxxxxxx'</span>%(int(time.time()))</span><br><span class="line">cookie = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> cookie_str.split(<span class="string">';'</span>):   </span><br><span class="line">    name,value=line.strip().split(<span class="string">'='</span>,<span class="number">1</span>)  </span><br><span class="line">    cookie[name]=value  </span><br><span class="line"><span class="keyword">print</span> cookie</span><br><span class="line">fp.write(<span class="string">'%s\n'</span>%cookie)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用cookie访问网站</span></span><br><span class="line"><span class="keyword">print</span> <span class="string">'签到中……'</span></span><br><span class="line">fp.write(<span class="string">'签到中……\n'</span>)</span><br><span class="line">res = requests.get(check_url,cookies=cookie)</span><br><span class="line"><span class="keyword">print</span> res</span><br><span class="line">fp.write(<span class="string">'%s\n\n'</span>%res)</span><br></pre></td></tr></table></figure></p>
+<p>我把脚本放到云服务器上每天凌晨1点定时运行一次，测试了一个周效果如下：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/1477afa3-f986-40d2-847a-f3251cb3fb6d.png" alt=""></p>
+<p>这个脚本比上一个脚本要简单，但是却花费了一晚上的时间，因为要排除一些不可行的方法。不过到最后还是有缺点，那就是需要手动复制cookie到脚本中，这不够自动化，好在cookie可以一直使用，复制一次即可。</p>
+<p>##参考资料<br><a href="http://www.oschina.net/code/snippet_2463131_52023" target="_blank" rel="noopener">Python爬虫-保存cookies,模拟登录的一些基础用法</a></p>
+<p><a href="http://blog.csdn.net/winterto1990/article/details/51213029" target="_blank" rel="noopener">python的requests在网络请求中添加cookies参数</a></p>
+<p><a href="http://blog.csdn.net/caisini_vc/article/details/5619954" target="_blank" rel="noopener">python 的常用时间操作，取得当前时间等</a></p>
+<p><a href="http://blog.csdn.net/zhangxinrun/article/details/6427369" target="_blank" rel="noopener">cookie的expires属性和max-age属性</a></p>
+<p><a href="http://blog.csdn.net/chenzhuyu/article/details/50363873" target="_blank" rel="noopener">python脚本在Windows计划任务执行问题</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/381" target="_blank" rel="noopener">readfree.me 自动签到脚本</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/06/19/使用 gogs 搭建私人 git 服务器 | nginx 添加反向代理到二级域名/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/06/05/python 实现校园网自动登录/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-06-07 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

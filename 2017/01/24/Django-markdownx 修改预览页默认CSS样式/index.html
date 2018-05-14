@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Django-markdownx 修改预览页默认CSS样式 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="在使用django-markdownx的过程中，存在不少问题，比如说这次要讨论的问题：预览页面显示样式和文章发布出去的显示样式不同。   
+导致这个问题的原因很简单：因为 后台使用的css和前台使用的css不同。
+在这里我只打算修改后台markdownx预览页的显示样式，让它显示效果和前台的显示效果相同。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Django-markdownx 修改预览页默认CSS样式"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Django-markdownx 修改预览页默认CSS样式</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>在使用django-markdownx的过程中，存在不少问题，比如说这次要讨论的问题：<strong>预览页面显示样式和文章发布出去的显示样式不同。</strong>   </p>
+<p>导致这个问题的原因很简单：因为 <strong>后台使用的css和前台使用的css不同</strong>。</p>
+<p>在这里我只打算修改后台markdownx预览页的显示样式，让它显示效果和前台的显示效果相同。<br><a id="more"></a></p>
+<p>要达到这个效果，需要完成两个步骤：</p>
+<h3 id="修改markdownx的css样式表"><a href="#修改markdownx的css样式表" class="headerlink" title="修改markdownx的css样式表"></a>修改markdownx的css样式表</h3><p>django-markdownx的css样式表是<strong>markdownx.css</strong>。</p>
+<p>我的markdownx.css路径是：<strong>D:\workspace\github\MingBlog\blog_venv\Lib\site-packages\markdownx\static\markdownx\admin\css\markdownx.css</strong>（我使用了virtualenv，所以有一段blog_venv路径）</p>
+<p>你可以找找你的所在路径，一般在python的site-packages目录下。</p>
+<p>找到markdownx.css文件后，在文件最后添加如下代码（注意一定是在文件最后，否则不生效）：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 自定义css */</span></span><br><span class="line"><span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-preview</span> &#123;</span><br><span class="line">    <span class="attribute">padding</span>:<span class="number">10px</span>;</span><br><span class="line">	<span class="attribute">font-size</span>:<span class="number">16px</span>;</span><br><span class="line">	<span class="attribute">font-family</span>: Merriweather, 冬青黑体简体中文, <span class="string">"Microsoft YaHei"</span>, 微软雅黑, SimSun, 宋体, Heiti, 黑体, droid_sansregular, arial, serif;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-preview</span> <span class="selector-tag">h2</span> &#123;</span><br><span class="line">    <span class="attribute">background</span>: none repeat scroll <span class="number">0%</span> <span class="number">0%</span> <span class="number">#2B6695</span>;</span><br><span class="line">    <span class="attribute">border-radius</span>: <span class="number">6px</span>;</span><br><span class="line">    <span class="attribute">box-shadow</span>: <span class="number">0px</span> <span class="number">0px</span> <span class="number">0px</span> <span class="number">1px</span> <span class="number">#5F5A4B</span>, <span class="number">1px</span> <span class="number">1px</span> <span class="number">6px</span> <span class="number">1px</span> <span class="built_in">rgba</span>(10, 10, 0, 0.5);</span><br><span class="line">    <span class="attribute">color</span>: <span class="number">#FFF</span>;</span><br><span class="line">    <span class="attribute">font-family</span>: <span class="string">"微软雅黑"</span>,<span class="string">"宋体"</span>,<span class="string">"黑体"</span>,Arial;</span><br><span class="line">    <span class="comment">/*font-family: "Palatino Linotype", Palatino, Georgia, serif;*/</span></span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">17px</span>;</span><br><span class="line">    <span class="attribute">font-weight</span>: bold;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">25px</span>;</span><br><span class="line">    <span class="attribute">line-height</span>: <span class="number">25px</span>;</span><br><span class="line">    <span class="attribute">margin</span>: <span class="number">10px</span> <span class="number">0px</span> <span class="meta">!important</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">0px</span> <span class="number">0px</span> <span class="number">5px</span> <span class="number">15px</span>;</span><br><span class="line">    <span class="attribute">text-shadow</span>: <span class="number">2px</span> <span class="number">2px</span> <span class="number">3px</span> <span class="number">#222</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-preview</span> <span class="selector-tag">pre</span>&#123; <span class="attribute">background</span>: <span class="number">#272822</span>; <span class="attribute">color</span>: <span class="number">#f8f8f2</span> &#125;</span><br><span class="line"><span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-preview</span> <span class="selector-tag">code</span>&#123;</span><br><span class="line">    <span class="attribute">font-family</span>: <span class="string">"Palatino Linotype"</span>, Palatino, Georgia, serif;</span><br><span class="line">    <span class="comment">/*font-size: 16px!important;*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>修改过后，二级标题和字体产生了变化。</p>
+<h3 id="接下来在admin中添加代码高亮css文件"><a href="#接下来在admin中添加代码高亮css文件" class="headerlink" title="接下来在admin中添加代码高亮css文件"></a>接下来在admin中添加代码高亮css文件</h3><p>markdownx.css是自动加载的，无需手动添加，但是用pygments生成的代码高亮css文件需要我们手动添加。</p>
+<p>具体方法是：<br>修改 [yourapp]\admin.py 中的文章管理类，在内部类Media中添加css样式。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ArticleAdmin</span><span class="params">(admin.ModelAdmin)</span>:</span></span><br><span class="line">    ……</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Media</span>:</span></span><br><span class="line">        css = &#123;</span><br><span class="line">            <span class="string">'all'</span>:(<span class="string">'/static/css/code.css'</span>,),</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<p>详情可见官方文档：<a href="https://docs.djangoproject.com/en/1.8/topics/forms/media/#css" target="_blank" rel="noopener">admin media css</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/351" target="_blank" rel="noopener">Django-markdownx 修改预览页默认CSS样式</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/01/28/博客园文章迁移脚本(xml.sax+mysqldb)/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/01/24/Django 后台添加more标签识别（自动截取文章简介）/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-01-24 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

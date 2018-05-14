@@ -1,0 +1,315 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>win7 使用 mstsc 访问 win10 远程桌面 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="##前言mstsc 是 windows 系统自带的远程桌面工具，有了它可以很方便连接内网甚至外网的主机。
+近期在公司写代码的时候有一个特殊需求，因为台式机（win7）内存不足，使用 webstorm 太卡，于是打算利用一下放在我旁边暂时没人用的高配 win10 笔记本。用了几次，感觉笔记本屏幕太小，又因为只提供了 HDMI 接口，所以无法将笔记本直接连接到大屏显示器。
+于是今天琢磨起远程桌面的主意，目的 是用台式机的 win7 系统连接笔记本的 win10 系统，这两台机器都连接到公司的 wifi。（尝试过 qq远程桌面，走的外网，延迟太高；teamviewer 由于我手贱，试用期已过，暂时没找到激活的方法）
+废话不多说，介绍一下 win7 访问 win10 远程桌面的方法。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="win7 使用 mstsc 访问 win10 远程桌面"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> win7 使用 mstsc 访问 win10 远程桌面</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>##前言<br>mstsc 是 windows 系统自带的远程桌面工具，有了它可以很方便连接内网甚至外网的主机。</p>
+<p>近期在公司写代码的时候有一个特殊需求，因为台式机（win7）内存不足，使用 webstorm 太卡，于是打算利用一下放在我旁边暂时没人用的高配 win10 笔记本。用了几次，感觉笔记本屏幕太小，又因为只提供了 HDMI 接口，所以无法将笔记本直接连接到大屏显示器。</p>
+<p>于是今天琢磨起远程桌面的主意，<strong>目的</strong> 是用台式机的 win7 系统连接笔记本的 win10 系统，这两台机器都连接到公司的 wifi。（尝试过 qq远程桌面，走的外网，延迟太高；teamviewer 由于我手贱，试用期已过，暂时没找到激活的方法）</p>
+<p>废话不多说，介绍一下 win7 访问 win10 远程桌面的方法。<br><a id="more"></a></p>
+<p>##步骤</p>
+<p>###win10 远程设置</p>
+<p>1.打开 <strong>win10 我的电脑 –&gt; 右键 –&gt; 属性</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/696a7cc3-a5a9-4f29-81bb-44a6e3f4cd1d.png" alt=""></p>
+<p>2.点击 <strong>远程设置</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/c71b0380-5989-48a8-9a4b-5a98056582ea.png" alt=""></p>
+<p>3.按图设置好 <strong>1) 和 2)</strong>，然后点击 <strong>选择用户</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/49959df9-b6e8-4fa5-8ef0-fd61a4a427de.png" alt=""></p>
+<p>4.这时候 <strong>允许访问的列表</strong> 是空的，点击 <strong>用户账户</strong>，添加一个用于远程访问的用户</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/40bfa966-bbb2-4a57-b18a-07c01ed55d49.png" alt=""></p>
+<p>5.点击 <strong>管理其他账户</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/a19e461a-a20d-4109-9b22-f6b18030434b.png" alt=""></p>
+<p>6.点击 <strong>添加用户账户</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/6f78b879-cf53-4495-9092-f384803f3cfb.png" alt=""></p>
+<p>7.点击 <strong>不使用 Microsoft 账户登录</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/0bbd4805-f4a0-40dc-8712-e63cbe182d34.png" alt=""></p>
+<p>8.点击 <strong>本地账户</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/76de13c1-2893-4e9e-9d1d-3e4fc2f16b77.png" alt=""></p>
+<p>9.填写 <strong>新账户信息</strong>，然后点击下一步。注意：最好填写密码。</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/edadb1a1-ef8d-44f2-b2df-a83855d433b7.png" alt=""></p>
+<p>10.这个时候，账户列表里会显示我们刚才创建的账户，<strong>这个账户将用于远程访问</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/e09e4f2d-405b-4ee7-bff5-0f1f643d2c76.png" alt=""></p>
+<p>11.回到远程桌面窗口，<strong>添加新用户</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/2a87bb3b-b324-4e21-a198-0e5f8107ee5d.png" alt=""></p>
+<p>12.<strong>填写</strong> 刚刚创建的用户名，点击 <strong>确定</strong></p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/e8ce28cb-6e59-4392-9865-264a531cfbe2.png" alt=""></p>
+<p>13.允许访问的列表中多出了我们创建的用户，点击确定。这个时候我们就可以用刚刚创建的账户进行远程桌面连接了</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/059ff953-b95e-4fb8-ad96-2780a8b964c0.png" alt=""></p>
+<p>###win7 访问 win10 远程桌面</p>
+<p>1.进入 win7 系统，按住快捷键 <strong>Win + R</strong> 打开运行，输入 <strong>mstsc</strong>，回车</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/8fa674cd-fa1d-4841-b319-80fa61dbdb1d.png" alt=""></p>
+<p>2.输入<strong>远程主机 IP 地址</strong>，单击确定。对我来说，输入的是内网地址，因为台式机和笔记本在同一内网中</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/975e40da-b9c0-4717-9039-1e5e9cd7f9a5.png" alt=""></p>
+<p>3.输入我们在 win10 中创建的用于远程访问的 <strong>账户密码</strong>，点击确定</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/44a25b27-29cd-4ae2-9891-bd8b031169f5.png" alt=""></p>
+<p>4.等待一会儿，会进入远程 win10 电脑上的桌面</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/da754de7-91f0-4dd7-b6e7-4d8316d243ad.png" alt=""></p>
+<p>5.win7 访问 win10 远程桌面成功</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/6/53777e3c-ff44-4567-b886-bc70115242ab.png" alt=""></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/385" target="_blank" rel="noopener">win7 使用 mstsc 连接 win10 远程桌面</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/07/02/windows 中永久修改环境变量的三种方法/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/06/21/神器清单/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-06-27 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

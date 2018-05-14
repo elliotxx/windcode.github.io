@@ -1,0 +1,475 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>Python 学习拾遗 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="该博文主要适应于python2.7，并没有对py3进行测试。
+主要记录学习python过程中容易出现的一些小问题、小错误，相信能给你启发。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Python 学习拾遗"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> Python 学习拾遗</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p><img src="http://yangyingming.com/uploads/markdownx/2017/7/342bab42-efac-4798-9117-11d26ea4b649.png" alt=""></p>
+<p>该博文主要适应于python2.7，并没有对py3进行测试。</p>
+<p>主要记录学习python过程中容易出现的一些小问题、小错误，相信能给你启发。<br><a id="more"></a></p>
+<p>##1、剔除一个字符串中的所有空格（假设该字符串是s）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">""</span>.join(s.split())</span><br></pre></td></tr></table></figure>
+<p>样例输入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">'    123  4567    8   '</span></span><br></pre></td></tr></table></figure>
+<p>样例输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'12345678'</span></span><br></pre></td></tr></table></figure>
+<p>##2、剔除文件名字符串中的非法字符（假设字符串是s）</p>
+<p>有的时候从网上抓取下来的标题需要作为文件名保存到本地（windows环境）</p>
+<p>但是windows下文件名中不能包含一些非法字符，例如‘/’、‘\’、‘?’ 神马的</p>
+<p>你可以用下面这段代码剔除标题中的非法字符</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pattern = re.compile(<span class="string">r'[/\:*?"&lt;&gt;|]'</span>)</span><br><span class="line">s = re.sub(pattern,<span class="string">''</span>,s)</span><br></pre></td></tr></table></figure>
+<p>样例输入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">'&lt;&lt;?I am title?&gt;&gt;'</span></span><br></pre></td></tr></table></figure>
+<p>样例输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'I am title'</span></span><br></pre></td></tr></table></figure>
+<p>##3、列表解析、base64解密、chr()、int()、join()函数使用</p>
+<p>这是知道创宇的余弦出的一个解密小游戏，给你一个字符串，你需要解密出一个邮箱地址。</p>
+<p><strong>密码字符串</strong> 为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">解密方式为先用base64解密，再进行16进制转换，最后按ASCII码输出每个字符。</span><br><span class="line"></span><br><span class="line">这个小游戏很有意思，可以学习到一些python知识。</span><br><span class="line"></span><br><span class="line">下面是 **解题步骤**：</span><br><span class="line"></span><br><span class="line">1.base64解密  </span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">s = &apos;XDY1XDc2XDY5XDZjXDYzXDZmXDczXDQwXDY3XDZkXDYxXDY5XDZjXDJlXDYzXDZmXDZk&apos;</span><br><span class="line">print base64.b64decode(s)</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\<span class="number">65</span>\<span class="number">76</span>\<span class="number">69</span>\<span class="number">6</span>c\<span class="number">63</span>\<span class="number">6</span>f\<span class="number">73</span>\<span class="number">40</span>\<span class="number">67</span>\<span class="number">6</span>d\<span class="number">61</span>\<span class="number">69</span>\<span class="number">6</span>c\<span class="number">2</span>e\<span class="number">63</span>\<span class="number">6</span>f\<span class="number">6</span>d</span><br></pre></td></tr></table></figure>
+<p>这一看就是一种字符编码，最先猜到是ASCII编码。</p>
+<p>为了方便观察，将其拆分：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> base64.b64decode(s).split(<span class="string">'\\'</span>)</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">''</span>, <span class="string">'65'</span>, <span class="string">'76'</span>, <span class="string">'69'</span>, <span class="string">'6c'</span>, <span class="string">'63'</span>, <span class="string">'6f'</span>, <span class="string">'73'</span>, <span class="string">'40'</span>, <span class="string">'67'</span>, <span class="string">'6d'</span>, <span class="string">'61'</span>, <span class="string">'69'</span>, <span class="string">'6c'</span>, <span class="string">'2e'</span>, <span class="string">'63'</span>, <span class="string">'6f'</span>, <span class="string">'6d'</span>]</span><br></pre></td></tr></table></figure>
+<p>由于每个元素带有字母，猜测是16进制数，转换进制。</p>
+<p>int(c,16) 可以将字符串c当成16进制数，将其转换成10进制数返回（注意返回的是一个整数）</p>
+<p>chr(n)     可以将一个整数n转换成对应的ASCII字符。</p>
+<p>于是有代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> base64.b64decode(s).split(<span class="string">'\\'</span>):</span><br><span class="line">　　<span class="keyword">if</span> c:　　　<span class="comment"># 剔除空元素</span></span><br><span class="line">　　　　<span class="keyword">print</span> chr(int(c,<span class="number">16</span>)),</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e v i l c o s @ g m a i l . c o m</span><br></pre></td></tr></table></figure>
+<p>以上代码可以用 列表解析 简洁表示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> [chr(int(c,<span class="number">16</span>)) <span class="keyword">for</span> c <span class="keyword">in</span> base64.b64decode(s).split(<span class="string">'\\'</span>) <span class="keyword">if</span> c]</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">'e'</span>, <span class="string">'v'</span>, <span class="string">'i'</span>, <span class="string">'l'</span>, <span class="string">'c'</span>, <span class="string">'o'</span>, <span class="string">'s'</span>, <span class="string">'@'</span>, <span class="string">'g'</span>, <span class="string">'m'</span>, <span class="string">'a'</span>, <span class="string">'i'</span>, <span class="string">'l'</span>, <span class="string">'.'</span>, <span class="string">'c'</span>, <span class="string">'o'</span>, <span class="string">'m'</span>]</span><br></pre></td></tr></table></figure>
+<p>2.join()连接为字符串</p>
+<p>s.join(l)  表示将列表l中每个字符连接成一个字符串，用字符串s作为间隔</p>
+<p>so，可以将上述列表连接成字符串：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> <span class="string">''</span>.join([chr(int(c,<span class="number">16</span>)) <span class="keyword">for</span> c <span class="keyword">in</span> base64.b64decode(s).split(<span class="string">'\\'</span>) <span class="keyword">if</span> c])</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">evilcos@gmail.com</span><br></pre></td></tr></table></figure>
+<p>以上，就得到余弦大大的邮箱咯，是不是很有意思？</p>
+<p>##4.理解python继承的小例子</p>
+<p>复制代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">1</span> <span class="comment">#coding=gbk</span></span><br><span class="line"> <span class="number">2</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(object)</span>:</span></span><br><span class="line"> <span class="number">3</span>     name = <span class="string">'boss'</span></span><br><span class="line"> <span class="number">4</span>     <span class="keyword">print</span> name</span><br><span class="line"> <span class="number">5</span>     <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name=None)</span>:</span></span><br><span class="line"> <span class="number">6</span>         <span class="keyword">print</span> <span class="string">'2'</span></span><br><span class="line"> <span class="number">7</span>         <span class="keyword">if</span> name <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line"> <span class="number">8</span>             self.name = name</span><br><span class="line"> <span class="number">9</span>         <span class="keyword">print</span> self.name</span><br><span class="line"><span class="number">10</span> </span><br><span class="line"><span class="number">11</span> </span><br><span class="line"><span class="number">12</span> <span class="class"><span class="keyword">class</span> <span class="title">B</span><span class="params">(A)</span>:</span></span><br><span class="line"><span class="number">13</span>     <span class="keyword">print</span> <span class="string">'1'</span></span><br><span class="line"><span class="number">14</span>     name = <span class="string">'Boss'</span></span><br><span class="line"><span class="number">15</span> </span><br><span class="line"><span class="number">16</span> te = B()</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">boss</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line">Boss</span><br></pre></td></tr></table></figure>
+<p>可以看出类中变量和函数的继承调用关系。</p>
+<p>实例化B，先是运行从A继承来的语句，运行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">boss</span><br></pre></td></tr></table></figure>
+<p>再运行B中的语句，运行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>最后调用从A继承过来的构造函数<strong>init</strong>()，运行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span></span><br><span class="line">Boss</span><br></pre></td></tr></table></figure>
+<p>##5.python列表解析中的双重循环</p>
+<p>如何将B列表中的每一个元素与A列表中的元素相加，生成一个新列表？</p>
+<p>请看以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> A = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line"><span class="number">2</span> B = [<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]</span><br><span class="line"><span class="number">3</span> <span class="keyword">print</span> [x+y <span class="keyword">for</span> x <span class="keyword">in</span> A <span class="keyword">for</span> y <span class="keyword">in</span> B]</span><br></pre></td></tr></table></figure>
+<p>以上列表解析的写法相当于一个双重循环，先遍历B中每一个元素，再遍历A中每一个元素，每轮循环进行元素相加操作，最后得到一个新列表。</p>
+<p>##6.max()的比较函数</p>
+<p>max()函数原型：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">max(arg1, arg2, *args[, key])</span><br></pre></td></tr></table></figure>
+<p>例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="comment">#coding=gbk</span></span><br><span class="line"><span class="number">2</span> A = [<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">2</span>,<span class="number">4</span>]</span><br><span class="line"><span class="number">3</span> </span><br><span class="line"><span class="number">4</span> <span class="keyword">print</span> max(A)        　　　　　　　　<span class="comment">#  输出A中最大的元素</span></span><br><span class="line"><span class="number">5</span> <span class="keyword">print</span> max(A,key=<span class="keyword">lambda</span> x:x&gt;<span class="number">2</span>)    <span class="comment"># 输出A中第一个大于2的元素</span></span><br><span class="line"><span class="number">6</span> </span><br><span class="line"><span class="number">7</span> <span class="keyword">print</span> max(<span class="string">'af'</span>, <span class="string">'be'</span>,<span class="string">'cd'</span>)       <span class="comment"># 输出最大的字符串，比较规则为默认的字符串比较规则</span></span><br><span class="line"><span class="number">8</span> <span class="keyword">print</span> max(<span class="string">'af'</span>, <span class="string">'be'</span>,<span class="string">'cd'</span>, key=<span class="keyword">lambda</span> x: x[<span class="number">1</span>])  <span class="comment"># 输出第二个字符最大的字符串</span></span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line">cd</span><br><span class="line">af</span><br></pre></td></tr></table></figure>
+<p>key参数值为一个函数入口指针，你可以将自己定义的函数作为参数传进来，max函数将根据你定义的函数来进行比较，你可以自己制订比较规则。</p>
+<p>lambda为python中一种定义函数（匿名函数）的方法，你也可以用def定义。</p>
+<p>##7.reverse()函数有返回值吗？</p>
+<p>请看以下代码，猜猜它会输出什么呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> A = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line"><span class="number">2</span> <span class="keyword">print</span> A.reverse()</span><br></pre></td></tr></table></figure>
+<p>是不是第一眼以为会输出 [3,2,1] ？哈哈，错了。真正的输出是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">None</span></span><br></pre></td></tr></table></figure>
+<p>看一下reverse()的语法：</p>
+<blockquote>
+<p>list.reverse()<br>参数：NA<br>返回值：该方法没有返回值，但是会对列表的元素进行反向排序。  </p>
+</blockquote>
+<p>##8.提取url中的host（域名）</p>
+<p>使用urllib库提供的函数，用法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">1</span> <span class="keyword">import</span> urllib  </span><br><span class="line"> <span class="number">2</span>   </span><br><span class="line"> <span class="number">3</span> protocol, rest = urllib.splittype(<span class="string">'https://www.cnblogs.com:80/yym2013'</span>)  </span><br><span class="line"> <span class="number">4</span> <span class="comment"># protocol : https</span></span><br><span class="line"> <span class="number">5</span> <span class="comment"># rest     : //www.cnblogs.com:80/yym2013</span></span><br><span class="line"> <span class="number">6</span>   </span><br><span class="line"> <span class="number">7</span> host, rest =  urllib.splithost(rest)  </span><br><span class="line"> <span class="number">8</span> <span class="comment"># host : www.cnblogs.com:80</span></span><br><span class="line"> <span class="number">9</span> <span class="comment"># rest : /yym2013</span></span><br><span class="line"><span class="number">10</span>   </span><br><span class="line"><span class="number">11</span> host, port = urllib.splitport(host)  </span><br><span class="line"><span class="number">12</span> <span class="comment"># host : www.cnblogs.com</span></span><br><span class="line"><span class="number">13</span> <span class="comment"># port : 80</span></span><br></pre></td></tr></table></figure>
+<p>参考自： <a href="http://blog.csdn.net/cugb1004101218/article/details/46501461" target="_blank" rel="noopener">python 获取url的host</a></p>
+<p>##9.if-else 单行书写方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> a&gt;b:</span><br><span class="line">    t = a</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    t = b</span><br></pre></td></tr></table></figure>
+<p>转换成if-else单行形式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t = a <span class="keyword">if</span> a&gt;b <span class="keyword">else</span> b</span><br></pre></td></tr></table></figure>
+<p>##10.open的文件打开模式</p>
+<blockquote>
+<p>r或rt 默认模式，文本模式读<br>rb   二进制文件<br>w或wt 文本模式写，打开前文件存储被清空<br>wb  二进制写，文件存储同样被清空<br>a  追加模式，只能写在文件末尾<br>a+ 可读写模式，写只能写在文件末尾<br>w+ 可读写，与a+的区别是要清空文件内容<br>r+ 可读写，与a+的区别是可以写到文件任何位置  </p>
+</blockquote>
+<p>特别注意：a+、w+、r+的区别，他们虽然都是读写模式，但使用效果是有差别的。</p>
+<p>参考自：<a href="http://www.jb51.net/article/58002.htm" target="_blank" rel="noopener">Python open()文件处理使用介绍</a></p>
+<p>##11.关于文件读写错误 IOError: [Errno 0] Error</p>
+<p>　　该错误通常在windows环境下，使用a+读写模式打开文件，并对其先进行read()读操作，然后进行write()写入操作后出现的。原因是没有进行flush或者seek等操作，python不知道文件位置在哪了。</p>
+<p>参考自：<a href="http://www.cnblogs.com/freeDynasty/p/3712949.html?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="noopener">python IOError: [Errno 0] Error - freeDynasty</a></p>
+<p>##12、使用python发送邮件</p>
+<p>使用python发送邮件需要使用smtplib和email两个模块。</p>
+<p>首先需要在你的邮箱中开启smtp服务，并获得相应的<strong>授权码</strong>（网易邮箱貌似不需要）</p>
+<p>然后按教程将你的用户名和授权码<strong>配置</strong>好，这部分代码是死的，具有通用性，这里不赘述。</p>
+<p>最后准备好 <strong>发送邮箱</strong> 和 <strong>发送内容</strong>，调用smtp.sendmail()发送即可。</p>
+<p>具体配置可参考：<a href="http://www.cnblogs.com/leetao94/p/5460520.html" target="_blank" rel="noopener">使用python发送邮件</a></p>
+<p>##13、python的编号迭代</p>
+<p>有时候想用下标记录当前遍历的位置，同时又想有当前元素，自建一个变量变量作为下标又太low，优雅一些的做法是用内建函数enumerate()进行迭代。</p>
+<p>这样既会有下标，又会有当前迭代元素。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> index,s <span class="keyword">in</span> enumerate(str):</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'%d==&gt;%s'</span>%(index,s)</span><br></pre></td></tr></table></figure>
+<p>##14、list元素去重</p>
+<p>当你处理list列表变量时，可能会出现列表元素重复的现象。这个时候你该怎样用简便的方法将重复的元素去掉呢？</p>
+<p>方法有很多，我比较喜欢用set集合进行去重，当list变量转换成set集合变量时，重复的元素会自动合并，只保留一个。再将set集合变量转换为list即可。</p>
+<p>另外如果要保留list的顺序的话，需要使用sort进行排序。</p>
+<p>详见：<a href="http://www.jb51.net/article/55342.htm" target="_blank" rel="noopener">python中对list去重的多种方法</a></p>
+<p>##15、如何用尽量简洁的代码输出一个列表（list）的前五个元素</p>
+<p>最直观的写法，定义一个下标变量index来控制输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> li = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>]</span><br><span class="line"><span class="number">2</span> index = <span class="number">0</span></span><br><span class="line"><span class="number">3</span> <span class="keyword">for</span> x <span class="keyword">in</span> li:</span><br><span class="line"><span class="number">4</span>     <span class="keyword">if</span> index&gt;=<span class="number">5</span>:</span><br><span class="line"><span class="number">5</span>         <span class="keyword">break</span></span><br><span class="line"><span class="number">6</span>     <span class="keyword">print</span> x</span><br><span class="line"><span class="number">7</span>     index+=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>观察代码，发现下标index可以用enumerate函数直接分离出来：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> li = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>]</span><br><span class="line"><span class="number">2</span> <span class="keyword">for</span> index,x <span class="keyword">in</span> enumerate(li):</span><br><span class="line"><span class="number">3</span>     <span class="keyword">if</span> index&gt;=<span class="number">5</span>:</span><br><span class="line"><span class="number">4</span>         <span class="keyword">break</span></span><br><span class="line"><span class="number">5</span>     <span class="keyword">print</span> x</span><br></pre></td></tr></table></figure>
+<p>还有更简单的写法，使用列表的切片操作来简化代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> li = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>]</span><br><span class="line"><span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> li[:<span class="number">5</span>]:</span><br><span class="line"><span class="number">3</span>     <span class="keyword">print</span> x</span><br></pre></td></tr></table></figure>
+<p>##16、readlines()会读入换行符！</p>
+<p>在一次用smtp服务发送邮件给自己的时候，我用readlines()读取本地文件。</p>
+<p>将带有email的username和password的那两行行直接赋值给用户名和密码变量。</p>
+<p>结果导致收到的邮件开头带有乱码，检查了各个地方都没有发现bug在哪里。</p>
+<p>最后找到原因是输入的用户名和密码最后分别带有一个换行符，而邮件将多余的内容作为乱码来处理了。</p>
+<p>解决方法是readlines()读取每一行内容后，赋值的时候需要先strip()去除字符串前后端多余的空白符。</p>
+<p>##17、如何创建一个二维列表？</p>
+<p>加入我想创建一个2000*7的二维列表，列表每个元素是0，该怎么创建呢？</p>
+<p>可以使用 <strong>嵌套的列表解析</strong> 来达成这个目的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cols = <span class="number">7</span></span><br><span class="line">rows = <span class="number">2000</span></span><br><span class="line"><span class="number">2</span>d_list = [[<span class="number">0</span> <span class="keyword">for</span> col <span class="keyword">in</span> range(cols)] <span class="keyword">for</span> row <span class="keyword">in</span> range(rows)]</span><br></pre></td></tr></table></figure>
+<p>##18、使用 eval 函数将列表样式字符串转换为真正的列表类型<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ip = <span class="string">"['123.43.54.3',80,10]"</span></span><br><span class="line"><span class="keyword">print</span> type(ip)</span><br><span class="line">ip = eval(ip)</span><br><span class="line"><span class="keyword">print</span> type(ip)</span><br></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;type <span class="string">'str'</span>&gt;</span><br><span class="line">&lt;type <span class="string">'list'</span>&gt;</span><br></pre></td></tr></table></figure></p>
+<p>##19、使用 tee 同时重定向到标准输出和文件<br>本例子基于 linux 环境</p>
+<p>创建一个脚本 tmp.py ，它使用 python 输出到标准输出<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys,time</span><br><span class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">	sys.stdout.write(<span class="string">'[%s]'</span>%time.strftime(<span class="string">'%Y-%m-%d %H:%M:%S'</span>,time.localtime(time.time())) + <span class="string">' '</span>)</span><br><span class="line">	sys.stdout.flush()</span><br></pre></td></tr></table></figure></p>
+<p>这个脚本的作用是循环输出当前时间到linux的<strong>标准输出</strong>，一般来说，linux 的标准输出就是屏幕，但如果在 linux 中运行该脚本时使用重定向符 &gt; output.txt ，那么标准输出就变成了文件 output.txt，也就是说以上代码循环输出的当前时间就会输出到文件 output.txt 中。</p>
+<p>但是使用重定向符 &gt; 只能单向指定，不能将输出同时指向两个位置，也就是说我<strong>没法将该脚本的运行结果同时输出到屏幕和一个文件中</strong>。</p>
+<p>这个需求可以用 linux 自带的工具 tee 解决。</p>
+<p>tee 的作用是：<strong>从标准输入中读取并同时写入到标准输出和指定的文件上</strong></p>
+<p>于是我们在linux 中用以下命令将脚本的运行结果同时输出到屏幕和文件中。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python tmp.py | tee output.txt</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意</strong>：python 脚本中一定不要忘了使用 flush() 输出缓冲区内容，不然你会看不到输出。</p>
+<p>参考资料：<a href="http://blog.csdn.net/andy572633/article/details/8081591" target="_blank" rel="noopener">Linux即输出到屏幕，又保存到文件 - csdn</a></p>
+<p>##20、linux小知识：nohup 和 &amp; 的区别<br>这两个操作的作用都是 <strong>使命令在后台运行</strong>。</p>
+<p>区别是 <strong>能否被 SIGHUP信号 中断</strong>。</p>
+<p>简单一些讲就是使用 &amp; 启动的后台任务，关闭终端连接之后会被 SIGHUP信号 中断。而使用 nohup 启动的后台任务则不受影响。</p>
+<p>仅仅这么说不太严谨，详情可以见：<a href="http://blog.csdn.net/lovemdx/article/details/20529563" target="_blank" rel="noopener">linux 的nohup &amp; 和daemon 总结</a></p>
+<p>##21、linux小知识：使用 tail 动态查看日志文件<br>查看 .log 日志文件的时候，经常需要重新打开文件才能查看日志的更新情况。</p>
+<p>那么可不可以动态的查看日志文件呢？</p>
+<p>这个时候一个被我忽视了很久的命令 <strong>tail</strong> 跳入了我的眼帘。</p>
+<p>tail 的<strong>作用</strong>是查看一个文件的末尾N行内容，如果 <strong>为 tail 添加上参数 -f 便可以动态查看日志啦！默认每秒刷新一次</strong>，即：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tail -f test.log</span><br></pre></td></tr></table></figure>
+<p>如此 test.log 最新写入的内容就可以立刻显示在屏幕上了，这对于查看日志文件十分有用。</p>
+<p>参考资料：<a href="http://codingstandards.iteye.com/blog/832575" target="_blank" rel="noopener">我使用过的Linux命令之tail - 输出文件尾部/动态监视文件尾部</a></p>
+<h2 id="22、logging-模块：按时间切分日志"><a href="#22、logging-模块：按时间切分日志" class="headerlink" title="22、logging 模块：按时间切分日志"></a>22、logging 模块：按时间切分日志</h2><p>如果将日志输出导向到一个文件，那么时间久了，这个文件会变得很大。</p>
+<p>这个时候我们可以使用 logging 模块提供的 RotatingFileHandler 和 TimedRotatingFileHandler 来自动切分日志。</p>
+<p>这里以 TimedRotatingFileHandler 举例，它的作用是设置 logging 按时间切分日志文件，比如下面这个例子，就是以“天”为单位，自动切分日志：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">LOG_FILE = <span class="string">'test.log'</span>  <span class="comment"># 日志文件输出位置</span></span><br><span class="line"></span><br><span class="line">logging.basicConfig(level=logging.INFO)     <span class="comment"># 基本设置</span></span><br><span class="line"></span><br><span class="line">handler = logging.handlers.TimedRotatingFileHandler(LOG_FILE,when=<span class="string">'D'</span>,interval=<span class="number">1</span>,backupCount=<span class="number">100</span>)   <span class="comment"># 按时间分割日志，每天对应一个日志文件</span></span><br><span class="line">formatter = logging.Formatter(fmt=<span class="string">'%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'</span>,datefmt=<span class="string">'%Y-%m-%d %H:%M:%S'</span>)</span><br><span class="line">handler.setFormatter(formatter) <span class="comment"># 设置显示格式</span></span><br><span class="line"></span><br><span class="line">logging.getLogger().addHandler(handler)    <span class="comment"># 加载该处理</span></span><br></pre></td></tr></table></figure>
+<p>参考资料：</p>
+<p><a href="http://www.cnblogs.com/dkblog/archive/2011/08/26/2155018.html" target="_blank" rel="noopener">python 的日志logging模块学习 - 博客园</a></p>
+<p><a href="http://blog.csdn.net/u012450329/article/details/53067717" target="_blank" rel="noopener">python 日志模块logging学习与使用(日志分割)</a></p>
+<p>##23、linux小知识：设置 alias 别名永久生效<br>使用 alias 设置命令的别名是很有用的操作，你可以在命令行直接输入以下命令设置一个别名，以 ll 为例：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias ll = <span class="string">'ls -alF'</span></span><br></pre></td></tr></table></figure></p>
+<p>如此便设置了一个别名，在命令行里输入 ll 和输入 ls -alF 产生的效果是相同的。</p>
+<p>但直接在命令行里设置下次登陆便会失效，如何让别名永久生效呢，需要修改用户目录下的 <figure class="highlight plain"><figcaption><span>文件。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">```python</span><br><span class="line">vi .bashrc</span><br></pre></td></tr></table></figure></p>
+<p>添加<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias ll = <span class="string">'ls -alF'</span></span><br></pre></td></tr></table></figure></p>
+<p>回到用户目录，输入以下命令使其生效：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source .bashrc</span><br></pre></td></tr></table></figure></p>
+<p>##24、git小知识：git remote 远程主机常用操作<br><strong>1. 查看帮助</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote -h</span><br></pre></td></tr></table></figure></p>
+<p><strong>2. 显示远程主机</strong></p>
+<p>结构：<br><figure class="highlight plain"><figcaption><span>remote [-v]```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">例子：</span><br><span class="line">```python</span><br><span class="line">git remote	# 显示所有远程主机名</span><br><span class="line">git remote -v	# 显示所有远程主机名和对应的url</span><br></pre></td></tr></table></figure></p>
+<p><strong>3. 添加远程主机</strong></p>
+<p>结构：<br><figure class="highlight plain"><figcaption><span>remote add <远程主机名> <远程仓库url>```</远程仓库url></远程主机名></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">例子：</span><br><span class="line">```python</span><br><span class="line">git remote add origin http://test.com/user/repo.git</span><br></pre></td></tr></table></figure></p>
+<p>ps:<br>远程主机名一般会起为 origin，每个git项目的remote是独立的</p>
+<p><strong>4. 重命名远程主机名</strong></p>
+<p>结构：<br><figure class="highlight plain"><figcaption><span>remote rename <旧主机名> <新主机名>```</新主机名></旧主机名></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">例子：</span><br><span class="line">```python</span><br><span class="line">git remote rename origin origin_bak</span><br></pre></td></tr></table></figure></p>
+<p><strong>5. 删除远程主机</strong></p>
+<p>结构：<figure class="highlight plain"><figcaption><span>remote remove <远程主机名>```</远程主机名></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">例子：</span><br><span class="line">```python</span><br><span class="line">git remote remove origin</span><br></pre></td></tr></table></figure></p>
+<p><strong>6. 重置远程主机的url</strong></p>
+<p>结构：<figure class="highlight plain"><figcaption><span>remote set-url <远程主机名> <新的远程仓库url>```</新的远程仓库url></远程主机名></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">例子：</span><br><span class="line">```python</span><br><span class="line">git remote set-url origin http://test.com/user/repo.git</span><br></pre></td></tr></table></figure></p>
+<h2 id="25、IP地址拼接精简写法"><a href="#25、IP地址拼接精简写法" class="headerlink" title="25、IP地址拼接精简写法"></a>25、IP地址拼接精简写法</h2><p>要实现这样一个功能，给出IP地址的四个字段，将它们拼接起来，并判断是否合法。</p>
+<p><strong>栗子</strong>：</p>
+<p>输入：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">192</span> <span class="number">168</span> <span class="number">12</span> <span class="number">34</span></span><br><span class="line"><span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span></span><br><span class="line"><span class="number">234</span> <span class="number">345</span> <span class="number">456</span> <span class="number">567</span></span><br><span class="line"><span class="number">-1</span> <span class="number">-1</span> <span class="number">-1</span> <span class="number">-1</span></span><br></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">192.168</span><span class="number">.12</span><span class="number">.34</span></span><br><span class="line"><span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></span><br><span class="line">[Error]: cannot compose IP address.</span><br><span class="line">[Error]: cannot compose IP address.</span><br></pre></td></tr></table></figure></p>
+<p>精简写法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> sys.stdin:</span><br><span class="line">    inputs = line.split()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> all([<span class="number">0</span> &lt;= int(input) &lt;= <span class="number">255</span> <span class="keyword">for</span> input <span class="keyword">in</span> inputs]):</span><br><span class="line">        print(<span class="string">"."</span>.join(inputs))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">"[Error]: cannot compose IP address."</span>)</span><br></pre></td></tr></table></figure></p>
+<p>亮点：</p>
+<ol>
+<li><code>for line in sys.stdin:</code> 循环读取标准输入的内容</li>
+<li>all() 的运用：如果列表内元素都不为 False、’’、0，则返回 <code>True</code>；否则返回 <code>False</code></li>
+</ol>
+<p>来源：<a href="https://github.com/WangHaizhen/py-tree/issues/1" target="_blank" rel="noopener">1.1 有个比较 pythonic 的写法，加油！ #1 - WangHaizhen/py-tree</a></p>
+<h2 id="26、linux小知识：查看系统登录过的用户"><a href="#26、linux小知识：查看系统登录过的用户" class="headerlink" title="26、linux小知识：查看系统登录过的用户"></a>26、linux小知识：查看系统登录过的用户</h2><p>Linux用户登录记录日志和相关查看命令汇总<br><a href="http://www.cnblogs.com/lizhaoxian/p/5981029.html" target="_blank" rel="noopener">http://www.cnblogs.com/lizhaoxian/p/5981029.html</a></p>
+<h2 id="27、python2-和-python3-的编码对比"><a href="#27、python2-和-python3-的编码对比" class="headerlink" title="27、python2 和 python3 的编码对比"></a>27、python2 和 python3 的编码对比</h2><p>讨论这个问题的起因是在 py3 环境中运行一段 py2 代码时出现了差异。</p>
+<p>出问题的代码是这里：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=gbk</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">if</span> s[:<span class="number">2</span>]==<span class="string">'【'</span>:</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>在 py2 里，这条语句的条件表达式结果为真；而在 py3 里，这条语句的条件表达式结果为假。</p>
+<p>而如果我把代码改成：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=gbk</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">if</span> s[:<span class="number">1</span>]==<span class="string">'【'</span>:</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>py3 中这条语句的条件表达式的结果变为真。</p>
+<p>为什么会出现这种情况呢？</p>
+<p>我们首先看一下，py2 中 gbk 编码的样子：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = <span class="string">'【'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s</span><br><span class="line"><span class="string">'\xa1\xbe'</span></span><br></pre></td></tr></table></figure></p>
+<p>这里中文字符‘【’，由两个区位符组成。所以s[:2]可以取到完整的‘【’。</p>
+<p>而 py3 对编码问题做了改进，所有 str 类型变量都会自动转码为 unicode 编码存储。也就是说一个 gbk 编码的文件中，将一个中文字符赋值给一个变量，会自动转码为 unicode 编码，然后存进变量。</p>
+<p>于是在 py3 中 gbk 编码赋值之后，变成了：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s = <span class="string">'【'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>s</span><br><span class="line"><span class="string">'\u3010'</span></span><br></pre></td></tr></table></figure></p>
+<p>（实际上 py3 解释器中会自动输出中文，这里理解意思就好）</p>
+<p>所以在 py3 中，用 s[:1] 便可以取到完整的’【’。</p>
+<p>于是<figure class="highlight plain"><figcaption><span>s[:1]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">## 28、linux小知识：修改 shell 提示符显示格式</span><br><span class="line">如果我想让linux shell 的提示符变成如下样子，该怎么做呢？</span><br><span class="line">```python</span><br><span class="line">[my-PC] yym@/home/yym&gt;</span><br></pre></td></tr></table></figure></p>
+<p>很简单，我们在 .bash_profile 中添加一条语句即可：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">vi .bash_profile</span><br><span class="line">添加 export PS1=<span class="string">'[\h] \u@$PWD&gt;'</span></span><br><span class="line">退出 vim</span><br><span class="line">source .bash_profile</span><br></pre></td></tr></table></figure></p>
+<p>执行以上操作之后，你会发现提示符已经变成了我们想要的格式。</p>
+<p>要修改成其它格式，依次类推。</p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/17" target="_blank" rel="noopener">Python 学习拾遗</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/01/02/新浪云SAE搭建python环境 问题拾遗/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2016/12/21/关于python中的字符串编码理解/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-01-02 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

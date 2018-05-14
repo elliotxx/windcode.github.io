@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>修改博客系统的第三方库 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="博客系统的运行环境由Django、markdownx、markdown-deux、markdown2等第三方库组成。
+在写博客系统的过程中，为了实现自己的意图，我修改了一些第三方库的源代码。
+为了以后方便部署，在这里记录一下我修改的地方。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="修改博客系统的第三方库"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> 修改博客系统的第三方库</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>博客系统的运行环境由Django、markdownx、markdown-deux、markdown2等第三方库组成。</p>
+<p>在写博客系统的过程中，为了实现自己的意图，我修改了一些第三方库的源代码。</p>
+<p>为了以后方便部署，在这里记录一下我修改的地方。<br><a id="more"></a></p>
+<p>##修改markdown_deux<br>markdown_deux用于渲染markdown文本</p>
+<p>作用：关闭渲染的安全模式，以便正常渲染HTML<br>修改 BLOG_VENV/lib/python2.7/site-packages/markdown_deux/conf/settings.py  12行<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">8</span> MARKDOWN_DEUX_DEFAULT_STYLE = &#123;</span><br><span class="line"> <span class="number">9</span>     <span class="string">"extras"</span>: &#123;</span><br><span class="line"><span class="number">10</span>         <span class="string">"code-friendly"</span>: <span class="keyword">None</span>,</span><br><span class="line"><span class="number">11</span>     &#125;,</span><br><span class="line"><span class="number">12</span>     <span class="string">"safe_mode"</span>: <span class="string">"escape"</span>,</span><br><span class="line"><span class="number">13</span> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>为<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">8</span> MARKDOWN_DEUX_DEFAULT_STYLE = &#123;</span><br><span class="line"> <span class="number">9</span>     <span class="string">"extras"</span>: &#123;</span><br><span class="line"><span class="number">10</span>         <span class="string">"code-friendly"</span>: <span class="keyword">None</span>,</span><br><span class="line"><span class="number">11</span>     &#125;,</span><br><span class="line"><span class="number">12</span>     <span class="comment">#"safe_mode": "escape",</span></span><br><span class="line"><span class="number">13</span>     <span class="string">"safe_mode"</span>: <span class="keyword">False</span>,</span><br><span class="line"><span class="number">14</span> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>##修改markdownx<br>markdownx是一款markdown编辑器，支持所见即所得（预览）。</p>
+<p>作用：使markdownx编辑器可以拖曳上传gif动图文件<br>修改 BLOG_VENV/lib/python2.7/site-packages/markdownx/forms.py 71行<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">71</span>         <span class="keyword">if</span> content_type.lower() != self._SVG_TYPE:</span><br><span class="line"><span class="number">72</span>             <span class="comment"># Processing the raster graphic image:</span></span><br><span class="line"><span class="number">73</span>             image = self._process_raster(image, image_extension)</span><br><span class="line"><span class="number">74</span>             image_size = image.tell()</span><br></pre></td></tr></table></figure></p>
+<p>为<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">71</span>         <span class="keyword">if</span> content_type.lower() != self._SVG_TYPE <span class="keyword">and</span> content_type.lower() != <span class="string">'image/gif'</span>:</span><br><span class="line"><span class="number">72</span>             <span class="comment"># Processing the raster graphic image:</span></span><br><span class="line"><span class="number">73</span>             image = self._process_raster(image, image_extension)</span><br><span class="line"><span class="number">74</span>             image_size = image.tell()</span><br></pre></td></tr></table></figure></p>
+<p>作用：修改markdownx编辑器预览页的css显示样式<br>修改 BLOG_VENV/lib/python2.7/site-packages/markdownx/static/markdownx/admin/css/markdownx.css 第7、10行<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> 4 <span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-editor</span>,</span><br><span class="line"> 5 <span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-preview</span> &#123;</span><br><span class="line"> 6     margin-left: 0;</span><br><span class="line"> 7     <span class="selector-tag">width</span>: 610<span class="selector-tag">px</span>;</span><br><span class="line"> 8 &#125;</span><br><span class="line"> 9 <span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-preview</span> &#123;</span><br><span class="line">10     overflow-y: scroll;</span><br><span class="line">11     <span class="selector-tag">-webkit-text-size-adjust</span>: 100%;</span><br><span class="line">12     <span class="selector-tag">-ms-text-size-adjust</span>: 100%;</span><br><span class="line">13     <span class="selector-tag">font-size</span>: 100%;</span><br><span class="line">14     <span class="selector-tag">font-size</span>: 1<span class="selector-tag">em</span>;</span><br><span class="line">15     <span class="selector-tag">line-height</span>: 1<span class="selector-class">.5em</span>;</span><br><span class="line">16 &#125;</span><br></pre></td></tr></table></figure></p>
+<p>为<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> 7 <span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-editor</span>,</span><br><span class="line"> 8 <span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-preview</span> &#123;</span><br><span class="line"> 9     margin-left: 0;</span><br><span class="line">10     <span class="selector-tag">width</span>: 600<span class="selector-tag">px</span>;</span><br><span class="line">11 &#125;</span><br><span class="line">12 <span class="selector-class">.markdownx</span> <span class="selector-class">.markdownx-preview</span> &#123;</span><br><span class="line">13     /*overflow-y: scroll;*/</span><br><span class="line">14     <span class="selector-tag">border</span>: <span class="selector-tag">double</span> ;</span><br><span class="line">15     <span class="selector-tag">-webkit-text-size-adjust</span>: 100%;</span><br><span class="line">16     <span class="selector-tag">-ms-text-size-adjust</span>: 100%;</span><br><span class="line">17     <span class="selector-tag">font-size</span>: 100%;</span><br><span class="line">18     <span class="selector-tag">font-size</span>: 1<span class="selector-tag">em</span>;</span><br><span class="line">19     <span class="selector-tag">line-height</span>: 1<span class="selector-class">.5em</span>;</span><br><span class="line">20</span><br><span class="line">21     <span class="selector-tag">margin-left</span>: 50<span class="selector-tag">px</span>;</span><br><span class="line">22     <span class="selector-tag">padding-top</span><span class="selector-pseudo">:0px</span>;</span><br><span class="line">23 &#125;</span><br></pre></td></tr></table></figure></p>
+<p>作用：修改css，使markdownx编辑页和预览页并排显示<br>修改 BLOG_VENV/lib/python2.7/site-packages/markdownx/templates/markdownx/widget.html 全部代码<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1 <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"markdownx"</span>&gt;</span></span><br><span class="line">2     &#123;&#123; markdownx_editor &#125;&#125;</span><br><span class="line">3     <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"markdownx-preview"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">4 <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>为<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> 1 <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"markdownx row"</span> &gt;</span></span><br><span class="line"> 2     <span class="comment">&lt;!--style="margin-left: -350px;margin-top:50px;"&gt;--&gt;</span></span><br><span class="line"> 3     <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"col-md-6"</span>&gt;</span></span><br><span class="line"> 4         &#123;&#123; markdownx_editor &#125;&#125;</span><br><span class="line"> 5     <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"> 6     <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"col-md-6"</span> &gt;</span></span><br><span class="line"> 7         <span class="comment">&lt;!--style="padding-left: 50px;"&gt;--&gt;</span></span><br><span class="line"> 8         <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"markdownx-preview"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"> 9     <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">10 <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>作用：修改默认markdownx渲染引擎 markdown 为 markdown2<br>修改 BLOG_VENV/lib/python2.7/site-packages/markdownx/utils.py 第1行<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">1</span> <span class="keyword">import</span> markdown</span><br><span class="line"> <span class="number">2</span></span><br><span class="line"> <span class="number">3</span> <span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"> <span class="number">4</span></span><br><span class="line"> <span class="number">5</span> <span class="keyword">from</span> .settings <span class="keyword">import</span> MARKDOWNX_MARKDOWN_EXTENSIONS, MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS</span><br><span class="line"> <span class="number">6</span></span><br><span class="line"> <span class="number">7</span></span><br><span class="line"> <span class="number">8</span> <span class="function"><span class="keyword">def</span> <span class="title">markdownify</span><span class="params">(content)</span>:</span></span><br><span class="line"> <span class="number">9</span>     <span class="keyword">return</span> markdown.markdown(</span><br><span class="line"><span class="number">10</span>                         content,</span><br><span class="line"><span class="number">11</span>                         extensions=MARKDOWNX_MARKDOWN_EXTENSIONS,</span><br><span class="line"><span class="number">12</span>                         extension_configs=MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS</span><br><span class="line"><span class="number">13</span>     )</span><br></pre></td></tr></table></figure></p>
+<p>为<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="keyword">import</span> markdown</span><br><span class="line"> <span class="number">2</span></span><br><span class="line"> <span class="number">3</span> <span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"> <span class="number">4</span> <span class="keyword">import</span> markdown2</span><br><span class="line"> <span class="number">5</span> <span class="keyword">from</span> django.utils.safestring <span class="keyword">import</span> mark_safe</span><br><span class="line"> <span class="number">6</span> <span class="keyword">from</span> django.utils.encoding <span class="keyword">import</span> force_text</span><br><span class="line"> <span class="number">7</span> <span class="keyword">from</span> django.template.defaultfilters <span class="keyword">import</span> stringfilter</span><br><span class="line"> <span class="number">8</span></span><br><span class="line"> <span class="number">9</span> <span class="keyword">from</span> .settings <span class="keyword">import</span> MARKDOWNX_MARKDOWN_EXTENSIONS, MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="number">11</span></span><br><span class="line"><span class="number">12</span> <span class="function"><span class="keyword">def</span> <span class="title">markdownify</span><span class="params">(content)</span>:</span></span><br><span class="line"><span class="number">13</span>     <span class="keyword">return</span> markdown2.markdown(</span><br><span class="line"><span class="number">14</span>         content,extras=MARKDOWNX_MARKDOWN_EXTENSIONS</span><br><span class="line"><span class="number">15</span>     )</span><br></pre></td></tr></table></figure></p>
+<p>##尾记<br>当时部署网站的时候，我先将项目源代码复制到了vps中，接下来需要安装项目的运行环境，比如Django、markdown2等。</p>
+<p>通过requirements.txt 安装了依赖的第三方工具之后，发现我改动的内容并没有同步过来。这意味着我运行项目之后，有些地方的效果并不能和我意图相同，比如markdownx编辑器的编辑页和预览页不能并排显示。</p>
+<p>为了找回同步的内容，我用diff对比了 <strong>修改过的运行环境</strong> 和 <strong>原生运行环境</strong>，得到对比结果之后总结出以上内容。</p>
+<p>以下是diff的原对比结果，也放在这里：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">diff -x <span class="string">'*.pyc'</span> -ed -r BLOG_VENV/lib/python2<span class="number">.7</span>/site-packages/markdown_deux/conf/settings.py BLOG_VENV_nav/lib/python2<span class="number">.7</span>/site-packages/markdown_deux/conf/settings. </span><br><span class="line">py</span><br><span class="line"><span class="number">12</span>,<span class="number">13</span>c</span><br><span class="line">    <span class="string">"safe_mode"</span>: <span class="string">"escape"</span>,</span><br><span class="line">.</span><br><span class="line">diff -x <span class="string">'*.pyc'</span> -ed -r BLOG_VENV/lib/python2<span class="number">.7</span>/site-packages/markdownx/forms.py BLOG_VENV_nav/lib/python2<span class="number">.7</span>/site-packages/markdownx/forms.py</span><br><span class="line"><span class="number">71</span>c</span><br><span class="line">        <span class="keyword">if</span> content_type.lower() != self._SVG_TYPE:</span><br><span class="line">.</span><br><span class="line">diff -x <span class="string">'*.pyc'</span> -ed -r BLOG_VENV/lib/python2<span class="number">.7</span>/site-packages/markdownx/static/markdownx/admin/css/markdownx.css BLOG_VENV_nav/lib/python2<span class="number">.7</span>/site-packages/</span><br><span class="line">markdownx/static/markdownx/admin/css/markdownx.css</span><br><span class="line"><span class="number">135</span>,<span class="number">166</span>d</span><br><span class="line"><span class="number">112</span>d</span><br><span class="line"><span class="number">22</span>,<span class="number">24</span>d</span><br><span class="line"><span class="number">15</span>,<span class="number">16</span>c</span><br><span class="line">    overflow-y: scroll;</span><br><span class="line">.</span><br><span class="line"><span class="number">12</span>,<span class="number">13</span>d</span><br><span class="line"><span class="number">10</span>c</span><br><span class="line">    width: <span class="number">610</span>px;</span><br><span class="line">.</span><br><span class="line"><span class="number">3</span>,<span class="number">5</span>d</span><br><span class="line">diff -x <span class="string">'*.pyc'</span> -ed -r BLOG_VENV/lib/python2<span class="number">.7</span>/site-packages/markdownx/templates/markdownx/widget.html BLOG_VENV_nav/lib/python2<span class="number">.7</span>/site-packages/markdownx/    </span><br><span class="line">templates/markdownx/widget.html</span><br><span class="line"><span class="number">1</span>,<span class="number">9</span>c</span><br><span class="line">&lt;div class="markdownx"&gt;</span><br><span class="line">    &#123;&#123; markdownx_editor &#125;&#125;</span><br><span class="line">    &lt;div class="markdownx-preview"&gt;&lt;/div&gt;</span><br><span class="line">.</span><br><span class="line">diff -x <span class="string">'*.pyc'</span> -ed -r BLOG_VENV/lib/python2<span class="number">.7</span>/site-packages/markdownx/utils.py BLOG_VENV_nav/lib/python2<span class="number">.7</span>/site-packages/markdownx/utils.py</span><br><span class="line"><span class="number">16</span>,<span class="number">22</span>d</span><br><span class="line"><span class="number">13</span>,<span class="number">14</span>c</span><br><span class="line">    <span class="keyword">return</span> markdown.markdown(</span><br><span class="line">                        content,</span><br><span class="line">                        extensions=MARKDOWNX_MARKDOWN_EXTENSIONS,</span><br><span class="line">                        extension_configs=MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS</span><br><span class="line">.</span><br><span class="line"><span class="number">4</span>,<span class="number">7</span>d</span><br><span class="line">diff -x <span class="string">'*.pyc'</span> -ed -r BLOG_VENV/lib/python2<span class="number">.7</span>/site-packages/pkg_resources/__init__.py BLOG_VENV_nav/lib/python2<span class="number">.7</span>/site-packages/pkg_resources/__init__.py</span><br><span class="line"><span class="number">1958</span>a</span><br><span class="line">        <span class="keyword">elif</span> subitem.lower().endswith(<span class="string">'.dist-info'</span>):</span><br><span class="line">            subpath = os.path.join(path_item, subitem)</span><br><span class="line">            submeta = EggMetadata(zipimport.zipimporter(subpath))</span><br><span class="line">            submeta.egg_info = subpath</span><br><span class="line">            <span class="keyword">yield</span> Distribution.from_location(path_item, subitem, submeta)</span><br><span class="line"></span><br><span class="line">.</span><br><span class="line">diff -x <span class="string">'*.pyc'</span> -ed -r BLOG_VENV/lib/python2<span class="number">.7</span>/site-packages/setuptools/command/__init__.py BLOG_VENV_nav/lib/python2<span class="number">.7</span>/site-packages/setuptools/command/__init__. </span><br><span class="line">py</span><br><span class="line"><span class="number">5</span>c</span><br><span class="line">    <span class="string">'register'</span>, <span class="string">'bdist_wininst'</span>, <span class="string">'upload_docs'</span>, <span class="string">'upload'</span>, <span class="string">'build_clib'</span>,</span><br><span class="line">.</span><br></pre></td></tr></table></figure></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/360" target="_blank" rel="noopener">修改博客系统的第三方库</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/02/23/基于Django、WeRoBot的微信公众平台开发（一）/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/02/20/搭建网站自动备份机制（crontab+mysqldump+tar+oss）/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-02-22 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>

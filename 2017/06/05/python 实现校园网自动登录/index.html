@@ -1,0 +1,313 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  
+  <title>python 实现校园网自动登录 | 呓语的黑板报</title>
+  <meta name="author" content="呓语">
+  
+  <meta name="description" content="##背景我所在的学校校园网登录是web式的，即随便打开一个网页就会自动跳转到登录页面，然后输入用户名密码，点登录，便可以上网了。
+但这种登录方式有个缺点：登录状态不会一直保持下去。即过一段时间就会掉线，然后你需要重新登陆才行。这个时间大概是一天。
+这就蛋疼了，想让实验室的电脑随时保持联网状态怎么办呢？（有时候我需要远程我的电脑）
+这个时候可以用python脚本解决这个问题！">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="python 实现校园网自动登录"/>
+  <meta property="og:site_name" content="呓语的黑板报"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+
+
+</head>
+
+ <body>  
+  <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+	  <a class="navbar-brand" href="/">呓语的黑板报</a>
+      <div class="collapse navbar-collapse nav-menu">
+		<ul class="nav navbar-nav">
+          <li><a href="/" title="Home"><i class="fa fa-home"></i>Home</a></li>
+		  
+		  <li>
+			<!-- <a href="//archives" title="All the articles."> -->
+            <a href="/archives" title="All the articles.">
+			  <i class="fa fa-archive"></i>Archives
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="//about" title="About me."> -->
+            <a href="/about" title="About me.">
+			  <i class="fa fa-user"></i>About
+			</a>
+		  </li>
+		  
+		  <li>
+			<!-- <a href="/https://github.com/windcode/windcode.github.io/issues" title="给我留言."> -->
+            <a href="https://github.com/windcode/windcode.github.io/issues" title="给我留言.">
+			  <i class="fa fa-comments"></i>留言
+			</a>
+		  </li>
+		  
+		</ul>
+      </div>
+    </div> <!-- container -->
+</nav>
+<div class="clearfix"></div>
+
+  <div class="container">
+  	<div class="content">
+    	 
+
+
+	
+		<div class="page-header">
+			<h1> python 实现校园网自动登录</h1>
+		</div>
+	
+
+
+
+<div class="row post">
+	<!-- cols -->
+	
+	<div id="top_meta"></div>
+	<div class="col-md-9">
+	
+
+	<!-- content -->
+	<div class="mypage x-post-content">		
+	  		
+
+	  <p>##背景<br>我所在的学校校园网登录是web式的，即随便打开一个网页就会自动跳转到登录页面，然后输入用户名密码，点登录，便可以上网了。</p>
+<p>但这种登录方式有个缺点：<strong>登录状态不会一直保持下去</strong>。即过一段时间就会掉线，然后你需要重新登陆才行。这个时间大概是一天。</p>
+<p>这就蛋疼了，想让实验室的电脑随时保持联网状态怎么办呢？（有时候我需要远程我的电脑）</p>
+<p>这个时候可以用python脚本解决这个问题！<br><a id="more"></a></p>
+<p>##思路</p>
+<p>写一个死循环一直 ping 8.8.8.8，如果 ping 通说明正连着网，进入下一次循环；如果 ping 不通，说明断网了，尝试登陆校园网，然后进入下一次循环。即：</p>
+<p>ping 8.8.8.8 —&gt; 如果已联网 —&gt; 继续 ping 8.8.8.8 —&gt; …… —&gt; 如果断网 —&gt; 尝试登陆 —&gt; 登陆成功 —&gt; ping 8.8.8.8 ……</p>
+<p>脚本写好后放到 windows 的计划任务里设置开机启动。</p>
+<p>或者在linux中设置 crontab，一样的道理。</p>
+<p>##技术点</p>
+<ul>
+<li>利用 python 进行 post 请求</li>
+<li>base64加密解密</li>
+<li>利用 subprocess 创建子进程</li>
+</ul>
+<p>##碎碎念<br>脚本在后台运行cpu占用大概为 1~2%，内存占用大概为 4M 左右，完全可以接受。</p>
+<p>当然如果你有条件的话，运行在内网服务器上也是极好的，顺便可以连个路由器出来，这样实验室的小伙伴能用不断网的wifi了……</p>
+<p>如果没有服务器，树莓派+路由器的组合也是一种解决方案~</p>
+<p>当然最省钱的就是我这种把脚本直接跑在自己机器上的…… </p>
+<p>##代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf8</span></span><br><span class="line"><span class="keyword">import</span> urllib,urllib2</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> os , subprocess</span><br><span class="line"></span><br><span class="line">username = <span class="string">'你的base64加密过的校园网用户名'</span></span><br><span class="line">password  = <span class="string">'你的base64加密过的校园网密码'</span></span><br><span class="line">url = <span class="string">'https://login.xxxx.edu.cn/auth_action.php'</span>	<span class="comment"># 校园网登陆验证地址</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isConnecting</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># Judge network connect status</span></span><br><span class="line">    res = subprocess.call(<span class="string">'ping 8.8.8.8 -n 1'</span>,shell=<span class="keyword">True</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">False</span> <span class="keyword">if</span> res <span class="keyword">else</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Signon</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># Sign on</span></span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">'action'</span> : <span class="string">'login'</span>,</span><br><span class="line">        <span class="string">'username'</span> : base64.decodestring(username),</span><br><span class="line">        <span class="string">'password'</span> : base64.decodestring(password),</span><br><span class="line">        <span class="string">'ac_id'</span> : <span class="number">1</span>,</span><br><span class="line">        <span class="string">'save_me'</span> : <span class="number">0</span>,</span><br><span class="line">        <span class="string">'ajax'</span> : <span class="number">1</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    data = urllib.urlencode(data)</span><br><span class="line">    response = urllib2.urlopen(url,data=data)</span><br><span class="line">    response = response.read().decode(<span class="string">'utf8'</span>)</span><br><span class="line">    <span class="keyword">print</span> response</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> isConnecting():</span><br><span class="line">            <span class="comment"># no-connect status, attempt sign on</span></span><br><span class="line">            Signon()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        main()</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'[ERROR]:'</span>,</span><br><span class="line">        <span class="keyword">print</span> e</span><br></pre></td></tr></table></figure></p>
+<h2 id="设置任务计划"><a href="#设置任务计划" class="headerlink" title="设置任务计划"></a>设置任务计划</h2><p>在 windows 中设置 <strong>任务计划</strong> 以便在某些情况下自动运行脚本。</p>
+<p>比如现在我想在 <strong>连接 WIFI 时自动运行校园网登陆的脚本</strong>。</p>
+<p>实现的思路是在任务计划中创建一个新的任务，在新任务的触发器中设置 <strong>发生事件时</strong> 运行脚本，连接 WIFI 的事件是 WLAN-AutoConfig &gt; Operational 的 8001 事件。</p>
+<p>可按如下设置创建新任务：</p>
+<p>常规页面：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/d6886de4-bf2c-4e80-bc6e-31cfdd06b426.png" alt=""></p>
+<p>触发器页面：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/4268df30-df3f-4da9-899e-3b192296bfce.png" alt=""></p>
+<p>编辑触发器（电脑启动时运行）：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/7d2749c6-3802-43a9-b874-6cc09fec7bb1.png" alt=""></p>
+<p>编辑触发器（可选，连接无线网络时）：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/566f0942-e288-46e8-9eb3-50ecd8f4c366.png" alt=""></p>
+<p>操作页面：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/8bd56c1b-148f-4c5c-b810-0d1479ea9d24.png" alt=""></p>
+<p>编辑操作：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/9372964a-b6fa-4217-bf71-fab9a7d901b2.png" alt=""></p>
+<p>条件页面：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/f514c908-590b-4046-bbe1-4af47a470fae.png" alt=""></p>
+<p>设置页面：</p>
+<p><img src="http://yangyingming.com/uploads/markdownx/2017/7/12924a7b-9452-4bd1-83b6-5a2b494633a4.png" alt=""></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://www.zhihu.com/question/50249683/answer/120098478" target="_blank" rel="noopener">如何设置计划任务或者脚本才能使电脑在连接指定wifi后自动运行某程序？</a></p>
+<h2 id="原创声明"><a href="#原创声明" class="headerlink" title="原创声明"></a>原创声明</h2><p><strong>转载请注明：<a href="http://www.yangyingming.com" target="_blank" rel="noopener">呓语</a> » <a href="http://www.yangyingming.com/article/380" target="_blank" rel="noopener">python 实现校园网自动登录</a></strong></p>
+	  
+	</div>
+
+	<div>
+  	<center>
+	<div class="pagination">
+
+    
+    
+    <a href="/2017/06/07/readfree.me 自动签到脚本获取免费积分/" type="button" class="btn btn-default"><i
+                class="fa fa-arrow-circle-o-left"></i> Prev</a>
+    
+
+    <a href="/" type="button" class="btn btn-default"><i class="fa fa-home"></i>Home</a>
+    
+    <a href="/2017/05/29/关于 ElasticSearch 中倒排索引的理解/" type="button" class="btn btn-default ">Next<i
+                class="fa fa-arrow-circle-o-right"></i></a>
+    
+
+    
+</div>
+
+    </center>
+	</div>
+	
+	<!-- comment -->
+	
+<section id="comment">
+  
+  <div id="gitalk-container"></div>
+    
+</section>
+
+
+	</div> <!-- col-md-9/col-md-12 -->
+		
+	
+	<div id="side_meta">
+		<div class="col-md-3" id="post_meta"> 
+
+	<!-- date -->
+	
+	<div class="meta-widget">
+	<i class="fa fa-clock-o"></i>
+	2017-06-05 
+	</div>
+	
+
+	<!-- categories -->
+    
+
+	<!-- tags -->
+		
+
+	<!-- toc -->
+	<div class="meta-widget">
+	
+	</div>
+	
+    <hr>
+	
+</div><!-- col-md-3 -->
+
+	</div>
+		
+
+</div><!-- row -->
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<style>
+.gt-comment-content{
+  border-radius: 10px;
+}
+</style>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID:  'a797ed901e6b69f8c7af', 
+      clientSecret: '44bc5132b052591d07831fdbdf73fe9de834209c',
+      id: md5(window.location.pathname),
+      repo: 'windcode.github.io', 
+      owner: 'windcode', 
+      admin: 'windcode', 
+      distractionFreeMode: 'true',
+    })
+    console.log(md5(window.location.pathname));
+    gitalk.render('gitalk-container')
+</script>
+
+
+
+	</div>
+  </div>
+  <div class="container-narrow">
+  <footer> <p>
+  &copy; 2018 呓语
+  
+      with help from <a href="http://hexo.io/" target="_blank">Hexo</a>,<a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind</a>,<a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> and <a href="http://getbootstrap.com/" target="_blank">BOOTSTRA.386</a>. 
+     <br> Theme by <a href="https://github.com/xlzd/hexo-theme-freemind.386">Freemind.386</a>.    
+</p>
+ </footer>
+</div> <!-- container-narrow -->
+  
+
+
+  
+<a id="gotop" href="#">   
+  <span>⬆︎TOP</span>
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/search.js"></script> 
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+   <script type="text/javascript">      
+     var search_path = "search.xml";
+	 if (search_path.length == 0) {
+	 	search_path = "search.xml";
+	 }
+	 var path = "/" + search_path;
+     searchFunc(path, 'local-search-input', 'local-search-result');
+   </script>
+
+
+
+<script type="text/javascript">
+  // img align center
+  var imgs = document.getElementsByTagName("img");
+  for(var i=0;i < imgs.length;i++){
+    // current img element
+    var img = imgs[i];
+    // current img parent node
+    var imgp = img.parentNode;
+    // current img parent parent node
+    var imgpp = img.parentNode.parentNode;
+    // set p element center
+    if(imgp.nodeName=='A' && imgpp.nodeName=='P'){
+      imgpp.setAttribute("align","center");
+    }
+  }
+</script>
+
+</body>
+   </html>
